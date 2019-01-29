@@ -37,6 +37,8 @@ We can exit the virtual environment using the `deactivate` command (Unix & Windo
 
 To use the PyPSA package, we need a *linear optimisation solver*. Follow [these instructions](https://pypsa.org/doc/installation.html#getting-a-solver-for-linear-optimisation) to install one on your system.
 
+To see a geographical map overlay, follow [these instructions](https://matplotlib.org/basemap/users/installing.html) to install *basemap*. (Could be skipped)
+
 
 
 ## Jupyter Notebook

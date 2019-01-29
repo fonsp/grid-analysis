@@ -105,3 +105,9 @@ venv*/
 .mypy_cache/
 
 .vs/
+
+*.glpk.raw
+*.glpk.glp
+*.pyomo.lp
+
+/data/
