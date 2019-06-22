@@ -45,6 +45,7 @@
 \renewcommand{\arraystretch}{1.2}
 \usepackage{bold-extra}
 \usepackage{bm}
+\usepackage{upgreek}
 
 % Font choice
 
@@ -59,6 +60,7 @@
 \usepackage[boldsans]{ccfonts}
 
 \renewcommand{\bfseries}{\fontfamily{bch}\fontseries{bx}\selectfont}
+% \DeclareMathAlphabet{\mathbf} {OT1}{\mathsf}{bx}{n}
 \DeclareMathAlphabet{\mathbf} {OT1}{bch}{bx}{n}
 
 
@@ -69,6 +71,7 @@
 \usepackage[pagestyles, clearempty]{titlesec}%
 \usepackage{fmtcount,etoolbox}
 
+%\begin{comment}
 \titleformat{\chapter}[display]{\center}
 {%\titlerule\vspace{1.4em}
 \Large\it\chaptername{ }\numberstring{chapter}}
@@ -76,11 +79,18 @@
 {\huge\bfseries}
 %[\vspace{1em}\titlerule]
 
-\renewcommand{\mat}[1]{\ensuremath{\mathbf{#1}}}
-\newcommand{\matSigma}{\Sigma}
+%\renewcommand{\mat}[1]{\ensuremath{\mathbf{#1}}}
+%\newcommand{\matSigma}{\Sigma}
 %\end{comment}
 
-
+\makeatletter
+\renewcommand{\mat}[1]{
+\StrLeft{#1}{1}[\chrfirst]
+\IfSubStr{ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz}{\chrfirst}
+   {\mathbf{#1}}
+   {\bm{#1}}
+}
+\makeatother
 
 
 %% DOCUMENT
@@ -150,16 +160,30 @@
 \DeclareMathOperator{\rank}{rank}
 \DeclareMathOperator{\PROB}{\mathbb{P}}
 \DeclareMathOperator{\EXP}{\mathbb{E}}
+\DeclareMathOperator{\COVMAT}{\mathcal{C}}
+\DeclareMathOperator{\gaussdistr}{\mathcal{N}}
+\DeclareMathOperator*{\argmin}{argmin}
+\DeclareMathOperator*{\argmax}{argmax}
 
 %% MISC
 \newcommand{\define}[1]{\emph{#1}\index{#1}}
 \newcommand{\ie}{i.e.\ }
 \newcommand{\eg}{e.g.\ }
+\newcommand{\almosteverywhere}{a.e.\ }
 
 \setlength{\parindent}{0pt}
 \setlength{\parskip}{.5em}
 
+% https://tex.stackexchange.com/a/63549
+\makeatletter
+\def\oversortoftilde#1{\mathop{\vbox{\m@th\ialign{##\crcr\noalign{\kern3\p@}%
+      \sortoftildefill\crcr\noalign{\kern3\p@\nointerlineskip}%
+      $\hfil\displaystyle{#1}\hfil$\crcr}}}\limits}
 
+\def\sortoftildefill{$\m@th \setbox\z@\hbox{$\braceld$}%
+  \braceld\leaders\vrule \@height\ht\z@ \@depth\z@\hfill\braceru$}
+
+\makeatother
 
 \DeclareRobustCommand\inlineres{\raisebox{-.3mm}{\begin{circuitikz}\ctikzset{bipoles/length=7mm}\draw[] (0,0) to[R] (1,0);\end{circuitikz}}}
 \DeclareRobustCommand\inlineac{\raisebox{-1.4mm}{\begin{circuitikz}\ctikzset{bipoles/length=7mm}\draw[] (0,0) to[sV] (1,0);\end{circuitikz}}}
@@ -249,7 +273,7 @@ Y&\text{ is a (real or complex) number}\\
 %parents: for their love of the natural world
 
 
-\bibliography{references.bib}
+\bibliography{library.bib}
 
 \printindex
 

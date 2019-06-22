@@ -4,10 +4,220 @@
 \section{*Abstract Integration}
 \towrite{Lebesgue-Stieltjes integral}
 \todo{See Rynne or Garling or Analyse de Hilbert et de Fourier course notes}
-\section{*Probability Measures}
+\section{*Probability Measure}
 \todo{See Pestman or MIT course notes or...}
 \towrite{Should cover: p. measure, cont. distr., stochastic vectors, E, moment gen?, CLT, multivar norm dist}
 \section{Large Deviation Theory}
 \todo{See Hugo or MIT course notes or ...}
 \towrite{Should cover: application to multivariate normal dist}
+
+\section{Multivariate Gaussian distribution}
+\emph{This presentation of the multivariate Gaussian distribution is heavily based on Chapter VIII of \emph{Mathematical Statistics} by \cite{Pestman1998}, which provides proofs to all theorems listed below.}
+
+One distribution that will be particularly useful in our analysis is the \emph{multivariate Gaussian distribution}. A special case is an elementary normally distributed vector $\mat{E}=(\mel{E}_1, \dots, \mel{E}_p)$, which is simply the combination of $p$ normally distributed, \emph{independent} scalar variables. In general, however, we wish to study stochastic vectors produced by applying a \emph{linear transformation} $\mat{L} \in \mathcal{L}(\mathbb{R}^p, \mathbb{R}^q)$ to $\mat{E}$. In this case, the coordinate variables $(\mel{LE})_1,\dots,(\mel{LE})_q$ are not always independent. 
+
+In particular, we answer the following question: ``For $i,j \in \range{q}$ and $x \in \mathbb{R}$, what is the distribution of $(\mel{LE})_i$, \emph{given that} $(\mel{LE})_j \geq x$?''
+\todo{Deze inleiding slaat het geval ${E}$ Gaussiaans maar niet normaal, over.}
+
+\subsection{Normal and Gaussian}
+Although they are often used interchangeably, we make a clear distinction between a \emph{normal} distribution and a \emph{Gaussian} distribution. 
+
+\begin{definition}
+A scalar variable $E$ is said to be \emph{normally distributed} with parameters $\mu$ and $\sigma$ if
+\begin{equation}
+x \mapsto \frac{1}{\sigma \sqrt{2\pi}} \exp\left[\frac{-(x-\mu)^2}{2\sigma^2}\right]
+\end{equation}
+is the probability density of $E$.
+\end{definition}
+
+\begin{definition}
+A scalar variable $E$ is said to be \emph{Gaussian distributed} if it is either normally distributed or constant. 
+\end{definition}
+
+One could interpret a constant $E$ with value $\mu$ as a normally distributed variable with mean $\mu$ and `standard deviation $0$'. Clearly, a linear combination of Gaussian distributed scalar variables is also Gaussian distributed.
+
+\begin{definition}
+A stochastic vector $\mat{E}=(\mel{E}_1, \dots, \mel{E}_p)$ is \emph{elementary normally distributed}\index{distribution!elementary normal} if the scalar variables $\mel{E}_i$ are independent and normally distributed ($i \in \range{p}$).
+$\mat{E}$ is \emph{elementary Gaussian distributed}\index{distribution!elementary Gaussian} if the scalar variables $\mel{E}_i$ are independent and Gaussian distributed.
+\end{definition}
+
+\begin{definition}
+A stochastic vector $\mat{X}=(\mel{X}_1, \dots, \mel{X}_p)$ is \emph{normally distributed}\index{distribution!normal} if there exists an orthogonal operator $\mat{Q}$ such that $\mat{QX}$ is elementary normally distributed.
+$\mat{X}$ is \emph{Gaussian distributed}\index{distribution!Gaussian} if there exists an orthogonal operator $\mat{Q}$ such that $\mat{QX}$ is elementary normally distributed.
+\end{definition}
+
+\towrite{Plaatjes vullen gaatjes}
+
+We state, without proof, the following properties of Gaussian distributed vectors:
+\begin{proposition}
+The distribution of a Gaussian distributed vector $\mat{X}$ is uniquely determined by its expectation $\mat{\mu} =\EXP\left[\mat{X}\right]$ and covariance matrix $\mat{\Sigma}=\COVMAT(\mat{X})$, and we write $\mat{X} \sim \gaussdistr(\mat{\mu}, \mat{\Sigma})$. $\mat{X}$ is normally distributed if and only if $\mat{\Sigma}$ is invertible. \todo{define covmat}
+\end{proposition}
+
+Translating or applying a linear map to a Gaussian distribution results in a new Gaussian distribution. Note that this can be \emph{any} linear map, not necessarily a bijective, orthogonal one.
+
+\begin{theorem}
+Suppose $\mat{X}$ is a $\gaussdistr(\mat{\mu}, \mat{\Sigma})$-distributed $p$-vector. 
+\begin{align}
+\intertext{For any $\mat{a} \in \mathbb{R}^p$:}
+\mat{X}+\mat{a} \, &\sim \, \gaussdistr(\mat{\mu}+\mat{a}, \mat{\Sigma}), \\
+\intertext{and for any linear map $\mat{L} \in \mathcal{L}(\mathbb{R}^p, \mathbb{R}^q)$:}
+\mat{L}\mat{X} \, &\sim \, \gaussdistr(\mat{L}\mat{\mu}, \mat{L}\mat{\Sigma}\mat{L}^*).
+\end{align}\todo{positive definite keer normaal is normaal}
+\end{theorem}
+\begin{corollary}\label{cor:innerproductisgaussian}
+For any $\mat{b} \in \mathbb{R}^p$, the mapping
+\[
+\mat{b}^* : \mathbb{R}^p \rightarrow \mathbb{R} : \mat{x} \mapsto \left\langle\mat{x}, \mat{b}\right\rangle
+\]
+is \emph{linear}, and therefore the scalar variable $\mat{b}^*\mat{X} = \left\langle\mat{X}, \mat{b}\right\rangle$ is Gaussian distributed.
+\end{corollary}
+In particular, when applying Corollary \ref{cor:innerproductisgaussian} to each element of the standard basis $(\mat{e}_1, \dots, \mat{e}_p)$ of $\mathbb{R}^p$, we find that each of the \emph{coordinates} of $\mat{X}$ is Gaussian distributed.
+
+
+
+\begin{theorem}
+Suppose $\mat{X}$ is a \emph{normally} distributed $p$-vector with expectation $\mat{\mu} =\EXP\left[\mat{X}\right]$ and covariance matrix $\mat{\Sigma}=\COVMAT(\mat{X})$. Then $\mat{X}$ has a \emph{probability density function} given by
+\begin{equation}\label{eq:multivarnormaldensity}
+\mat{x} \mapsto \frac{1}{\sqrt{\det(\mat{\Sigma})} \left(2\pi\right)^{p/2}} \exp\left[ -\frac{1}{2} (\mat{x} - \mat{\mu})^* \mat{\Sigma}^{-1} (\mat{x} - \mat{\mu}) \right]
+\end{equation}
+\end{theorem}
+\begin{remark}
+The condition that $\mat{X}$ is normally distributed is necessary: if $\mat{X}$ is Gaussian, but not normal, it will take values in an \emph{affine subspace of $\mathbb{R}^p$} (such as a plane, as subspace of $\mathbb{R}^3$). If a density function were to exist, it would have support of zero measure, and integrating over $\mathbb{R}^p$ would yield $0$, instead of $1$. \todo{Klopt dit?}
+\end{remark}
+\subsection{TODO}
+
+\subsection{Given $\mel{X}_i$\dots}
+
+\begin{theorem}
+The mode of a Gaussian distribution is its mean.
+\end{theorem}
+
+\begin{definition}
+plane
+\end{definition}
+\towrite{Plane is the edge of the feasibility region.}
+\begin{theorem}
+Let $\mat{X} \, \sim \, \gaussdistr(\mat{\mu}, \mat{\Sigma})$ be a normally distributed $p$-vector with density function $f_{\mat{X}}$, and let $A\subsetneq \mathbb{R}^p$ be a plane, given by:
+\[
+\text{for any $\mat{x} \in \mathbb{R}^p$}: \quad \mat{x} \in A \, \iff \, \left\langle \mat{x}, \mat{r}_A \right\rangle = 1
+\]
+for some $\mat{r}_A \in \mathbb{R}^p$. Then $X \mid A$ \todo{hier bestaat vast notatie voor} is Gaussian distributed, and has mode\todo{$A$ is not an event, but $\mathbf{X}^{-1}(A)$ is.}
+\[
+\breve{\mat{x}}_{A} = \argmax_{\mat{x} \in A} f_{\mat{X}}(\mat{x}) = \mat{\mu}  + \frac{1 - \left\langle \mat{\mu}, \mat{r}_A \right\rangle}{\left\langle  \mat{\Sigma} \mat{r}_A, \mat{r}_A \right\rangle} \mat{\Sigma} \mat{r}_A.
+\]
+\end{theorem}
+\begin{proof}
+We will start with the special case of $\mat{\Sigma} = \mat{I}$, and work our way towards the general case.\footnote{This process uses the so-called the \emph{standardised}\index{distribution!standardised normal} form of $\mat{X}$.}
+
+\emph{Step 1. The case of unit covariance.}\\
+Suppose $\mat{X}$ is \emph{elementary} normally distributed, with all marginal variances equal to one, \ie $\mat{\Sigma} = \mat{\Sigma}^{-1} = \mat{I}$. The probability density function of $X$ (see Equation (\ref{eq:multivarnormaldensity})) then reduces to:
+\[
+\mat{x} \mapsto \frac{1}{\left(2\pi\right)^{p/2}} \exp\left[ \frac{-\norm{\mat{x} - \mat{\mu}}^2}{2}  \right].
+\]
+This is a \emph{decreasing} function of the \emph{distance between $\mat{x}$ and $\mat{\mu}$}, and so its mode is obtained when this distance is minimum.
+
+Because $A$ is an affine subspace of $\mathbb{R}^p$, the distance between $\mat{x} \in A$ and $\mat{\mu}$ is minimum when $\mat{x}$ is the \emph{orthogonal projection} of $\mat{\mu}$ onto $A$, which is given by:
+\[
+\tilde{\mat{x}}_{A} = \mat{\mu} + \frac{1 - \left\langle \mat{\mu}, \mat{r}_A \right\rangle}{\left\langle \mat{r}_A, \mat{r}_A \right\rangle} \mat{r}_A.
+\]
+
+\emph{Step 2. The case of an arbitrary elementary normal distribution.}\\
+Let us drop the assumption that all marginal variances are equal to one. There exist $\lambda_1, \dots, \lambda_p \in \mathbb{R}_{>0}$ such that $\mat{\Sigma} = \mat{\Lambda} = \diag(\lambda_1, \dots, \lambda_p)$, and $\mat{\Lambda}^{t} = \diag(\lambda_1^{t}, \dots, \lambda_p^{t})$ for any $t \in \mathbb{R}$. \todo{Dit zijnd e varianties, gebruikt simgasquared?} With $t=-\frac{1}{2}$, we find that $\mat{\Lambda}^{-\frac{1}{2}}\mat{X}$ is elementary normally distributed, with mean $\mat{\Lambda}^{-\frac{1}{2}}$ and unit covariance matrix.
+Applying the same transformation $\mat{\Lambda}^{-\frac{1}{2}}$ to $A$ yields a new plane, which is defined by $\mat{\Lambda}^{\frac{1}{2}}\mat{r}_A$ (not $\mat{\Lambda}^{-\frac{1}{2}}\mat{r}_A$!):
+
+For each $\mat{x} \in \mathbb{R}^p$, we have
+
+$\mat{x} \in A \iff $
+\begin{gather*}
+\left\langle \mat{x}, \mat{r}_A \right\rangle = 1
+\iff \sum_{i=1}^p \mel{x}_i \mel{r}_{A\,i} = 1
+\iff \sum_{i=1}^p \lambda_{i}^{-\frac{1}{2}}\mel{x}_i \lambda_{i}^{\frac{1}{2}} \mel{r}_{A\,i} = 1 
+\iff \\
+\left\langle \mat{\Lambda}^{-\frac{1}{2}}\mat{x}, \mat{\Lambda}^{\frac{1}{2}}\mat{r}_A \right\rangle = 1
+\iff
+\left\langle \mat{\Lambda}^{-\frac{1}{2}}\mat{x}, \mat{r}_{\mat{\Lambda}^{-\frac{1}{2}}(A)} \right\rangle = 1
+\end{gather*}
+
+\hfill $\iff \mat{\Lambda}^{-\frac{1}{2}}\mat{x} \in \mat{\Lambda}^{-\frac{1}{2}}(A).$
+
+This means that the plane $\mat{\Lambda}^{-\frac{1}{2}}(A)$ is defined by $\mat{\Lambda}^{\frac{1}{2}}\mat{r}_A$. \todo{wat sterkere definitie voor die $r_B$, \emph{crossed}?}
+
+We can now apply our earlier result, and we find:
+
+\begin{gather*}
+\tilde{\mat{x}}_{A} = \mat{\Lambda}^{\frac{1}{2}} 
+\oversortoftilde{\left(
+\mat{\Lambda}^{-\frac{1}{2}} \mat{x}_{\mat{\Lambda}^{-\frac{1}{2}}(A)}
+\right)}
+=
+\mat{\Lambda}^{\frac{1}{2}} 
+\left(
+\mat{\Lambda}^{-\frac{1}{2}} \mat{\mu}  + \frac{1 - \left\langle \mat{\Lambda}^{-\frac{1}{2}} \mat{\mu}, \mat{\Lambda}^{\frac{1}{2}} \mat{r}_A \right\rangle}{\left\langle \mat{\Lambda}^{\frac{1}{2}} \mat{r}_A, \mat{\Lambda}^{\frac{1}{2}} \mat{r}_A \right\rangle} \mat{\Lambda}^{\frac{1}{2}} \mat{r}_A
+\right) \\
+=
+\mat{\mu}  + \frac{1 - \left\langle \mat{\Lambda}^{-\frac{1}{2}} \mat{\mu}, \mat{\Lambda}^{\frac{1}{2}} \mat{r}_A \right\rangle}{\left\langle \mat{\Lambda}^{\frac{1}{2}} \mat{r}_A, \mat{\Lambda}^{\frac{1}{2}} \mat{r}_A \right\rangle} \mat{\Lambda} \mat{r}_A
+=
+\mat{\mu}  + \frac{1 - \left\langle \mat{\mu}, \mat{r}_A \right\rangle}{\left\langle \mat{\Lambda}  \mat{r}_A,\mat{r}_A \right\rangle} \mat{\Lambda} \mat{r}_A.
+\end{gather*}
+
+\emph{Step 3. The general case.}\\
+Finally, we consider the general case where $\mat{X}$ is normally distributed. If so, there exists orthogonal $\mat{Q}$ such that $\mat{\Sigma}=\mat{Q}\mat{\Lambda}\mat{Q}^{-1}$, with $\mat{\Lambda}$ a diagonal matrix. In other words, the orthogonal map $\mat{Q}^{-1}$ maps $\mat{X}$ into an \emph{elementary} normally distributed vector.
+Applying the same transformation $\mat{Q}^{-1}$ to $A$ yields a new plane, which is defined by $\mat{Q}^{-1}\mat{r}_A$. This derivation is more straightforward, since $\mat{Q}^{-1}$ is orthogonal:
+
+For each $\mat{x} \in \mathbb{R}^p$, we have
+
+$\mat{x} \in A \iff $
+\begin{gather*}
+\left\langle \mat{x}, \mat{r}_A \right\rangle = 1
+\iff \left\langle \mat{Q}^{-1} \mat{x}, \mat{Q}^{-1} \mat{r}_A \right\rangle = 1
+\iff \left\langle \mat{Q}^{-1} \mat{x}, \mat{r}_{\mat{Q}^{-1}(A)} \right\rangle = 1
+\end{gather*}
+
+\hfill $\iff \mat{Q}^{-1}\mat{x} \in\mat{Q}^{-1}(A).$
+
+This means that the plane $\mat{\Lambda}^{-\frac{1}{2}}(A)$ is defined by $\mat{\Lambda}^{\frac{1}{2}}\mat{r}_A$. Again, using our previous result, we find:
+
+\begin{gather*}
+\tilde{\mat{x}}_{A}
+=
+\mat{Q}
+\oversortoftilde{\left(
+\mat{Q}^{-1}\mat{x}_{\mat{Q}^{-1}(A)}
+\right)}
+=
+\mat{Q}
+\left(
+\mat{Q}^{-1}\mat{\mu}  + \frac{1 - \left\langle \mat{Q}^{-1} \mat{\mu}, \mat{Q}^{-1}\mat{r}_A \right\rangle}{\left\langle \mat{\Lambda} \mat{Q}^{-1} \mat{r}_A,\mat{Q}^{-1} \mat{r}_A \right\rangle} \mat{\Lambda} \mat{Q}^{-1} \mat{r}_A
+\right) \\
+=
+\mat{\mu}  + \frac{1 - \left\langle \mat{Q}^{-1} \mat{\mu}, \mat{Q}^{-1}\mat{r}_A \right\rangle}{\left\langle \mat{\Lambda} \mat{Q}^{-1} \mat{r}_A,\mat{Q}^{-1} \mat{r}_A \right\rangle} \mat{Q} \mat{\Lambda} \mat{Q}^{-1} \mat{r}_A
+=
+\mat{\mu}  + \frac{1 - \left\langle \mat{\mu}, \mat{r}_A \right\rangle}{\left\langle  \mat{Q} \mat{\Lambda} \mat{Q}^{-1} \mat{r}_A, \mat{r}_A \right\rangle} \mat{Q} \mat{\Lambda} \mat{Q}^{-1} \mat{r}_A \\
+=
+\mat{\mu}  + \frac{1 - \left\langle \mat{\mu}, \mat{r}_A \right\rangle}{\left\langle  \mat{\Sigma} \mat{r}_A, \mat{r}_A \right\rangle} \mat{\Sigma} \mat{r}_A
+\end{gather*}
+
+\end{proof}
+
+\begin{definition}
+
+\end{definition}
+\begin{definition}
+
+\end{definition}
+
+
+
+
+
+\towrite{def: Normal distribution}
+\towrite{def: gaussian}
+\towrite{prop: gaussian}
+\towrite{def: elementary (multivar) gaussian, elementary (multivar) normal; (multivar) gaussian, (multivar) normal}
+\towrite{thm: Gauss is uniquely determined by its mean and cov matrix}
+\towrite{thm: X Gauss -> X + a Gauss en TX Gauss (T arbitrair)}
+\towrite{prop: X Gauss <-> er bestaat orthogonaal Q zodat QX elementair Gauss}
+\towrite{remark: TX need not be normal}
+
+\section{}
 \end{document}

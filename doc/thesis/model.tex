@@ -38,7 +38,7 @@ We model transmission lines as time-invariant impedances, which are assumed to b
 \begin{align*}
     \mathsf{I=VY}
 \end{align*}
-This allows us to define the admittance between two unconnected nodes as $0$. (\ie no current is induced by a potential difference.) \todelete{We now construct the \emph{admittance matrix}\index{admittance!matrix} $\mat{Y} \in \mathbb{C}^{n \times n}$, where $\mel{Y}_{i,j}$ is the admittance between nodes $i$ and $j$. Note that $\mat{Y}$ is a symmetric matrix, with only $2m$ non-zero entries.} \todo{$\mat{Y}$ is not used very often and conflicts with the \emph{Nodal admittance matrix} (wiki)}
+This allows us to define the admittance between two unconnected nodes as $0$. (\ie no current is induced by a potential difference.) \todelete{We now construct the \emph{admittance matrix}\index{admittance!matrix} $\mathbf{Y} \in \mathbb{C}^{n \times n}$, where $\mel{Y}_{i,j}$ is the admittance between nodes $i$ and $j$. Note that $\mathbf{Y}$ is a symmetric matrix, with only $2m$ non-zero entries.} \todo{$\mathbf{Y}$ is not used very often and conflicts with the \emph{Nodal admittance matrix} (wiki)}
 
 We \todelete{also }define $\mat{\eta} \in \mathbb{C}^m$ as the \emph{admittance vector}\index{admittance!vector}, where $\eta_l$ is the admittance of $\mathcal{L}_l$, for each $l \in \range{m}$. \todelete{Equivalently, one can write 
 $\eta_l \coloneqq Y_{\mathcal{L}_l} \text{ for each }l\in\range{m}$
@@ -116,7 +116,7 @@ Will also emphasise that in most real networks, $m>n$.}
 \end{example}
 
 \section{Power grid state}
-\towrite{TODO, I is directed along the graph edges}\todo{$\mat{I}$ could be left out of the grid state, since it is uniquely determined by $\mat{V}$ and the structure.}
+\towrite{TODO, I is directed along the graph edges}\todo{$\mathbf{I}$ could be left out of the grid state, since it is uniquely determined by $\mathbf{V}$ and the structure.}
 \begin{definition}\label{def:gridstate}
 To summarise, a \emph{grid state}\index{grid!state} of an $(n,m)$-grid structure is defined as a tuple $(\mat{S}, \mat{V}, \mat{I})$, where
 \begin{itemize}
@@ -189,7 +189,7 @@ Since the $k$th row of $\mat{C}$ (which corresponds to the line $\mathcal{L}_k=(
 $$\mel{I}_k = (\mel{V}_j - \mel{V}_i) \cdot \mel{\eta}_k = -(\mel{CV})_{k}\mel{\eta}_k.$$
 This holds for every $k \in \range{m}$, and this system of equations can be written compactly as:
 $$\mat{I} = i\diag(i\mat{\eta})\mat{C}\mat{V}$$
-\towrite{Written in this form, we see that when $i\mat{\eta}, \mat{C}$ and $\mat{V}$ are purely real, then $\mat{I}$ is purely imaginary. Physically, this means that line current is always $90\si{\degree}$ out of phase with node voltage. (Or it means that current is out of phase with voltage differences? Which are voltage angle differences?)}
+\towrite{Written in this form, we see that when $i\bm{\eta}, \mathbf{C}$ and $\mathbf{V}$ are purely real, then $\mathbf{I}$ is purely imaginary. Physically, this means that line current is always $90\si{\degree}$ out of phase with node voltage. (Or it means that current is out of phase with voltage differences? Which are voltage angle differences?)}
 \todo{Writing node voltages in a circuit already implies that KVL holds.}
 
 \subsection{Kirchoff's Current Law (KCL)}
@@ -255,7 +255,7 @@ Writing in real and imaginary components, we get the node flow equations for rea
     \\
     \phym{Q}=\Im (\mel{S}_i) &= \sum_{j=1}^{n} |\mel{V}_i| |\mel{V}_{j}|\Big[\Re(\mel{M}_{i,j})\sin(\theta_i - \theta_j)-\Im(\mel{M}_{i,j})\cos(\theta_i - \theta_j)\Big]
     \label{eq:realreactivenodefloweqreactive}
-\end{align}\todo{$\mat{M}$ should be $\pm i \mat{L}$}
+\end{align}\todo{$\mathbf{M}$ should be $\pm i \mathbf{L}$}
 In literature on the subject, the node flow equation is often given in this form.
 
 We will later study so called \emph{DC-valid} grid structures, where the values of $\mat{M}$ are purely imaginary. If so, (\ref{eq:realreactivenodefloweqreal}) simplifies to:
@@ -335,7 +335,7 @@ By replacing the $\exp$ function in (\ref{eq:nodefloweq}) by $z \mapsto 1+z$ (th
 Compare the following with Definition \ref{def:statevalidity} and (\ref{eq:nodefloweq}).
 
 \begin{definition}\label{def:stateDCvalidity}
-Given an $(n,m)$-grid structure $((\mathcal{N},\mathcal{L}),\mat{C},\mat{\eta})$, a grid state $(\mat{S}, \mat{V}, \mat{I})$ is \emph{DC-valid}\index{valid!DC} if it satisfies the \emph{KVL-Ohm equality}:\todo{this is also approximated: $\mat{CV}$ is linearised.}
+Given an $(n,m)$-grid structure $((\mathcal{N},\mathcal{L}),\mat{C},\mat{\eta})$, a grid state $(\mat{S}, \mat{V}, \mat{I})$ is \emph{DC-valid}\index{valid!DC} if it satisfies the \emph{KVL-Ohm equality}:\todo{this is also approximated: $\mathbf{CV}$ is linearised.}
 \begin{align}
     \mat{I} = i\diag(i\mat{\eta})\mat{C}\mat{V} \tag{\ref{eq:KVLOhmeq}}
 \end{align}
@@ -374,10 +374,10 @@ For each node $i$, we have:
     \mat{S} &= \mat{L}\mat{\theta}
 \end{align*}
 \end{proof}
-\towrite{Appendix: give a direct formula for $\mat{L}$}
-\towrite{compute $\mat{L}$ for the example networks}
-\towrite{give an alternative interpretation of $\mat{L}$ or $\mat{L}$: discrete laplacian}
-\towrite{discuss the kernel of $\mat{L}$: it should follow from graph theoretical arguments that the kernel is spanned by $(1,1,\dots,1)^T$, such that the nullity of $\mat{L}$ is $1$. This corresponds to the fact that phase angle is a relative quantity. (The state remains (DC-)valid when increasing the phase angle at each node by the same amount. (If $\mat{S}=\mat{L\theta}$ and $\mat{\theta}_0 \in \ker \mat{L}$, then $\mat{S}=\mat{L}(\mat{\theta}+\mat{\theta_0})$.))\\There are two paths to take after this point:\\1: Fix the phase angle of the slack bus (to $0$), which corresponds to taking the ${n-1 \times n-1}$ submatrix of $\mat{L}$, I think. \textbf{This is the approach of PyPSA, which might explain small differences in line flow.} \\2: Leave $\mat{L}$ as-is, and consider the \emph{Moore-Penrose pseudo-inverse} of $\mat{L}$. This is the approach of Nesti et al., which they attribute to 'distributive slack': not fixing a single slack bus.}
+\towrite{Appendix: give a direct formula for $\mathbf{L}$}
+\towrite{compute $\mathbf{L}$ for the example networks}
+\towrite{give an alternative interpretation of $\mathbf{L}$ or $\mathbf{L}$: discrete laplacian}
+\towrite{discuss the kernel of $\mathbf{L}$: it should follow from graph theoretical arguments that the kernel is spanned by $(1,1,\dots,1)^T$, such that the nullity of $\mathbf{L}$ is $1$. This corresponds to the fact that phase angle is a relative quantity. (The state remains (DC-)valid when increasing the phase angle at each node by the same amount. (If $\mathbf{S}=\mathbf{L\theta}$ and $\mathbf{\theta}_0 \in \ker \mathbf{L}$, then $\mathbf{S}=\mathbf{L}(\bm{\theta}+\bm{\theta_0})$.))\\There are two paths to take after this point:\\1: Fix the phase angle of the slack bus (to $0$), which corresponds to taking the ${n-1 \times n-1}$ submatrix of $\mathbf{L}$, I think. \textbf{This is the approach of PyPSA, which might explain small differences in line flow.} \\2: Leave $\mathbf{L}$ as-is, and consider the \emph{Moore-Penrose pseudo-inverse} of $\mathbf{L}$. This is the approach of Nesti et al., which they attribute to 'distributive slack': not fixing a single slack bus.}
 
 \subsection{Usefulness}
 Real transmission networks do not satisfy the DC approximation and, in general, a DC-valid state is not (physically) valid. Yet, using these two approximations has one important property: the approximated node flow equation becomes \emph{linear}. This has a number of advantages:
@@ -488,19 +488,19 @@ The state is DC-valid, so we can substitute (\ref{eq:approxnodefloweq}) for $\me
     \\
     &=
     KV_{op}^2 
-    \sum_{\mathcal{L}_k=(a,b) \in \mathcal{L}} \abs{\mel{\eta}_k} (\mel{C\theta})_k^2
+    \sum_{\mathcal{L}_k=(a,b) \in \mathcal{L}} \abs{\mel{\eta}_k} (\mel{C}\mel{\theta})_k^2
     \\
     &=
     KV_{op}^2 
-    \norm{\mat{\eta}  \pointwise \mat{C\theta} \pointwise \mat{C\theta}}_{1} \qquad \text{(in $\ell^1$)}
+    \norm{\mat{\eta}  \pointwise \mat{C}\mat{\theta} \pointwise \mat{C}\mat{\theta}}_{1} \qquad \text{(in $\ell^1$)}
     \\
     &\leq
     KV_{op}^2 
-    \norm{\mat{\eta}}_{\infty}  \norm{\mat{C\theta} \pointwise \mat{C\theta}}_{1} \qquad \text{(Hölder's inequality)}
+    \norm{\mat{\eta}}_{\infty}  \norm{\mat{C}\mat{\theta} \pointwise \mat{C}\mat{\theta}}_{1} \qquad \text{(Hölder's inequality)}
     \\
     &=
     KV_{op}^2 
-    \norm{\mat{\eta}}_{\infty}  \norm{\mat{C\theta}}_2^2
+    \norm{\mat{\eta}}_{\infty}  \norm{\mat{C}\mat{\theta}}_2^2
 \end{align*}
 \end{proof}
 \towrite{Discuss the PDEs used for computing the PF?}
@@ -516,23 +516,23 @@ pseudoinverse:
 \end{align*}
 this is the moore-penrose pseudo-inverse,
 
-\towrite{My DC approximated KVL-Ohm is incorrect, it should be: $\mat{I} = i\diag(i\mat{\eta})\mat{C\theta}V_{op}$.}
+\towrite{My DC approximated KVL-Ohm is incorrect, it should be: $\mathbf{I} = i\diag(i\bm{\eta})\mathbf{C\theta}V_{op}$.}
 
 \begin{align*}
-    \mat{\hat{f}} = -iV_{op}\mat{I}=-iV_{op}^2i\diag(i\mat{\eta})\mat{C\theta}
-    = \diag(i\mat{\eta})\mat{C}\mat{L^+}\mat{p}.
+    \hat{\mat{f}} = -iV_{op}\mat{I}=-iV_{op}^2i\diag(i\mat{\eta})\mat{C}\mat{\theta}
+    = \diag(i\mat{\eta})\mat{C}\mat{L}^+\mat{p}.
 \end{align*}
 (We assumed a normalised profile, so $V_{op}=1$.)
 
 If the line capacities\index{line capacity} are $\mat{W}=(W_1, \dots, W_m)^T \in \mathbb{R}^m$\todo{C already used}, then we can define the \emph{normalised line flow}\index{line flow!normalised} as:
-$$\mat{f} = \diag(\mat{W})^{-1}\mat{\hat{f}}$$
+$$\mat{f} = \diag(\mat{W})^{-1}\hat{\mat{f}}$$
 and we find:
 \begin{empheq}[box=\fbox]{gather}
     \mat{f}=\mat{F}\mat{p}\\[3mm]
     \text{where }\quad\mat{F}=\diag(\mat{W})^{-1}\diag(i\mat{\eta})\mat{C}\mat{L^+}
 \end{empheq}
 
-\emph{This is a linear transformation from a power injection vector $\mat{p}$ to the normalised line flow $\mat{f}$ that it induces.}\todo{$\mat{F}$ is not the unique transformation with this property (otherwise $\mat{F}$ would be square and non-singular). Does $\mat{F}$ minimise $\norm{\mat{f}}$?}
+\emph{This is a linear transformation from a power injection vector $\mat{p}$ to the normalised line flow $\mat{f}$ that it induces.}\todo{$\mathbf{F}$ is not the unique transformation with this property (otherwise $\mathbf{F}$ would be square and non-singular). Does $\mathbf{F}$ minimise $\norm{\mathbf{f}}$?}
 
 \todo{line drop: (real) power flowing out of a node is slightly more than power }
 
@@ -601,16 +601,16 @@ Things get even more interesting when $\mat{p}$ is a \emph{stochastic variable}.
 \subsection{Normally distributed power injection}
 Following \cite{Nesti2018emergentfailures}, we model $\mat{p}$ to be \emph{multivariate normally distributed}:
 \[
-\mat{p} \sim N(\mat{\mu_p}, \matSigma_\mat{p})
+\mat{p} \sim \gaussdistr(\mat{\mu}_p, \mat{\Sigma}_{\mat{p}})
 \]
-where $\mat{\mu_p}$ is the mean power injection, which is the sum of deterministic generation and expected stochastic generation, minus the load. $\matSigma_\mat{p}$ is the \emph{power injection correlation matrix}. When power injection at different nodes is correlated (because of correlated weather), this matrix is non-diagonal.
+where $\mat{\mu}_p$ is the mean power injection, which is the sum of deterministic generation and expected stochastic generation, minus the load. $\mat{\Sigma}_{\mat{p}}$ is the \emph{power injection correlation matrix}. When power injection at different nodes is correlated (because of correlated weather), this matrix is non-diagonal.
 
 Because $\mat{F}$ is a linear transformation, the vector of line flows $\mat{f}$ is also (multivariate) normally distributed, and its distribution is given by
 
 \begin{equation}
-\mat{f} \sim N(\mat{\mu_f}, \matSigma_\mat{f}), \quad \text{ where } \quad
+\mat{f} \sim \gaussdistr(\mat{\mu_f}, \mat{\Sigma}_{\mat{f}}), \quad \text{ where } \quad
 \mat{\mu_f} = \mat{F}\mat{\mu_f} \quad \text{and} \quad 
-\matSigma_\mat{f} = \mat{F}\matSigma_\mat{p}\mat{F}^T.
+\mat{\Sigma}_{\mat{f}} = \mat{F}\mat{\Sigma}_{\mat{p}}\mat{F}^T.
 \end{equation}
 
 \section{Applying the Large Devation Principle}
