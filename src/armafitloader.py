@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd
 import json
 import re
+import logging
 
 from pathlib import Path
 
@@ -32,6 +33,8 @@ class ARMAfit_loader():
         self.solar_noised = {i for i in self.solar_monthseries if "noise" in self.solar_monthseries[i]}
         self.wind_noised = {i for i in self.wind_monthseries if "noise" in self.wind_monthseries[i]}
 
+        if self.sgn.solar_generation.shape[1] < self.monthstarts[self.month_index+1]:
+            logging.warn("Not enough generation data in the selected month.")
         self.solar_generationmonth = self.sgn.solar_generation[:, self.monthstarts[self.month_index]:self.monthstarts[self.month_index+1]]
         self.wind_generationmonth = self.sgn.wind_generation[:, self.monthstarts[self.month_index]:self.monthstarts[self.month_index+1]]
 
