@@ -1,0 +1,210 @@
+\documentclass[main.tex]{subfiles}
+ 
+\begin{document}
+\towrite{
+
+(100W = 16-candela = 200lm = 2.2Watt bij ikea)
+
+
+30\%? of energy use is transported using the grid
+
+list of synchronous grids
+
+complexity
+
+why interconnect? separate generation and load; economy of scale; security (distributed peak demand); stability; 
+
+}
+
+This chapter is based on the books \emph{Electric Power Systems} by \cite{VonMeier2006}, which provides a clear summary of the working and operation of electric grids, and \emph{Electric Power Principles: Sources, Conversion, Distribution and Use} by \cite{Kirtley2010}, a more quantitative approach to the subject.
+\section{Overview}
+\towrite{basics, scale, nomenclature}
+\section{Generators}
+Almost all sources of electric power in the electric grid use an \emph{AC generator}\index{generator} to convert (rotational) kinetic energy to electric energy.\footnote{A notable exception is the photovoltaic cell (PV cell) used in solar panels. PV cells produce a direct current, which is converted to AC power at nominal voltage using an \define{inverter}. Solar inverters are often complicated systems, capable of using battery storage, synchronising with the AC grid and varying PV operating voltage to maximise PV efficiency.} 
+At a hydroelectric plant, the weight of water applies direct torque to the water pumps, mechanically connected to the generator shaft.\footnote{Some hydroelectric plants are \emph{reversible}: their generators can be used as electric motors, pumping water back up into a reservoir. This is a form of large-scale \define{energy storage}, which can increase the usability of intermittent renewable energy sources.}
+At most other types of plants (including coal-fired and nuclear plants), generators are powered by steam pressure. 
+\towrite{coils, 3 phase}
+\section{Loads}
+\towrite{load profiling, load series, fridge duty cycle example, reactive load, power factor}
+\section{Transmission}
+\towrite{Should cover: lines, transformers, circuit breakers, grid security}
+\subsection{DC transmission}
+%At the end of the 19th century, the first lines of the American electric grid were being built by Thomas Edison and Nicolas Tesla
+%The use of alternating current might seem strange, or overly complex, since most modern-day electric appliances use DC power (requiring AC-DC
+
+
+\subsection{3-phase transmission}
+\towrite{
+The AC grid has 3 phases, but it is very common to model the grid as a single-line network (with a global, zero-impedance ground). Von Meier mentions material that justifies this change.}
+
+\towrite{}
+
+If you live in mainland Europe, North America, \todo{}, your wall socket will have \emph{two} connectors. Most modern sockets also have a third connector, the \emph{ground wire}. 
+
+This makes sense, since most electrical devices only need a \emph{potential difference} (between \emph{two} wires) to function. In the early days of transmission systems, however, this caused a problem for factories using AC motors to power their production line. When a (single-phase) AC current is used to power a motor, the amount of \emph{torque} 
+\footnote{\ie rotational force. In most systems, torque is proportional to \emph{change in rotational velocity} (change in rpm).}
+is not constant: when the potential difference is zero, which happens twice every $1/50^{\text{th}}$ of a second, no electric field is present in the armature windings, and no torque is applied to the rotor. \todo{en waarom is dat een probleem?}
+
+To solve this problem, both the AC generator and AC motor are equipped with \emph{three} identical sets of armature windings, each oriented $120 \si{\degree}$ relative to the others. One end of each winding is connected to the common ground, and the remaining three connection points form the \emph{three-phase connection} between generator and motor. 
+
+As the generator rotor is moving, there will always be one armature winding which is close \footnote{within $30 \si{\degree}$} to being perpendicular to the rotor windings, and will therefore have a relatively high induced current. 
+
+In fact, when writing down the three currents in exact form (three sinusoids with the same frequency and magnitude, with phases $0\si{\degree}$, $120\si{\degree}$ and $240\si{\degree}$), we find that \emph{the sum of their squares}, \ie the total amount of transmitted power, \emph{is constant}! Although the amount of power transmitted on just one of the phases (square of the sinusoid current) is not constant, the combination of the three is. 
+
+This means that the torque of a motor, which is the sum of torques applied by each armature winding, is constant.
+
+\todo{What we just described is a \emph{Wye} connection}
+
+
+\towrite{Nu weten we ook wat het verschil is tussen ground en de linkerdraad!}
+
+When looking at AC transmission systems \todo{om ons heen}, you will always find three identical copies of the same component. For example, high-voltage AC transmission lines always have three, six or nine wires, which are identical in material, thickness and length. 
+
+There are a number of reasons to build transmission systems this way. One benefit of having three copies of the exact same network is that they will behave the same way, saving grid operators up to two thirds of potential headaches!
+
+\subsubsection{Single-line approximation}
+\todo{Move to next 5?}
+
+
+\subsection{Line failures}
+When a transmission line stops transmitting power, we speak of a \define{line failure}. In most cases, a line failure is not caused by a broken or molten wire, but by a disconnection at one of its ends, as a safety measure. 
+Some line failures are caused by a fault: a sudden abnormal peak in current, caused by anomalies like fallen trees or lightning strikes. A high current is detected by a \emph{circuit breakers}\index{circuit breaker}, which then automatically breaks its connection. A household fuse is an example of a circuit breaker, although modern circuit breakers use a mechanical switch (which be reset, instead of requiring a replacement fuse). In high-voltage systems, circuit breakers can be quite advanced, sometimes using pressurised gas or oil to prevent arcing inside the switch.
+
+Another type of line failure, the one most relevant to this report, is an \define{overload}. All transmission lines have a \define{thermal limit}: a maximum current that the line can sustain without risking overheating, causing sagging or even melting of transmission cables. To prevent these dangerous scenarios, transmission lines automatically disconnect when the current exceeds the predetermined \define{line capacity}. \todo{or stability limit}
+
+It is important to note that grid operators cannot control the amount of current - and therefore - power that flows through a transmission line, grid operators can only connect or disconnect the line from the grid. The impedance of a wire does not act as a \emph{bottleneck} (like a small-diameter pipe would do in an irrigation network). From Ohm's law ($\phym{ZI=V}$), one could mistakenly conclude that the amount of current passing through a transmission line is inversely proportional to its resistance. However, the electric potential ($\phym{V}$) in this equation is \emph{not} the potential between the wire and the ground (\eg $220\,\si{\kilo\volt}$), but rather the potential difference between the two ends of the wire (which is not zero!). This difference (known as \define{line drop}) is quite low, compared to the potential between one of the ends and the ground ($220\,\si{\kilo\volt}$ transmission lines usually have a $1\si{\percent}$ line drop\todo{check}). The amount of current carried by a wire is dominated by the current being 'generated' and 'used' at its ends.
+
+
+
+\todo{not the case for DC transmission?}
+
+\todo{dynamic rating: modern transmission lines will allow a current beyond its threshold for a short while, and will have different ratings for different weather conditions}
+
+
+
+\section{Power Flow Analysis}
+\towrite{historic note, slack bus, distributive slack, DC approximation, optimal power flow}
+
+\section{Transmission grid operation}
+The transmission network is a crucial 
+
+The transmis
+
+In societies that 
+
+Historically, failures of transmission network have had dramatic effects. The effects of 
+such outages are even visible from space, since almost every light source indirectly depends on a functioning transmission network. 
+
+Luckily, TODO where a power-outage would be life-threatening, or has significant economic impact, often have backup generators in place.
+
+In modern hospitals, medical equipment often has a built-in battery to sustain relatively short power cuts. (When unplugged by accident, for example.) Hospitals also use two sets of power lines with independent protection: one for essential equipment, and one for computers, lights, phone chargers, et cetera.
+
+It should come as no surprise that the transmission network requires constant monitoring to ensure that it is working properly. 
+
+When the first power grids were built, grid security was ensured by \emph{redundancy}. \todo{historic note} Transmission lines were designed to carry currents much greater than predicted. One of the criteria for building a network was \emph{N-1 contigency}: the network should remain operational after the failure of \emph{any} line. In graph theory, this is equivalent to building a 2-edge-connected graph.
+\subsection{Power islanding}
+Because nodes often house both loads and generators, the disconnection of a single node, or of a subset of nodes, does not always lead to a power outage, since local power generation might be sufficient to serve the load. This situation, where a subsection of the transmission network still operates after being disconnected, is called a \emph{power island}. 
+
+Since the power island and the remaining network have been operating independently of each other, it is likely that their AC phase angles no longer line up.\footnote{This misalignment likely occurs right after the disconnection, when the total generation in the power island is substantially higher or lower than the total load. Until this mismatch has settled, the AC frequency will be higher or lower, respectively, than the target frequency (say, $50\,\si{\hertz}$).}
+Unless this phase drift is corrected for (by temporarily increasing or decreasing the AC frequency on either side), the power island cannot be reconnected, since this phase drift likely exceeds the power angle limit of a new transmission line. \todo{adsf}
+
+
+%To understand how grid operators 
+
+%Normal grid operation can be 
+
+%Every hour, grid operators try to predic
+\clearpage
+\subsection{The energy market}
+\towrite{intro. Very simplified world:}
+Every hour, all parties involved in the generation and transmission of power come together, to decide \emph{what the configuration during the following hour will be}. For the sake of simplicity, we will assume that each power plant (renewable or non-renewable) is owned by its own company, and that the entire transmission network is owned by a single grid operator.
+
+\subsubsection*{Phase one: offering prices}
+First, all generators offer to supply energy during the coming hour \emph{for a certain price per kWh}. Generally, company A, which owns a wind farm, will offer their energy for a lower price than company B, which owns a coal plant. The price offered by company A is lower because a wind farm has zero \define{marginal cost} - the cost of generating an additional unit of electricity, once the turbine has been built. No fuel or labour is needed to generate power using a wind turbine, it simply needs to not be turned off.
+
+Besides marginal cost, there are two more factors that influence the offered price:
+\begin{itemize}[itemsep=0em]
+    \item Company A needs to pay back their initial investment, which increases the offered price.
+    \item Government subsidies, which promote the use of low-carbon energy, reduce the offered price.
+\end{itemize}
+In general, one can assume that the price offered for renewable energy is close to zero. In some cases, the subsidies are greater than all other costs, and energy is offered for a \emph{negative price}. This has the counter-intuitive effect that a grid operator actually \emph{earns money} by buying electricity from that company.
+
+Energy from company B is generally more expensive, since it has a marginal cost (price of coal, labour wages, and so on), on top of paying back the investment.\footnote{In some cases, coal plants offer their electricity for a lower, or even negative, price, to avoid power off the plant. With the exception of open-cycle gas turbines, turning on non-renewable energy plants is expensive, and might take several hours. It might be cheaper for company B to offer their energy for free for one hour than to turn off the plant.}
+
+\towrite{Misschien is dit een goede plek om de \emph{environmental cost} van elk type generator te geven}
+
+\subsubsection*{Phase two: grid operator}
+Now that all generators have offered a price, the grid operator needs to decide where to buy its energy from. Grid operators have a fairly good estimate for the load (energy demand) during the coming hour, based on the current load, historical load series, weather forecasts, sporting events, television programme schedules, and so on. Such a model is called a \define{load profile}. \todo{load profile plotje}
+
+By design, the total generation capacity is much greater than the expected load, \todo{why? winter and incident load} so running every generator at full capacity would be problematic.
+As a grid operator, we need to tell each generator at what percentage of their capacity they should operate. \todo{stats: het percentage van totale capaciteit dat wordt gebruikt ligt tussen ?\% en ?\%.}
+
+A complete set of generator instructions, called a \define{configuration}, might look something like Table \ref{tab:sampleconfiguration}. Note that generators could be told to operate at 0\% of their capacity, which is equivalent to powering off the generator completely.
+
+\begin{table}[t]
+    \centering
+\begin{tabular}{l@{\hskip 2em}l@{\hskip 2em}l}
+\toprule
+    \multicolumn{3}{c}{\texttt{%\textbf{Configuration}, 
+    15 March 2019, 11:00-12:00}}\\[.5em]
+    \emph{generator} & \emph{offered price} & \emph{requested output} \\
+\midrule
+    \texttt{Sally's Solar Park} & \texttt{\hphantom{xx}4 \euro/MWh}  & \texttt{ 115 MW \emph{/ \hphantom{x}115 MW}} \\
+    \texttt{Chris's Coal Plant} & \texttt{122 \euro/MWh}  & \texttt{\hphantom{xxx}0 MW \emph{/\hphantom{xx}240 MW}} \\
+    \texttt{Nellie's Nuclear Plant} & \texttt{\hphantom{x}45 \euro/MWh}  & \texttt{1387 MW \emph{/ 2500 MW}} \\
+    \texttt{Steven's Solar Park} & \texttt{\hphantom{x}-2 \euro/MWh}  & \texttt{\hphantom{xx}23 MW \emph{/ \hphantom{xx}23 MW}} \\
+    $\qquad\vdots$ & \texttt{\hphantom{xx}}$\vdots$  & \texttt{\hphantom{xxx}}$\vdots$ \\
+\bottomrule
+\end{tabular}
+    \caption{A small section of a fictional configuration.}
+    \label{tab:sampleconfiguration}
+\end{table}
+
+
+Some configurations are more expensive than others, and some will result in more greenhouse gas emissions than others. Perhaps surprisingly, most configurations are not even \emph{admissible}: using them would cause some transmission lines to be overloaded, which could even result in a blackout.\todo{admissible is niet ja of nee} 
+
+More precisely, a configuration is called \define{ready to deploy} if it satisfies the following three conditions:
+\begin{itemize}[labelwidth =\widthof{\emph{admissibleasdf}}, leftmargin = !]
+    \item[\emph{possible}\index{configuration!possible}:] For each generator, the power output dictated by a configuration must be a non-negative number, no greater than the maximum capacity of the generator.
+    \item[\emph{balanced}\index{configuration!balanced}:] When the dictated configuration is applied, total generation must equal total load, together with line losses.\footnote{Of course, the total load is not perfectly constant for one hour. To accommodate for this, the grid operator designates a single \define{load following} generator, which will vary its output continually to make sure that the total demand is met exactly. (This is equivalent to maintaining a constant AC frequency!) The bus that this generator is connected to is called the \define{slack bus} of the transmission network.}
+    \item[\emph{admissible}\index{configuration!admissible}:] When the dictated configuration is applied, no line should be overloaded.
+\end{itemize}
+
+To determine whether a configuration is \emph{admissible}, the grid operator can simply \emph{calculate the line flows} that would be induced by that configuration, using a Power Flow (PF) algorithm, and check for any overloaded lines. Because power flow physics are quite well-understood, these results are accurate.\tocite{accuracy}\todo{geschiedenis van PF: modellen}
+
+
+
+\subsubsection*{OPF}
+
+We can easily find a configuration that is both {possible} and {balanced}. First, set all generators to maximum capacity. We now have a \emph{possible} configuration. By design, the total generation of this configuration is much greater than the total load. By scaling the output of all generators with the same factor $0 \leq \lambda \leq 1$, the configuration remains \emph{possible}, and by the intermediate value theorem, a $\lambda$ exists such that the configuration is \emph{balanced}.
+
+
+When trying out different \emph{possible}, \emph{balanced} configurations randomly, we will find that almost all of them are inadmissible; the subset of admissible configurations is actually quite small, and finding \emph{any} ready-to-deploy configuration is a lot of work.
+
+Once a {ready-to-deploy} configuration has been found, the grid operator now wants to minimise economic and environmental cost. Given this initial configuration, the associated cost can be calculated, since all generators have offered their price, and their environmental impacts are known. 
+This {ready-to-deploy} configuration is not unique, and by varying the configuration only slightly, the configuration remains ready to deploy.\footnote{As we will later learn, the function that maps a configuration to the vector of line flows that it induces is \emph{continuous}. The set of vectors where each line flow is $<100\si{\percent}$ is an \emph{open} box, and so its inverse image (the set of configurations that are ready to deploy) is also open.}
+By doing so, we might be able to reduce the (environmental) cost! By repeating this process, a local minimum can be found. 
+
+The problem of
+\begin{gather*}
+    \textit{finding a ready-to-deploy configuration} \\
+    \textit{that minimises the associated cost} \nonumber
+\end{gather*}
+is called the \define{Optimum Power Flow (OPF)} problem. 
+
+Even with modern-day computers, solving this problem is a difficult task indeed, and is often simplified by making a slight modification to our process. Instead of using the Power Flow (PF) algorithm to check a configuration's admissibility, we use the so-called \define{Linearised Power Flow (LPF)} algorithm to check linear admissibility. This linearised version can be computed much more quickly, with only a small loss in accuracy. We will derive the equations describing these two algorithms in Chapter \ref{chap:model}, and compare their results.\todo{linear balance}
+
+With our slight modification, we restate our problem as:
+\begin{equation*}
+    \begin{array}{ll@{}}
+\text{minimise}  & \textit{associated cost} \\
+\text{subject to}& \textit{possibility} \\
+\text{and}& \textit{balance} \\
+\text{and}& \textit{linear admissibility}
+\end{array}
+\end{equation*}
+which is known as the \define{Linear Optimum Power Flow (LOPF)} problem. As suggested by the notation, this optimisation problem falls in the more general class of problems solvable using \emph{linear programming}. First studied by  Fourier in 1827, the field has seen many developments, most notably the \emph{simplex} solution method developed by G. Dantzig in 1947.\footnote{For the \emph{simplex method}, see \cite{Matousek2007} .}
+Nowadays, several high-performance linear programming solvers have been created, including the open source \texttt{GNU Linear Programming Kit}, which was used in this project.
+\todo{Je kan de eisen van OPF naar beneden schalen om lineaire admissibility te krijgen (bv de contingecy factor!)}
+
+\end{document}

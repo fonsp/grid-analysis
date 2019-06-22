@@ -1,0 +1,132 @@
+% By Fons van der Plas
+% Based on "Interaction diagram" by Pascal Seppecher, which in turn is based on a diagram from Marco Miani.
+
+%\documentclass[border=5mm]{standalone}\usepackage{tikz}\usepackage[european,siunitx]{circuitikz}\usepackage{amsmath,amssymb}\usetikzlibrary{positioning}\newcommand{\mat}[1]{\ensuremath{\boldsymbol{\mathrm{#1}}}}\newcommand{\mel}[1]{\ensuremath{{\mathrm{#1}}}}\newcommand{\phym}[1]{\ensuremath{\mathsf{#1}}}\begin{document}
+
+
+\newcommand{\yslant}{.4}
+\newcommand{\xslant}{-.7}
+\begin{circuitikz}[scale=1.1,every node/.style={minimum size=8mm},on grid]
+\ctikzset{label/align = rotate}
+
+    % Ground level
+	\begin{scope}[
+		yshift=-120,
+		every node/.append style={yslant=\yslant,xslant=\xslant},
+		yslant=\yslant,xslant=\xslant
+	]
+	    \coordinate[](1gnd) at (1,2);
+	    \coordinate[](ignd) at (5,3);
+	    \coordinate[](jgnd) at (9,3);
+	    \coordinate[](2gnd) at (3.2,6);
+	    
+	    \coordinate[](xgnd) at (10,3.7);
+	    \coordinate[](ygnd) at (10,2.2);
+	    
+	    \coordinate[](tgnd) at (0.5,0.3);
+	    \coordinate[](ugnd) at (0,2.3);
+	\end{scope}
+	
+	
+	
+    % Top level
+	\begin{scope}[
+		yshift=0,
+		every node/.append style={yslant=\yslant,xslant=\xslant},
+		yslant=\yslant,xslant=\xslant
+	]
+	    \coordinate[](1hv) at (1,2);
+	    \coordinate[](ihv) at (5,3);
+	    \coordinate[](jhv) at (9,3);
+	    \coordinate[](2hv) at (3.2,6);
+	    
+	    \coordinate[](xhv) at (10,3.7);
+	    \coordinate[](yhv) at (10,2.2);
+	    
+	    \coordinate[](thv) at (0.5,.3);
+	    \coordinate[](uhv) at (0,2.3);
+	\end{scope}
+    
+
+	% Ground level
+	\begin{scope}[
+		yshift=-120,
+		every node/.append style={yslant=\yslant,xslant=\xslant},
+		yslant=\yslant,xslant=\xslant
+	] 
+	    \fill[white,fill opacity=.7] (0,.3) rectangle (10,7); % Opacity
+		% The frame
+		\draw[black, loosely dotted, thick] (0,0.3) rectangle (10,7);
+		
+		
+		
+		\draw[] (1gnd) to[short,*-*] (ignd) node[ground]{};
+		\draw[thick] (jgnd) to[short,*-*] (ignd);
+		\draw[] (2gnd) to[short,*-*] (ignd);
+		
+		\draw[] (jgnd) to [] (xgnd);
+		\draw[] (jgnd) to [] (ygnd);
+		\draw[] (tgnd) to [] (1gnd);
+		\draw[] (ugnd) to [] (1gnd);
+		
+		 % Level title
+		\fill[black]
+			(0.2,6.5) node[right, scale=1] {\textbf{Ground}}	
+			(5.1,1.9);
+	\end{scope}
+	
+	% Vertical lines
+	\draw[](1gnd) to[sV] (1hv);
+	\draw[thick](ignd) to[sV, semithick] (ihv);
+	\draw[thick](jgnd) to[sV, semithick] (jhv);
+	\draw[](2gnd) to[sV] (2hv);
+	
+	
+	\begin{scope}[
+		yshift=0,
+		every node/.append style={yslant=\yslant,xslant=0},
+		yslant=\yslant,xslant=0
+	]
+	\draw[thick, blue, ->] (3.9,.8) arc (180:-170:1);
+	\fill[black]
+			(4.9,.8) node[blue, scale=1] {KVL}; 
+	\end{scope}
+	
+	
+	
+	% HV level
+	\begin{scope}[
+		yshift=0,
+		every node/.append style={yslant=\yslant,xslant=\xslant},
+		yslant=\yslant,xslant=\xslant
+	]
+		% The frame:
+		\fill[white,fill opacity=.7] (0,.3) rectangle (10,7); % Opacity
+		\draw[black, loosely dotted, thick] (0,.3) rectangle (10,7);
+		
+			
+		\draw[] (1hv) to [R,l_=$\mel{Y}_{1,i}$, *-*] (ihv);
+	    \draw[thick] (jhv) to [R,l=$\mel{Y}_{i,j}$, semithick, *-*] (ihv);
+		\draw[] (2hv) to [R,l_=$\mel{Y}_{2,i}$, *-*] (ihv);
+		
+		\draw[] (jhv) to [] (xhv);
+		\draw[] (jhv) to [] (yhv);
+		\draw[] (thv) to [] (1hv);
+		\draw[] (uhv) to [] (1hv);
+		
+		\draw[fill=black]  
+			(1hv) node[anchor=south] {$\mel{V}_1$}
+			(ihv) node[anchor=south] {$\mel{V}_i$}
+			(jhv) node[anchor=south] {$\mel{V}_j$}
+			(2hv) node[anchor=south] {$\mel{V}_2$};
+		 % Level title
+		\fill[black]
+			(0.2,6.5) node[right, scale=1] {\textbf{High-Voltage}}; 
+	\end{scope}
+	\draw[orange, rounded corners=3mm, dashed, thick] ($(ihv)-
+	(1,1)$) rectangle ($(ihv) + (1,1)$);
+	\node[orange,above] at ($(ihv) + (0,1)$){KCL};
+	
+	
+\end{circuitikz}
+%\end{document}

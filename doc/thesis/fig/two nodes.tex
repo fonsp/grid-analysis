@@ -1,0 +1,16 @@
+%\documentclass{standalone}\usepackage{tikz}\begin{document}
+
+
+\begin{tikzpicture}
+
+\def \width{4cm}
+\def \margin{4mm}
+
+\node (1) [draw, circle] at (0,0) {$1$};
+\node (2) [draw, circle] at ({\width},0) {$2$};
+\draw[->, >=latex] (1) -- node[above] {$\mathcal{L}_1$} (2);
+
+\end{tikzpicture}
+
+
+%\end{document}

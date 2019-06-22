@@ -1,0 +1,36 @@
+\newcommand{\inlinebar}[2]{\begin{tikzpicture}
+    \begin{axis}[
+        grid=major,
+        width=40mm,
+        height=20mm,
+        scale=1,
+        xmin=0, xmax=1.2, ymin=0, ymax=1,
+        xtick = {0,1}, ytick = {0.,1},
+        xmajorticks=false,
+        ymajorticks=false]
+     \addplot[fill=#2, fill opacity=.3, draw=none, samples=500]
+       plot (\x, {sign(#1-\x) } );
+   \end{axis}
+\end{tikzpicture}}
+
+
+\newcommand{\inlineprob}[3]{\begin{tikzpicture}
+    \begin{axis}[
+        grid=major,
+        width=40mm,
+        height=20mm,
+        scale=1,
+        xmin=0, xmax=1.2, ymin=0, ymax=1,
+        xtick = {0,1}, ytick = {0.,1},
+        %xticklabel={\pgfmathparse{\tick*100}\pgfmathprintnumber{\pgfmathresult}\%},
+        xmajorticks=false,
+        ymajorticks=false]
+     \addplot[fill=#3, fill opacity=.3, samples=500, draw=none]
+       plot (\x, {1/(1+exp((\x-#1)*#2))} ) \closedcycle;
+   \end{axis}
+\end{tikzpicture}}
+
+\newcommand{\TikzCross}{\mathbin{\tikz [x=1.4ex,y=1.4ex,line width=.2ex, red] \draw (0,0) -- (1,1) (0,1) -- (1,0);}}%
+
+\definecolor{darkgreen}{rgb}{.1, .8, .1}
+\newcommand{\Checkmark}{\color{darkgreen}\checkmark}

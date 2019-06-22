@@ -1,0 +1,59 @@
+% By Fons van der Plas
+% Based on "Interaction diagram" by Pascal Seppecher, which in turn is based on a diagram from Marco Miani.
+
+%\documentclass[border=5mm]{standalone}\usepackage{tikz}\usepackage[european,siunitx]{circuitikz}\usepackage{amsmath,amssymb}\usetikzlibrary{positioning}\newcommand{\mat}[1]{\ensuremath{\boldsymbol{\mathrm{#1}}}}\newcommand{\mel}[1]{\ensuremath{{\mathrm{#1}}}}\newcommand{\phym}[1]{\ensuremath{\mathsf{#1}}}\begin{document}
+
+\newcommand{\yslant}{0}
+\newcommand{\xslant}{0}
+\begin{circuitikz}[scale=1.1,every node/.style={minimum size=8mm},on grid]
+\ctikzset{label/align = rotate}
+	\draw[black, loosely dotted, thick] (0,.3) rectangle (10,7);
+	
+    % Top level
+	\begin{scope}[
+		yshift=0,
+		every node/.append style={yslant=\yslant,xslant=\xslant},
+		yslant=\yslant,xslant=\xslant
+	]
+	    \coordinate[](1hv) at (1,2);
+	    \coordinate[](ihv) at (5,3);
+	    \coordinate[](jhv) at (9,3);
+	    \coordinate[](2hv) at (3.2,6);
+	    
+	    \coordinate[](xhv) at (10,3.7);
+	    \coordinate[](yhv) at (10,2.2);
+	    
+	    \coordinate[](thv) at (0.5,.3);
+	    \coordinate[](uhv) at (0,2.3);
+	\end{scope}
+    
+
+	
+	% HV level
+	\begin{scope}[
+		yshift=0,
+		every node/.append style={yslant=\yslant,xslant=\xslant},
+		yslant=\yslant,xslant=\xslant
+	]
+		
+			
+		\draw[] (1hv) to [R,l_=$\mel{Y}_{1,i}$, *-*] (ihv);
+		\draw[thick] (jhv) to [R,l=$\mel{Y}_{i,j}$, semithick, *-*] (ihv);
+		\draw[] (2hv) to [R,l_=$\mel{Y}_{2,i}$, *-*] (ihv);
+		
+		\draw[] (jhv) to [] (xhv);
+		\draw[] (jhv) to [] (yhv);
+		\draw[] (thv) to [] (1hv);
+		\draw[] (uhv) to [] (1hv);
+		
+		\draw[fill=black]  
+			(1hv) node[anchor=south] {$\mel{V}_1$}
+			(ihv) node[anchor=south] {$\mel{V}_i$}
+			(jhv) node[anchor=south] {$\mel{V}_j$}
+			(2hv) node[anchor=south] {$\mel{V}_2$};
+		
+	\end{scope}
+	
+	
+\end{circuitikz}
+%\end{document}

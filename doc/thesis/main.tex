@@ -1,0 +1,257 @@
+\documentclass{report}
+\usepackage[utf8]{inputenc}     % for éô
+\usepackage[english]{babel}     % for proper word breaking at line ends
+\usepackage[a4paper, left=1.5in, right=1.5in, top=1.5in, bottom=1.5in]{geometry}
+                                % for page size and margin settings
+\usepackage{imakeidx}           % for creating a look-up index
+\usepackage{natbib}
+\bibliographystyle{humannat}
+\usepackage{graphicx}           % for image widths
+
+%\graphicspath{{img/}{../img/}}
+\usepackage{subfiles}
+
+\usepackage{tikz}
+\usetikzlibrary{positioning}
+\usepackage[european,siunitx]{circuitikz}
+\usepackage{pgfplots}
+\usepgfplotslibrary{dateplot}
+\usepgfplotslibrary{fillbetween}
+\usetikzlibrary{calc}
+\usepackage{adjustbox}
+\usepackage[labelfont=bf]{caption}
+\usepackage{amsmath,amssymb}    % for better equations
+\usepackage{amsthm}             % for better theorem styles
+\usepackage{mathtools}          % for greek math symbol formatting
+\usepackage{enumitem}           % for control of 'enumerate' numbering
+\usepackage{listings}           % for control of 'itemize' spacing
+%\usepackage[obeyDraft]{todonotes}
+                                % for clear TODO notes
+\usepackage{todonotes}          % for clear TODO notes
+% \usepackage{multicol}         % for creating a 2-column document
+\usepackage[hidelinks]{hyperref}% page numbers and '\ref's become clickable
+% \usepackage{mathabx}          % astro
+\usepackage{fourier-orns}       % leaf symbol
+\usepackage{marvosym}           % lightning symbol
+\usepackage{siunitx}            % for writing physical units like \si{\micro\ohm\per\meter}
+\usepackage{textcomp}
+\usepackage{eurosym}
+\DeclareSIUnit\EUR{\text{\euro}}
+%\usepackage[parfill]{parskip}
+\usepackage{empheq}
+\usepackage[normalem]{ulem}     % for strikethrough text
+\usepackage{booktabs}
+\usepackage{tabularx}
+\renewcommand{\arraystretch}{1.2}
+\usepackage{bold-extra}
+\usepackage{bm}
+
+% Font choice
+
+\usepackage{comment}
+
+
+%\newcommand{\mat}[1]{\ensuremath{\boldsymbol{\mathrm{#1}}}}
+\newcommand{\mat}[1]{\ensuremath{\bm{\mathrm{#1}}}}
+
+%\begin{comment}
+\usepackage[T1]{fontenc}
+\usepackage[boldsans]{ccfonts}
+
+\renewcommand{\bfseries}{\fontfamily{bch}\fontseries{bx}\selectfont}
+\DeclareMathAlphabet{\mathbf} {OT1}{bch}{bx}{n}
+
+
+%\pdfpkmode{dpdfezzz}
+%\pdfpkresolution=1200
+
+
+\usepackage[pagestyles, clearempty]{titlesec}%
+\usepackage{fmtcount,etoolbox}
+
+\titleformat{\chapter}[display]{\center}
+{%\titlerule\vspace{1.4em}
+\Large\it\chaptername{ }\numberstring{chapter}}
+{1\baselineskip}
+{\huge\bfseries}
+%[\vspace{1em}\titlerule]
+
+\renewcommand{\mat}[1]{\ensuremath{\mathbf{#1}}}
+\newcommand{\matSigma}{\Sigma}
+%\end{comment}
+
+
+
+
+%% DOCUMENT
+\def\thesistitle{Power Grid Failures \& Stochastic Renewables}
+\def\thesissubtitle{}
+\def\thesisauthorfirst{Fons}
+\def\thesisauthorsecond{van der Plas}
+\def\thesissupervisorfirst{dr. Henk}
+\def\thesissupervisorsecond{Don}
+\def\thesissecondreaderfirst{prof. dr. Eric}
+\def\thesissecondreadersecond{Cator}
+\def\thesisdate{April 2019}
+
+%% FOR PDF METADATA
+\title{\thesistitle}
+\author{\thesisauthorfirst\space\thesisauthorsecond}
+\date{\thesisdate}
+
+
+%% TODO PACKAGE
+\newcommand{\towrite}[1]{\todo[inline,color=yellow!10]{#1}}
+\newcommand{\tocite}[1]{\todo[color=green!10]{#1}}
+\newcommand{\todelete}[1]{\sout{#1}}
+
+%% INDEX
+\makeindex
+
+%% THEOREM STYLES
+\renewcommand\qedsymbol{\leafNE}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{corollary}{Corollary}[theorem]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{examplex}[theorem]{Example}
+\newenvironment{example}
+  {\renewcommand{\qedsymbol}{\textthing}%
+   \pushQED{\qed}\begin{examplex}}
+  {\popQED\end{examplex}}
+
+\theoremstyle{remark}
+\newtheorem*{remark}{Remark}
+
+%% MATH STYLES
+%\newcommand{\mat}[1]{\ensuremath{\mathbf{#1}}}
+\newcommand{\mel}[1]{\ensuremath{{\mathrm{#1}}}}
+\newcommand{\phym}[1]{\ensuremath{\mathsf{#1}}}
+\newcommand{\range}[1]{\ensuremath{[#1]}}
+\newcommand{\norm}[1]{\left\lVert#1\right\rVert}
+\newcommand{\abs}[1]{\left\lvert#1\right\rvert}
+\newcommand{\defeq}[0]{:=}
+\newcommand{\LPF}[0]{\ensuremath{\text{\textup{LPF}}}}
+
+
+%% MATH OPERATORS
+\newcommand{\conj}[1]{{#1}^*}
+\newcommand{\pointwise}{\ast}
+\DeclareMathOperator{\diag}{diag}
+\DeclareMathOperator{\Arg}{Arg}
+\DeclareMathOperator{\Ima}{Im}
+\DeclareMathOperator{\linspan}{Span}
+\DeclareMathOperator{\gr}{gr}
+\DeclareMathOperator{\nullity}{null}
+\DeclareMathOperator{\rank}{rank}
+\DeclareMathOperator{\PROB}{\mathbb{P}}
+\DeclareMathOperator{\EXP}{\mathbb{E}}
+
+%% MISC
+\newcommand{\define}[1]{\emph{#1}\index{#1}}
+\newcommand{\ie}{i.e.\ }
+\newcommand{\eg}{e.g.\ }
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{.5em}
+
+
+
+\DeclareRobustCommand\inlineres{\raisebox{-.3mm}{\begin{circuitikz}\ctikzset{bipoles/length=7mm}\draw[] (0,0) to[R] (1,0);\end{circuitikz}}}
+\DeclareRobustCommand\inlineac{\raisebox{-1.4mm}{\begin{circuitikz}\ctikzset{bipoles/length=7mm}\draw[] (0,0) to[sV] (1,0);\end{circuitikz}}}
+
+
+\input{fig/inlinebars.tex}
+
+%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+
+
+\begin{document}
+
+%\begin{multicols}{2}
+\input{titlepage.tex}
+
+
+\chapter*{Notation}
+\begin{align*}
+\mat{Y}&\text{ is a matrix or vector} \\
+\mel{Y}_{i,j}& \text{ is an element of a matrix or vecor} \\
+Y&\text{ is a (real or complex) number}\\
+\phym{Y}&\text{ is a physical quantity (like `admittance')}\\
+\range{n}&=\{1,\dots,n\}
+\end{align*}
+\towrite{Een geel doosje geeft aan dat een stuk tekst \emph{nog geschreven moet worden}.}
+\todo{Een oranje doosje is meer \emph{voor mezelf}, dingen waar ik later nog naar moet kijken.}
+\tocite{Een groen doosje geeft \emph{bronnen} aan die relevant (kunnen) zijn.}
+
+
+\tableofcontents
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\part{Theory of Electric Power Networks}\label{part:theory}
+
+\chapter{Probability Theory}\label{chap:probtheory}
+\subfile{probability}
+
+\chapter{Graph theory}\label{chap:graphtheory}
+\subfile{graph}
+
+\chapter{Circuit Theory}\label{chap:circuittheory}
+\subfile{circuit}
+
+\chapter{The Electric Grid}\label{chap:grid}
+\subfile{grid}
+
+\chapter{Modelling Transmission Networks}\label{chap:model}
+\subfile{model}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\part{Predicting failures in Germany's grid}\label{part:sim}
+
+\chapter{Methods}\label{chap:methods}
+\subfile{methods}
+
+\chapter{Results}\label{chap:results}
+\subfile{results}
+
+%\appendix
+%\chapter{eerste}
+%\section{hmmm}
+%adf
+%%\chapter{Aoasdf}
+%asdf
+%\chapter{verder}
+%\section{tweede}
+%%\chapter{Aoasdf}
+%asdf
+
+
+
+%\chapter{Acknowledgements}
+%Henk Don: MIT Open Courseware
+%Eric Cator: ARMA
+%Klaas Landsman: 
+%Uli Zeitler: 
+%
+%CWI&Caltech
+%
+%Thijs
+%Luka
+%Merlijn, Lily, Sara, Jelmar, Meinders, Robin, Lieve, Bregje, Sanne, Leon
+%parents: for their love of the natural world
+
+
+\bibliography{references.bib}
+
+\printindex
+
+
+\end{document}
