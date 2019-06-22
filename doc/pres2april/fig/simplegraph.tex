@@ -1,0 +1,20 @@
+\definecolor{renewablegreen}{rgb}{.1, .7, .1}
+
+\newcommand{\graafjeduitsland}[9]{
+\begin{tikzpicture}[scale=.6]
+    \node[draw, circle](b) at (6,3){#1};
+    \node[draw, circle](h) at (0,6){#2};
+    \node[draw, circle](f) at (1,2){#3};
+    \node[draw, circle](l) at (5,0){#4};
+    \node[above, opacity=.6] at ($(b.north) + (.3,.1)$) {\emph{Berlin   }};
+    \node[above, opacity=.6] at (h.north) {\emph{Hamburg  }};
+    \node[below, opacity=.6] at ($(f.south) - (.6,.1)$) {\emph{Frankfurt}};
+    \node[below, opacity=.6] at (l.south) {\emph{Leipzig  }};
+    
+    \draw[-latex] (b) -- node[midway, left] {#5} (l);
+    \draw[-latex] (l) -- node[midway, above]{#6} (f);
+    \draw[-latex] (f) -- node[midway, above]{#7} (b);
+    \draw[-latex] (b) -- node[midway, above]{#8} (h);
+    \draw[-latex] (h) -- node[midway, right]{#9} (f);
+\end{tikzpicture}
+}

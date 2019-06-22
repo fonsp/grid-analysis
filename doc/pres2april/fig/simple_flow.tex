@@ -1,0 +1,75 @@
+% By Fons van der Plas
+
+\documentclass[border=5mm]{standalone}\usepackage{tikz}\usetikzlibrary{calc}\usepackage{amsmath,amssymb}\newcommand{\mat}[1]{\ensuremath{\boldsymbol{\mathrm{#1}}}}\newcommand{\mel}[1]{\ensuremath{{\mathrm{#1}}}}\newcommand{\phym}[1]{\ensuremath{\mathsf{#1}}}\begin{document}
+
+\input{fig/simplegraph.tex}
+\usetikzlibrary{arrows, decorations.pathmorphing}
+
+\graafjeduitsland
+{?}
+{?}
+{?}
+{?}
+{1}
+{2}
+{6}
+{-1}
+{4}
+
+\graafjeduitsland
+{-6}
+{9}
+{0}
+{1}
+{1}
+{2}
+{6}
+{-1}
+{4}
+
+
+
+\graafjeduitsland
+{-5}
+{9}
+{1}
+{1}
+{?}
+{?}
+{?}
+{?}
+{?}
+
+
+\graafjeduitsland
+{-5}
+{9}
+{1}
+{1}
+{1}
+{2}
+{7}
+{-1}
+{4}
+
+
+
+\begin{tikzpicture}[scale=.6, decoration=snake]
+    \node[draw, rectangle](b) at (6,3){$?+{\color{renewablegreen}{2}}-9$};
+    \node[draw, rectangle](h) at (0,6){$?+{\color{renewablegreen}{12}}-8$};
+    \node[draw, rectangle](f) at (1,2){$?+{\color{renewablegreen}{3}}-11$};
+    \node[draw, rectangle](l) at (5,0){$?+{\color{renewablegreen}{4}}-6$};
+    \node[above, opacity=.6] at ($(b.north) + (.3,.1)$) {\emph{Berlin   }};
+    \node[above, opacity=.6] at (h.north) {\emph{Hamburg  }};
+    \node[below, opacity=.6] at ($(f.south) - (.6,.1)$) {\emph{Frankfurt}};
+    \node[below, opacity=.6] at (l.south) {\emph{Leipzig  }};
+    
+    \draw[-latex, decorate] (b) -- node[midway, left] {?} (l);
+    \draw[-latex, decorate] (l) -- node[midway, above]{?} (f);
+    \draw[-latex, decorate] (f) -- node[midway, above]{?} (b);
+    \draw[-latex, decorate] (b) -- node[midway, above]{?} (h);
+    \draw[-latex, decorate] (h) -- node[midway, right]{?} (f);
+\end{tikzpicture}
+
+
+\end{document}

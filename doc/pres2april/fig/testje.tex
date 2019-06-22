@@ -1,0 +1,110 @@
+% By Fons van der Plas
+
+\documentclass[]{article}\usepackage{tikz}\usepackage{pgfplots}\usepgfplotslibrary{fillbetween}\usepackage{amsmath,amssymb}\newcommand{\mat}[1]{\ensuremath{\boldsymbol{\mathrm{#1}}}}\newcommand{\mel}[1]{\ensuremath{{\mathrm{#1}}}}\newcommand{\phym}[1]{\ensuremath{\mathsf{#1}}}
+
+\newcommand{\inlinebar}[2]{\begin{tikzpicture}
+    \begin{axis}[
+        grid=major,
+        width=40mm,
+        height=20mm,
+        scale=1,
+        xmin=0, xmax=1.2, ymin=0, ymax=1,
+        xtick = {0,1}, ytick = {0.,1},
+        xmajorticks=false,
+        ymajorticks=false]
+     \addplot[fill=#2, fill opacity=.3, draw=none, samples=500]
+       plot (\x, {sign(#1-\x) } );
+   \end{axis}
+\end{tikzpicture}}
+
+
+\newcommand{\inlineprob}[3]{\begin{tikzpicture}
+    \begin{axis}[
+        grid=major,
+        width=40mm,
+        height=20mm,
+        scale=1,
+        xmin=0, xmax=1.2, ymin=0, ymax=1,
+        xtick = {0,1}, ytick = {0.,1},
+        %xticklabel={\pgfmathparse{\tick*100}\pgfmathprintnumber{\pgfmathresult}\%},
+        xmajorticks=false,
+        ymajorticks=false]
+     \addplot[fill=#3, fill opacity=.3, samples=500, draw=none]
+       plot (\x, {1/(1+exp((\x-#1)*#2))} ) \closedcycle;
+   \end{axis}
+\end{tikzpicture}}
+
+\newcommand{\Cross}{\mathbin{\tikz [x=1.4ex,y=1.4ex,line width=.2ex, red] \draw (0,0) -- (1,1) (0,1) -- (1,0);}}%
+
+\definecolor{darkgreen}{rgb}{.1, .8, .1}
+\newcommand{\Checkmark}{\color{darkgreen}\checkmark}
+
+\begin{document}
+Given a power injection $\mat{p}$, the Linearised Power Flow computes the saturation of each line.
+This determines which lines will fail:
+\[
+\begin{pmatrix}
+p_1\\
+p_2\\
+p_3\\
+p_4
+\end{pmatrix}
+\quad
+\tikz{\draw[|->,thick] (0,0) -- (20mm,0) node[above,midway] {LPF};}
+\quad
+\begin{pmatrix}
+f_1 = \raisebox{-1mm}{\inlinebar{.5}{green}} \\
+f_2 = \raisebox{-1mm}{\inlinebar{.2}{green}} \\
+f_3 = \raisebox{-1mm}{\inlinebar{.8}{green}} \\
+f_4 = \raisebox{-1mm}{\inlinebar{1.15}{red}} \\
+f_5 = \raisebox{-1mm}{\inlinebar{.3}{green}}
+\end{pmatrix}
+\quad
+\tikz{\draw[|->,thick] (0,0) -- (20mm,0) node[above,midway] {$\leq$ capacity};}
+\quad
+\begin{pmatrix}
+\Checkmark\\
+\Checkmark\\
+\Checkmark\\
+\Cross\\
+\Checkmark
+\end{pmatrix}
+\]
+When the power injection $\mat{P}$ is a stochastic variable, we get the saturation \emph{distribution} for each line. Large deviations theory estimates the \emph{failure probability}, and gives the \emph{most likely power injection $\hat{\mat{p}}$} that would cause that failure.
+\[
+\begin{pmatrix}
+P_1\\
+P_2\\
+P_3\\
+P_4
+\end{pmatrix}
+\quad
+\tikz{\draw[|->,thick] (0,0) -- (20mm,0) node[above,midway] {LPF};}
+\quad
+\begin{pmatrix}
+F_1 \sim \raisebox{-1mm}{\inlineprob{0.5}{10.0}{orange}} \\
+F_2 \sim \raisebox{-1mm}{\inlineprob{0.25}{20.0}{orange}} \\
+F_3 \sim \raisebox{-1mm}{\inlineprob{0.9}{100.0}{orange}} \\
+F_4 \sim \raisebox{-1mm}{\inlineprob{1.1}{10.0}{orange}} \\
+F_5 \sim \raisebox{-1mm}{\inlineprob{0.7}{5.0}{orange}}
+\end{pmatrix}
+\quad
+\tikz{\draw[|->,thick] (0,0) -- (20mm,0) node[above,midway] {Large Dev.};}
+\quad
+\begin{pmatrix}
+\phantom{0}0.001\%\phantom{0}\\
+\phantom{0}0.0001\%\\
+\phantom{0}0.1\%\phantom{000}\\
+60.0\%\phantom{000}\\
+10.0\%\phantom{000}
+\end{pmatrix}, 
+\begin{pmatrix}
+\hat{\mat{p}}\,\mid \, F_1>1\\
+\hat{\mat{p}}\,\mid \, F_2>1\\
+\hat{\mat{p}}\,\mid \, F_3>1\\
+\hat{\mat{p}}\,\mid \, F_4>1\\
+\hat{\mat{p}}\,\mid \, F_5>1
+\end{pmatrix}
+\]
+
+\end{document}
