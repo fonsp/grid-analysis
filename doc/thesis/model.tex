@@ -627,7 +627,7 @@ Because $\mat{F}$ is a linear transformation, the vector of line flows $\mat{f}$
 For realistic networks we have $m > n$, which means that $\mat{F}$ is not surjective. Then $\mat{\Sigma}_{\mat{f}}$ is not injective, meaning that $\mat{f}$ is Gaussian, but not normally distributed (Theorem \ref{thm:normaliffinvertible}).
 
 \subsection{Overload probabilities}
-For a line $l$, the probability distribution of the current through that line is simply the marginal distribution $\mel{f}_l$. Therefore, the probability of an emergent failure of line $l$ is given by:
+For a line $l$, the probability distribution of the current through that line is simply the marginal distribution $\mel{f}_l$. Therefore, the probability of an emergent failure of line $l$ is given by: \footnote{Remember that the \emph{sign} of $\mel{f}_l$ corresponds to the \emph{direction} of current through the line. The line orientations were chosen arbitrarily, and only have meaning in our bookkeeping.}
 \[
 \PROB\left[|\mel{f}_l| \geq 1 \right] = \PROB\left[\mel{f}_l \leq 1 \right] + \PROB\left[\mel{f}_l \geq 1 \right]
 \]
@@ -652,29 +652,51 @@ Because we have estimated a probability distribution for $\mat{p}$, we can find 
 
 \begin{theorem}
 Suppose a grid with LPF $\mat{F}$ has a $\gaussdistr(\mat{\mu}_p, \mat{\Sigma}_{\mat{p}})$-distributed power injection $\mat{p}$. The most likely power injection $\tilde{\mat{p}}^{(l)}$, given the emergent failure of a line $l$, is uniquely given by
-\[
-?????
-\]
-when $\mel{\mu}_{\mat{f}\, l} \neq 0$. Otherwise, there are two injections that maximise ?????, which are given by 
-\[
-??????????.
-\]
+\begin{empheq}[box=\fbox]{gather}\label{eq:mostlikelyinjection}
+    \tilde{\mat{p}}^{(l)} = \mat{\mu}_{\mat{p}}  + \frac{\sign(\mel{\mu}_{\mat{f}\, l} ) - \mel{\mu}_{\mat{f}\, l} }{ \mel{\Sigma}_{\mat{f}\, ll}} \mat{\Sigma}_{\mat{p}} \mat{F}^*\mat{e}_l
+\end{empheq}
+when $\mel{\mu}_{\mat{f}\, l} \neq 0$. Otherwise, there are two injections that maximise the conditional probability of $\mat{p}$, which are given by 
+\begin{align*}
+    \tilde{\mat{p}}^{(l, +)} = \mat{\mu}_{\mat{p}}  + \frac{1}{ \mel{\Sigma}_{\mat{f}\, ll}} \mat{\Sigma}_{\mat{p}} \mat{F}^*\mat{e}_l \quad \text{ and }\quad 
+    \tilde{\mat{p}}^{(l, -)} = \mat{\mu}_{\mat{p}}  + \frac{-1}{ \mel{\Sigma}_{\mat{f}\, ll}} \mat{\Sigma}_{\mat{p}} \mat{F}^*\mat{e}_l.
+\end{align*}
 \end{theorem}
 \begin{proof}
 
 The set of power injections associated with the failure event of line $l$ is a union of two parallel \emph{planes} in $\mathbb{R}^n$. Indeed, the condition $\mel{f}_l = 1$ can be written as:
 \[
-\mel{f}_l = 1 \iff (\mel{F}\mel{p})_l = 1 \iff \mat{e}_l\mat{F}\mat{p} = 1 \iff \left\langle \mat{e}_l\mat{F}, \mat{p} \right\rangle = 1
+\mel{f}_l = 1 \iff (\mel{F}\mel{p})_l = 1 \iff \mat{e}_l^*\mat{F}\mat{p} = 1 \iff \left\langle \mat{F}^*\mat{e}_l, \mat{p} \right\rangle = 1
 \]
-which is the equation defining the plane with pillar $\mat{e}_l\mat{F}$. Similarly, the condition $\mel{f}_l = -1$ is satisfied if and only if $\mat{p}$ is contained in the plane with pillar $-\mat{e}_l\mat{F}$. 
+which is the equation defining the plane with pillar $\mat{F}^*\mat{e}_l$. Similarly, the condition $\mel{f}_l = -1$ is satisfied if and only if $\mat{p}$ is contained in the plane with pillar $-\mat{F}^*\mat{e}_l$. 
 
 We can now apply Theorem \ref{thm:modeofaplaneconditional} to each pillar to find the mode of $\mat{p}$, given $\mel{f}_l = 1$, or $\mel{f}_l = 1$, respectively:
-
-
-
-
-$\mat{\mu}  + \frac{1 - \left\langle \mat{\mu}, \mat{r}_A \right\rangle}{\left\langle  \mat{\Sigma} \mat{r}_A, \mat{r}_A \right\rangle} \mat{\Sigma} \mat{r}_A$
-
+\begin{align}
+\tilde{\mat{p}}^{(l, +)}
+&=
+\mat{\mu}_{\mat{p}}  + \frac{1 - \left\langle \mat{\mu}_{\mat{p}}, \mat{F}^*\mat{e}_l \right\rangle}{\left\langle  \mat{\Sigma}_{\mat{p}} \mat{F}^*\mat{e}_l, \mat{F}^*\mat{e}_l \right\rangle} \mat{\Sigma}_{\mat{p}} \mat{F}^*\mat{e}_l \notag \\
+&=
+\mat{\mu}_{\mat{p}}  + \frac{1 - \left\langle \mat{F} \mat{\mu}_{\mat{p}}, \mat{e}_l \right\rangle}{\left\langle \mat{F} \mat{\Sigma}_{\mat{p}} \mat{F}^*\mat{e}_l, \mat{e}_l \right\rangle} \mat{\Sigma}_{\mat{p}} \mat{F}^*\mat{e}_l \qquad \text{($\mat{F}^*$ is the \emph{adjoint} of $\mat{F}$)} \notag \\
+&=
+\mat{\mu}_{\mat{p}}  + \frac{1 - \left\langle \mat{\mu}_{\mat{f}}, \mat{e}_l \right\rangle}{\left\langle \mat{\Sigma}_{\mat{f}} \mat{e}_l, \mat{e}_l \right\rangle} \mat{\Sigma}_{\mat{p}} \mat{F}^*\mat{e}_l \notag \\
+&=
+\mat{\mu}_{\mat{p}}  + \frac{1 - \mel{\mu}_{\mat{f}\, l} }{ \mel{\Sigma}_{\mat{f}\, ll}} \mat{\Sigma}_{\mat{p}} \mat{F}^*\mat{e}_l \label{eq:modeinjectionpos}\\
+\notag \\
+\tilde{\mat{p}}^{(l, -)}
+&=
+\mat{\mu}_{\mat{p}} - \frac{1 - \left\langle \mat{\mu}_{\mat{p}}, -\mat{F}^*\mat{e}_l \right\rangle}{\left\langle - \mat{\Sigma}_{\mat{p}} \mat{F}^*\mat{e}_l, - \mat{F}^*\mat{e}_l \right\rangle} \mat{\Sigma}_{\mat{p}} \mat{F}^*\mat{e}_l \notag \\
+&= 
+\mat{\mu}_{\mat{p}}  + \frac{-1 - \left\langle \mat{\mu}_{\mat{p}}, \mat{F}^*\mat{e}_l \right\rangle}{\left\langle \mat{\Sigma}_{\mat{p}} \mat{F}^*\mat{e}_l, \mat{F}^*\mat{e}_l \right\rangle} \mat{\Sigma}_{\mat{p}} \mat{F}^*\mat{e}_l \notag \\
+& \;\, \vdots \notag \\
+&=
+\mat{\mu}_{\mat{p}}  + \frac{-1 - \mel{\mu}_{\mat{f}\, l} }{ \mel{\Sigma}_{\mat{f}\, ll}} \mat{\Sigma}_{\mat{p}} \mat{F}^*\mat{e}_l. \label{eq:modeinjectionneg}
+\end{align}
+By symmetry of the marginal distribution of $\mel{f}_l$, it follows that in the unlikely case where $\mel{\mu}_{\mat{f}\, l}$ is zero, the line current is equally likely to deviate to the left as it is to deviate to the right, and both cases come with a different power injection. When $\mel{\mu}_{\mat{f}\, l}$ is non-zero, one of the two cases is more likely. 
+\begin{align*}
+\mel{\mu}_{\mat{f}\, l} > 0 \, &\iff \, \tilde{\mat{p}}^{(l, +)}\text{ is the most probable injection,} \\
+\mel{\mu}_{\mat{f}\, l} = 0 \, &\iff \, \tilde{\mat{p}}^{(l, +)} \text{ and }\tilde{\mat{p}}^{(l, +)}\text{ are the two most probable injections,} \\
+\mel{\mu}_{\mat{f}\, l} < 0 \, &\iff \, \tilde{\mat{p}}^{(l, -)}\text{ is the most probable injection.}
+\end{align*}
+When $\mel{\mu}_{\mat{f}\, l} \neq 0$, we can use the $\sign$ function to combine Equations (\ref{eq:modeinjectionpos}) and (\ref{eq:modeinjectionneg}) into one, which gives the desired expression.
 \end{proof}
-\towrite{}
+\towrite{Large dev: in het limiet $\epsilon \rightarrow 0$ valt de verwachtingswaarde van $\mathbf{p}$, gegeven emergent failure $l$, samen met de zojuist gegeven mode.}
 \end{document}
