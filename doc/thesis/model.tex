@@ -1,12 +1,18 @@
 \documentclass[main.tex]{subfiles}
  
 \begin{document}
-\towrite{intro}
+In this Chapter we will derive the \emph{Linear Power Flow} transformation: a linear map from the vector of power injections at the buses to the vector of currents flowing through the lines of the network. 
+This equation can be derived explicitly by constructing an electric circuit that represents the whole transmission network and everything connected to it, and applying Ohm's Law and Kirchoff's Laws to relate line currents to power injections. We linearise the resulting \emph{node flow equations} to find the LPF matrix (page \pageref{eq:LPF}).
+
+Using this linear map, we can transform the normal distribution of stochastic injections to a Gaussian distribution of line flows. Using the results of Chapter \ref{chap:probability}, we can estimate the overload probability of each line, resulting in a ranking of most vulnerable lines. Additionally, for each such line, we compute the most probable injection to cause the failure, and simulate the subsequent \emph{cascading failures}.
+
+\towrite{intro state \& structure}
+
 % Feynman: What I cannot create, I do not understand.
 %This approach attempts to combine mathematical and physical theory, while maintaining a clear distinction between the two.
 %A grid is modelled as a directed graph TODO
 
-In practice, the grid structure remains unchanged during normal operation, while the grid state is continually changing over time. For example, an important aspect of grid operation is \define{load profiling}: examining and predicting the total load connected to a node, as a function of time. As a result of changing loads, the flow of power in a grid is constantly changing.
+The grid structure remains unchanged during normal operation, while the grid state is continually changing over time. For example, an important aspect of grid operation is \define{load profiling}: examining and predicting the total load connected to a node, as a function of time. As a result of changing loads, the flow of power in a grid is constantly changing.
 
 One example of a change in grid structure is a \emph{line failure}, which can be modelled as the removal of an edge from the graph. In some cases, the removal of an edge from the graph result in an unconnected graph (\ie there exist two nodes with no sequence of lines connecting them). This scenario is called \emph{power islanding}\index{power island}.
 Most transmission networks are designed in such a way that no single (or double) line failure can cause power islanding or a blackout, by increasing the \emph{edge-connectivity} of the graph.
@@ -527,14 +533,19 @@ this is the moore-penrose pseudo-inverse,
 If the line capacities\index{line capacity} are $\mat{W}=(W_1, \dots, W_m)^T \in \mathbb{R}^m$\todo{C already used}, then we can define the \emph{normalised line flow}\index{line flow!normalised} as:
 $$\mat{f} = \diag(\mat{W})^{-1}\hat{\mat{f}}$$
 and we find:
-\begin{empheq}[box=\fbox]{gather}
-    \mat{f}=\mat{F}\mat{p}\\[3mm]
-    \text{where }\quad\mat{F}=\diag(\mat{W})^{-1}\diag(i\mat{\eta})\mat{C}\mat{L^+}
+\begin{empheq}[box=\fbox]{gather}\label{eq:LPF}
+    \mat{f}=\mat{F}\mat{p} \tag{LPF}\\[3mm]
+    \text{where }\quad\mat{F}=\diag(\mat{W})^{-1}\diag(i\mat{\eta})\mat{C}\mat{L^+} \notag
 \end{empheq}
 
 \emph{This is a linear transformation from a power injection vector $\mat{p}$ to the normalised line flow $\mat{f}$ that it induces.}\todo{$\mathbf{F}$ is not the unique transformation with this property (otherwise $\mathbf{F}$ would be square and non-singular). Does $\mathbf{F}$ minimise $\norm{\mathbf{f}}$?}
 
 \todo{line drop: (real) power flowing out of a node is slightly more than power }
+
+\towrite{Leg het verband tussen de LPF en het hoofdstuk over grafen}
+
+\subsection{Line removal}
+\towrite{Expliciete uitdrukking voor de nieuwe matrix}
 
 \section{Stochastic power injections}\label{stochasticpowerinjections}
 Using the linear transformation $\mat{F}$ that we just derived, we can compute the normalised line flow that a \emph{zero-sum} power injection $\mat{p}$ induces. This is a useful result: for example, one could check whether a generator configuration is \emph{admissible} by writing down the injection $\mat{p}$ associated to this configuration, and checking that no value of $\mat{F}\mat{p}$ is greater than $1$. (Since we \emph{normalised} the line flows, each line has unit 'threshold'.)
@@ -566,7 +577,7 @@ Using the linear transformation $\mat{F}$ that we just derived, we can compute t
 \TikzCross\\
 \Checkmark
 \end{pmatrix}
-\]
+\]\todo{grafiekjes zijn van $|f|$, niet $f$.}
 
 Things get even more interesting when $\mat{p}$ is a \emph{stochastic variable}. In this case, $\mat{f}$ is also a stochastic variable! In fact, given a probability distribution function for $\mat{p}$, we can use $\mat{F}$ to compute the \emph{probability distribution function of $\mat{f}$}. Using this probability distribution, we can now answer questions such as: ``What is the probability that line $i$ overloads?'' ($\PROB \left[ \mel{f}_i \geq 1 \right]$) Or: ``What is the probability that line $i$ overloads, given that line $j$ is operating at 95\% capacity?'' ($\PROB \left[ \mel{f}_i \geq 1 \,\mid\, \mel{f}_j = 0.95 \right]$).
 
@@ -596,23 +607,74 @@ Things get even more interesting when $\mat{p}$ is a \emph{stochastic variable}.
 60.0\%\phantom{000}\\
 10.0\%\phantom{000}
 \end{pmatrix}
-\]
+\]\todo{grafiekjes zijn van $|f|$, niet $f$.}
 
 \subsection{Normally distributed power injection}
 Following \cite{Nesti2018emergentfailures}, we model $\mat{p}$ to be \emph{multivariate normally distributed}:
 \[
-\mat{p} \sim \gaussdistr(\mat{\mu}_p, \mat{\Sigma}_{\mat{p}})
+\mat{p} \, \sim \, \gaussdistr(\mat{\mu}_p, \mat{\Sigma}_{\mat{p}})
 \]
-where $\mat{\mu}_p$ is the mean power injection, which is the sum of deterministic generation and expected stochastic generation, minus the load. $\mat{\Sigma}_{\mat{p}}$ is the \emph{power injection correlation matrix}. When power injection at different nodes is correlated (because of correlated weather), this matrix is non-diagonal.
+where $\mat{\mu}_p$ is the mean power injection, which is the sum of deterministic generation and expected stochastic generation, minus the load. $\mat{\Sigma}_{\mat{p}}$ is the \emph{power injection correlation matrix}, which can be estimated from historical generation series. When power injection at different nodes is correlated (because of correlated weather), this matrix is non-diagonal.
 
-Because $\mat{F}$ is a linear transformation, the vector of line flows $\mat{f}$ is also (multivariate) normally distributed, and its distribution is given by
+Because $\mat{F}$ is a linear transformation, the vector of line flows $\mat{f}$ is (multivariate) Gaussian distributed (Theorem \ref{thm:linearmapofgaussian}), and its distribution is given by
 
 \begin{equation}
 \mat{f} \sim \gaussdistr(\mat{\mu_f}, \mat{\Sigma}_{\mat{f}}), \quad \text{ where } \quad
 \mat{\mu_f} = \mat{F}\mat{\mu_f} \quad \text{and} \quad 
-\mat{\Sigma}_{\mat{f}} = \mat{F}\mat{\Sigma}_{\mat{p}}\mat{F}^T.
+\mat{\Sigma}_{\mat{f}} = \mat{F}\mat{\Sigma}_{\mat{p}}\mat{F}^*.
 \end{equation}
 
-\section{Applying the Large Devation Principle}
-\towrite{We will study $\PROB(|\mel{f}_l|\geq 1)$ for each line $l$ using the LDP.}
+For realistic networks we have $m > n$, which means that $\mat{F}$ is not surjective. Then $\mat{\Sigma}_{\mat{f}}$ is not injective, meaning that $\mat{f}$ is Gaussian, but not normally distributed (Theorem \ref{thm:normaliffinvertible}).
+
+\subsection{Overload probabilities}
+For a line $l$, the probability distribution of the current through that line is simply the marginal distribution $\mel{f}_l$. Therefore, the probability of an emergent failure of line $l$ is given by:
+\[
+\PROB\left[|\mel{f}_l| \geq 1 \right] = \PROB\left[\mel{f}_l \leq 1 \right] + \PROB\left[\mel{f}_l \geq 1 \right]
+\]
+From Theorem \ref{prop:gaussianmarginaldistr} it follows that $\mel{f}_l \, \sim \, \gaussdistr(\mel{\mu}_{\mat{f}\,l}, \mel{\Sigma}_{\mat{f}\,ll})$, and $\PROB\left[|\mel{f}_l| \geq 1 \right]$ can now be computed using standard techniques.\todo{Or estimated using the LDP}
+
+The probability of \emph{any} emergent failure is $\PROB\left[\exists_{l \in \range{m}} |\mel{f}_l| \geq 1 \right]$, which can be approximated by an upper and lower bound:
+\[
+\min_{l \in \range{m}} \PROB\left[|\mel{f}_l| \geq 1 \right]
+\quad\leq\quad
+\PROB\left[\exists_{l \in \range{m}} |\mel{f}_l| \geq 1 \right]
+\quad\leq\quad
+\sum_{l \in \range{m}} \PROB\left[|\mel{f}_l| \geq 1 \right].
+\]
+Trivially, the most likely line flow, given that any emergent failure occurred, coincides with most likely line flow, given that the most vulnerable line failed.
+
+\subsection{Most likely power injection}
+Now that we have identified the most vulnerable lines in the network, we naturally want to simulate the effect that the failure of one of these lines will have. When we remove the line from our model, we get a new LPF matrix, which can be used to check the currents through all other lines, after the initial failure. But what power injection should be used? Because we are studying the \emph{hypothetical} failure of a line, we do not yet know the exact power injection that caused it.
+
+The classical approach is to use the nominal power injection, $\mat{\mu}_{\mat{p}}$. This is exactly what we would do when studying regular line failures (caused by a fallen tree, for example). In our case, however, we assumed that the line failed because of an \emph{overload}, which tells us that the power injection must have deviated from its nominal value.
+
+Because we have estimated a probability distribution for $\mat{p}$, we can find \emph{the most likely power injection, given that line $l$ overloaded}. We can compute this injection explicitly, leveraging the fact that the LPF map is linear.
+
+\begin{theorem}
+Suppose a grid with LPF $\mat{F}$ has a $\gaussdistr(\mat{\mu}_p, \mat{\Sigma}_{\mat{p}})$-distributed power injection $\mat{p}$. The most likely power injection $\tilde{\mat{p}}^{(l)}$, given the emergent failure of a line $l$, is uniquely given by
+\[
+?????
+\]
+when $\mel{\mu}_{\mat{f}\, l} \neq 0$. Otherwise, there are two injections that maximise ?????, which are given by 
+\[
+??????????.
+\]
+\end{theorem}
+\begin{proof}
+
+The set of power injections associated with the failure event of line $l$ is a union of two parallel \emph{planes} in $\mathbb{R}^n$. Indeed, the condition $\mel{f}_l = 1$ can be written as:
+\[
+\mel{f}_l = 1 \iff (\mel{F}\mel{p})_l = 1 \iff \mat{e}_l\mat{F}\mat{p} = 1 \iff \left\langle \mat{e}_l\mat{F}, \mat{p} \right\rangle = 1
+\]
+which is the equation defining the plane with pillar $\mat{e}_l\mat{F}$. Similarly, the condition $\mel{f}_l = -1$ is satisfied if and only if $\mat{p}$ is contained in the plane with pillar $-\mat{e}_l\mat{F}$. 
+
+We can now apply Theorem \ref{thm:modeofaplaneconditional} to each pillar to find the mode of $\mat{p}$, given $\mel{f}_l = 1$, or $\mel{f}_l = 1$, respectively:
+
+
+
+
+$\mat{\mu}  + \frac{1 - \left\langle \mat{\mu}, \mat{r}_A \right\rangle}{\left\langle  \mat{\Sigma} \mat{r}_A, \mat{r}_A \right\rangle} \mat{\Sigma} \mat{r}_A$
+
+\end{proof}
+\towrite{}
 \end{document}

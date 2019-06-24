@@ -14,13 +14,13 @@
 \section{Multivariate Gaussian distribution}
 \emph{This presentation of the multivariate Gaussian distribution is heavily based on Chapter VIII of \emph{Mathematical Statistics} by \cite{Pestman1998}, which provides proofs to all theorems listed below.}
 
-One distribution that will be particularly useful in our analysis is the \emph{multivariate Gaussian distribution}. A special case is an elementary normally distributed vector $\mat{E}=(\mel{E}_1, \dots, \mel{E}_p)$, which is simply the combination of $p$ normally distributed, \emph{independent} scalar variables. In general, however, we wish to study stochastic vectors produced by applying a \emph{linear transformation} $\mat{L} \in \mathcal{L}(\mathbb{R}^p, \mathbb{R}^q)$ to $\mat{E}$. In this case, the coordinate variables $(\mel{LE})_1,\dots,(\mel{LE})_q$ are not always independent. 
+One distribution that will be particularly useful in our analysis is the \emph{multivariate Gaussian distribution}, which generalised the (one-dimensional) normal distribution. In the simplest case, we have a stochastic vector $\mat{E}=(\mel{E}_1, \dots, \mel{E}_p)$, which is the combination of $p$ normally distributed, \emph{independent} scalar variables. In general, however, we wish to study stochastic vectors produced by applying a \emph{linear transformation} $\mat{L} \in \mathcal{L}(\mathbb{R}^p, \mathbb{R}^q)$ to $\mat{E}$. In this case, the coordinate variables $(\mel{LE})_1,\dots,(\mel{LE})_q$ are not always independent! For example, the map $(\mel{E}_1, \mel{E}_2) \mapsto (\mel{E}_1, \mel{E}_1 + \mel{E}_2)$ transforms two independent normals into two dependent ones.
 
-In particular, we answer the following question: ``For $i,j \in \range{q}$ and $x \in \mathbb{R}$, what is the distribution of $(\mel{LE})_i$, \emph{given that} $(\mel{LE})_j \geq x$?''
+%In particular, we answer the following question: ``For $i,j \in \range{q}$ and $x \in \mathbb{R}$, what is the distribution of $(\mel{LE})_i$, \emph{given that} $(\mel{LE})_j \geq x$?''
 \todo{Deze inleiding slaat het geval ${E}$ Gaussiaans maar niet normaal, over.}
 
 \subsection{Normal and Gaussian}
-Although they are often used interchangeably, we make a clear distinction between a \emph{normal} distribution and a \emph{Gaussian} distribution. 
+Although they are often used interchangeably, we make a clear distinction between a \emph{normal} distribution and a \emph{Gaussian} distribution. The former should be familiar:
 
 \begin{definition}
 A scalar variable $E$ is said to be \emph{normally distributed} with parameters $\mu$ and $\sigma$ if
@@ -49,13 +49,13 @@ $\mat{X}$ is \emph{Gaussian distributed}\index{distribution!Gaussian} if there e
 \towrite{Plaatjes vullen gaatjes}
 
 We state, without proof, the following properties of Gaussian distributed vectors:
-\begin{proposition}
+\begin{proposition}\label{thm:normaliffinvertible}
 The distribution of a Gaussian distributed vector $\mat{X}$ is uniquely determined by its expectation $\mat{\mu} =\EXP\left[\mat{X}\right]$ and covariance matrix $\mat{\Sigma}=\COVMAT(\mat{X})$, and we write $\mat{X} \sim \gaussdistr(\mat{\mu}, \mat{\Sigma})$. $\mat{X}$ is normally distributed if and only if $\mat{\Sigma}$ is invertible. \todo{define covmat}
 \end{proposition}
 
 Translating or applying a linear map to a Gaussian distribution results in a new Gaussian distribution. Note that this can be \emph{any} linear map, not necessarily a bijective, orthogonal one.
 
-\begin{theorem}
+\begin{theorem}\label{thm:linearmapofgaussian}
 Suppose $\mat{X}$ is a $\gaussdistr(\mat{\mu}, \mat{\Sigma})$-distributed $p$-vector. 
 \begin{align}
 \intertext{For any $\mat{a} \in \mathbb{R}^p$:}
@@ -71,10 +71,16 @@ For any $\mat{b} \in \mathbb{R}^p$, the mapping
 \]
 is \emph{linear}, and therefore the scalar variable $\mat{b}^*\mat{X} = \left\langle\mat{X}, \mat{b}\right\rangle$ is Gaussian distributed.
 \end{corollary}
-In particular, when applying Corollary \ref{cor:innerproductisgaussian} to each element of the standard basis $(\mat{e}_1, \dots, \mat{e}_p)$ of $\mathbb{R}^p$, we find that each of the \emph{coordinates} of $\mat{X}$ is Gaussian distributed.
+In particular, when applying Corollary \ref{cor:innerproductisgaussian} to each element of the standard basis $(\mat{e}_1, \dots, \mat{e}_p)$ of $\mathbb{R}^p$, we find that each of the \emph{coordinates} of $\mat{X}$ is Gaussian distributed:
+\begin{proposition}\label{prop:gaussianmarginaldistr}
+Suppose $\mat{X}=(\mel{X}_1,\dots,\mel{X}_p)$ is a $\gaussdistr(\mat{\mu}, \mat{\Sigma})$-distributed $p$-vector. Then each for each $i \in \range{p}$, the marginal distribution is given by:
+\[
+\mel{X}_i \, \sim \, \gaussdistr(\mel{\mu}_i, \mel{\Sigma}_{ii}).
+\]
+\end{proposition}
 
 
-
+For normal distributed vectors, a probability density function exists:
 \begin{theorem}
 Suppose $\mat{X}$ is a \emph{normally} distributed $p$-vector with expectation $\mat{\mu} =\EXP\left[\mat{X}\right]$ and covariance matrix $\mat{\Sigma}=\COVMAT(\mat{X})$. Then $\mat{X}$ has a \emph{probability density function} given by
 \begin{equation}\label{eq:multivarnormaldensity}
@@ -84,22 +90,55 @@ Suppose $\mat{X}$ is a \emph{normally} distributed $p$-vector with expectation $
 \begin{remark}
 The condition that $\mat{X}$ is normally distributed is necessary: if $\mat{X}$ is Gaussian, but not normal, it will take values in an \emph{affine subspace of $\mathbb{R}^p$} (such as a plane, as subspace of $\mathbb{R}^3$). If a density function were to exist, it would have support of zero measure, and integrating over $\mathbb{R}^p$ would yield $0$, instead of $1$. \todo{Klopt dit?}
 \end{remark}
-\subsection{One linear condition}
 
 \begin{theorem}
-The mode of a Gaussian distribution is its mean.
+The mode of a Gaussian distribution is its mean.\todo{(waar) moet dit?}
 \end{theorem}
+\subsection{One linear condition}
+\begin{definition}
+Given a $\mat{r} \in \mathbb{R}^p$ and $b \in \mathbb{R}$, the set $A\subseteq \mathbb{R}^p$ of solutions to the equation
+\[
+\left\langle \mat{r}, \mat{x} \right\rangle = b
+\]
+is called a \emph{plane in $\mathbb{R}^p$}\index{plane}. The set $B \subseteq \mathbb{R}^p$ of solutions to
+\[
+\left\langle \mat{r}, \mat{x} \right\rangle \leq b
+\]
+is a \emph{half-space in $\mathbb{R}^p$}.
+When $b=1$, we write $\mat{r}_A$, and we say that $\mat{r}_A$ is a \define{pillar} for $A$. Two planes are called \emph{parallel} if they do not intersect.
+\end{definition}
+\begin{remark}
+When $b \neq 1$, we can scale $\mat{r}$ to create a pillar for $A$ or $B$, unless $b=0$ (which is the case if and only if $\mat{0} \in A$, $B$, respectively).
+\end{remark}
+\begin{remark}
+$A = \partial B$.
+\end{remark}
+
+\towrite{Orthogonal projection onto a plane}
 
 \begin{definition}
-plane
-\end{definition}
-\towrite{Plane is the edge of the feasibility region.}
-\begin{theorem}
-Let $\mat{X} \, \sim \, \gaussdistr(\mat{\mu}, \mat{\Sigma})$ be a normally distributed $p$-vector with density function $f_{\mat{X}}$, and let $A\subsetneq \mathbb{R}^p$ be a plane, given by:
+A \emph{convex polyhedron in $\mathbb{R}^p$}\index{polyhedron} is the intersection of finitely many half-spaces in $\mathbb{R}^p$, and can be written as the set of solutions to
 \[
-\text{for any $\mat{x} \in \mathbb{R}^p$}: \quad \mat{x} \in A \, \iff \, \left\langle \mat{x}, \mat{r}_A \right\rangle = 1
+\mat{R}\mat{x} \leq \mat{b},
 \]
-for some $\mat{r}_A \in \mathbb{R}^p$. Then $X \mid A$ \todo{hier bestaat vast notatie voor} is Gaussian distributed, and has mode\todo{$A$ is not an event, but $\mathbf{X}^{-1}(A)$ is.}
+where each $i$th row of $\mat{R}$, together with $\mel{b}_i$, defines one of the intersecting half-spaces.
+\end{definition}
+The boundary of a convex polyhedron is contained in the union of planes corresponding to the half-spaces. This relation is strict, in general.
+
+The convex polyhedra in $\mathbb{R}$ are exactly all (possibly infinite) closed intervals. Convex polyhedra in $\mathbb{R}^3$ are familiar shapes, like a cube or a pyramid, but they might also be unbounded, like a pyramid with infinitely deep foundations. 
+Objects that are \emph{not} convex polyhedra are spheres (no finite intersection of half-spaces) and donuts (not convex, which as the name suggest, is a property of any convex polyhedron\footnote{Using the linearity of the inner product, one easily finds that half-spaces are convex, and so are their intersections.}).
+
+In this thesis, we model the \emph{power injection} of a grid as a normally distributed stochastic vector, where each coordinate corresponds to the amount of energy injected at a node of the network. Positive values denote net generation (injection) and negative values are assigned to net consumption. The stochastic behaviour originates from \emph{renewable sources}: wind and solar, and their correlations arise from correlated weather. 
+
+The transmission network was built to transfer power from one node to another, \ie have a non-zero power injection.
+In Chapter \ref{chap:grid}, we will learn that not all power injections are \emph{feasible}, as some might cause one of the transmission lines to overload. The \emph{feasibility region} (the set of power injections that can be used) is, to some approximation, a \emph{convex polyhedron}.
+
+Using historical generation series, we can estimate the covariance of this power injection. Because the amount of current flowing through a line is a linear function of the power injection (by the same approximation), we can use Corollary \ref{cor:innerproductisgaussian} to determine the marginal distribution of line current, which gives the probability of an overload failure. A failure of this kind (\ie caused by a fluctuation of renewable injection) is called an \define{emergent failure}.
+
+Current studies (notably \cite{Nesti2018} and \cite{Chertkov2011}) take this one step further, by determining \emph{the most probable power injection that caused the emergent failure to occur}. We follow the approach of \cite{Nesti2018}, which is generalised in the following Theorem. Here, the plane $A$ can be taken to be one of the \emph{boundary planes of the feasibility region, corresponding to one of the lines}, and the event $\mat{X} \in A$ is the \emph{moment that this line overloads}.
+
+\begin{theorem}\label{thm:modeofaplaneconditional}
+Let $\mat{X} \, \sim \, \gaussdistr(\mat{\mu}, \mat{\Sigma})$ be a normally distributed $p$-vector with density function $f_{\mat{X}}$, and let $A\subseteq \mathbb{R}^p$ be a plane, given by a pillar $\mat{r}_A \in \mathbb{R}^p$. Then $\mat{X} \mid A$ \todo{hier bestaat vast notatie voor} is Gaussian distributed, and has mode\todo{$A$ is not an event, but $\mathbf{X}^{-1}(A)$ is.}
 \[
 \breve{\mat{x}}_{A} = \argmax_{\mat{x} \in A} f_{\mat{X}}(\mat{x}) = \mat{\mu}  + \frac{1 - \left\langle \mat{\mu}, \mat{r}_A \right\rangle}{\left\langle  \mat{\Sigma} \mat{r}_A, \mat{r}_A \right\rangle} \mat{\Sigma} \mat{r}_A.
 \]
@@ -121,7 +160,7 @@ Because $A$ is an affine subspace of $\mathbb{R}^p$, the distance between $\mat{
 
 \emph{Step 2. The case of an arbitrary elementary normal distribution.}\\
 Let us drop the assumption that all marginal variances are equal to one. There exist $\lambda_1, \dots, \lambda_p \in \mathbb{R}_{>0}$ such that $\mat{\Sigma} = \mat{\Lambda} = \diag(\lambda_1, \dots, \lambda_p)$, and $\mat{\Lambda}^{t} = \diag(\lambda_1^{t}, \dots, \lambda_p^{t})$ for any $t \in \mathbb{R}$. \todo{Dit zijnd e varianties, gebruikt simgasquared?} With $t=-\frac{1}{2}$, we find that $\mat{\Lambda}^{-\frac{1}{2}}\mat{X}$ is elementary normally distributed, with mean $\mat{\Lambda}^{-\frac{1}{2}}$ and unit covariance matrix.
-Applying the same transformation $\mat{\Lambda}^{-\frac{1}{2}}$ to $A$ yields a new plane, which is defined by $\mat{\Lambda}^{\frac{1}{2}}\mat{r}_A$ (not $\mat{\Lambda}^{-\frac{1}{2}}\mat{r}_A$!):
+Applying the same transformation $\mat{\Lambda}^{-\frac{1}{2}}$ to $A$ yields a new plane, which has pillar $\mat{\Lambda}^{\frac{1}{2}}\mat{r}_A$ (not $\mat{\Lambda}^{-\frac{1}{2}}\mat{r}_A$!):
 
 For each $\mat{x} \in \mathbb{R}^p$, we have
 
@@ -138,15 +177,15 @@ $\mat{x} \in A \iff $
 
 \hfill $\iff \mat{\Lambda}^{-\frac{1}{2}}\mat{x} \in \mat{\Lambda}^{-\frac{1}{2}}(A).$
 
-This means that the plane $\mat{\Lambda}^{-\frac{1}{2}}(A)$ is defined by $\mat{\Lambda}^{\frac{1}{2}}\mat{r}_A$. \todo{wat sterkere definitie voor die $r_B$, \emph{crossed}?}
+This means that the plane $\mat{\Lambda}^{-\frac{1}{2}}(A)$ is defined by the pillar $\mat{\Lambda}^{\frac{1}{2}}\mat{r}_A$.
 
 We can now apply our earlier result, and we find:
 
 \begin{gather*}
 \tilde{\mat{x}}_{A} = \mat{\Lambda}^{\frac{1}{2}} 
 \oversortoftilde{\left(
-\mat{\Lambda}^{-\frac{1}{2}} \mat{x}_{\mat{\Lambda}^{-\frac{1}{2}}(A)}
-\right)}
+\mat{\Lambda}^{-\frac{1}{2}} \mat{x}\right)_{\mat{\Lambda}^{-\frac{1}{2}}(A)}
+}
 =
 \mat{\Lambda}^{\frac{1}{2}} 
 \left(
@@ -160,7 +199,7 @@ We can now apply our earlier result, and we find:
 
 \emph{Step 3. The general case.}\\
 Finally, we consider the general case where $\mat{X}$ is normally distributed. If so, there exists orthogonal $\mat{Q}$ such that $\mat{\Sigma}=\mat{Q}\mat{\Lambda}\mat{Q}^{-1}$, with $\mat{\Lambda}$ a diagonal matrix. In other words, the orthogonal map $\mat{Q}^{-1}$ maps $\mat{X}$ into an \emph{elementary} normally distributed vector.
-Applying the same transformation $\mat{Q}^{-1}$ to $A$ yields a new plane, which is defined by $\mat{Q}^{-1}\mat{r}_A$. This derivation is more straightforward, since $\mat{Q}^{-1}$ is orthogonal:
+Applying the same transformation $\mat{Q}^{-1}$ to $A$ yields a new plane, which is defined by the pillar $\mat{Q}^{-1}\mat{r}_A$. This derivation is more straightforward, since $\mat{Q}^{-1}$ is orthogonal:
 
 For each $\mat{x} \in \mathbb{R}^p$, we have
 
@@ -173,15 +212,15 @@ $\mat{x} \in A \iff $
 
 \hfill $\iff \mat{Q}^{-1}\mat{x} \in\mat{Q}^{-1}(A).$
 
-This means that the plane $\mat{\Lambda}^{-\frac{1}{2}}(A)$ is defined by $\mat{\Lambda}^{\frac{1}{2}}\mat{r}_A$. Again, using our previous result, we find:
+Using our previous result, we find:
 
 \begin{gather*}
 \tilde{\mat{x}}_{A}
 =
 \mat{Q}
 \oversortoftilde{\left(
-\mat{Q}^{-1}\mat{x}_{\mat{Q}^{-1}(A)}
-\right)}
+\mat{Q}^{-1}\mat{x}\right)_{\mat{Q}^{-1}(A)}
+}
 =
 \mat{Q}
 \left(
@@ -192,30 +231,17 @@ This means that the plane $\mat{\Lambda}^{-\frac{1}{2}}(A)$ is defined by $\mat{
 =
 \mat{\mu}  + \frac{1 - \left\langle \mat{\mu}, \mat{r}_A \right\rangle}{\left\langle  \mat{Q} \mat{\Lambda} \mat{Q}^{-1} \mat{r}_A, \mat{r}_A \right\rangle} \mat{Q} \mat{\Lambda} \mat{Q}^{-1} \mat{r}_A \\
 =
-\mat{\mu}  + \frac{1 - \left\langle \mat{\mu}, \mat{r}_A \right\rangle}{\left\langle  \mat{\Sigma} \mat{r}_A, \mat{r}_A \right\rangle} \mat{\Sigma} \mat{r}_A
+\mat{\mu}  + \frac{1 - \left\langle \mat{\mu}, \mat{r}_A \right\rangle}{\left\langle  \mat{\Sigma} \mat{r}_A, \mat{r}_A \right\rangle} \mat{\Sigma} \mat{r}_A.
 \end{gather*}
 
 \end{proof}
 
-\begin{definition}
 
-\end{definition}
-\begin{definition}
+\todo[inline]{Is de marginale verdeling gaussiaans verdeeld? (Ze is niet normaal verdeeld.) Wat is de covariantiematrix? Je zou als Stap 0 kunnen transformeren naar een $\mathbf{r}_A$ die parallel aan een van de assen loopt, en dan dat coordinaat gelijk aan $\norm{\mathbf{r}_A}$ stellen? Maar dan klopt de verwachtingswaarde niet meer?}
 
-\end{definition}
+\todo[inline]{Het zou mooier zijn om dit resultaat toe te passen op een algemene Gauss-verdeling, die niet per se normaal is. De marginele verdeling bestaat dan alleen niet altijd, namelijk wanneer $A \cap \Ima(\mathbf{X}) = \emptyset$. Als ze wel bestaat, dan gok ik dat het Gaussiaans is.
 
+Het is nu niet toe te passen op line flows (want die zijn normaal, wel Gaussiaans), maar wel op de injectie. Wanneer je dan de meest likely injectie hebt, kan je afleiden wat de flow is. Dit komt overeen met elkaar?
 
-
-
-
-\towrite{def: Normal distribution}
-\towrite{def: gaussian}
-\towrite{prop: gaussian}
-\towrite{def: elementary (multivar) gaussian, elementary (multivar) normal; (multivar) gaussian, (multivar) normal}
-\towrite{thm: Gauss is uniquely determined by its mean and cov matrix}
-\towrite{thm: X Gauss -> X + a Gauss en TX Gauss (T arbitrair)}
-\towrite{prop: X Gauss <-> er bestaat orthogonaal Q zodat QX elementair Gauss}
-\towrite{remark: TX need not be normal}
-
-\section{}
+De covariantiematrix van de flow is ook bijna singulair (numeriek gezien singulair), omdat de correlaties zo sterk zijn. Maar ik denk dat je kan beargumenteren dat de kans op singulaire covariantiematrix $0$ is, en dan kan de stelling dus wel worden toegepast. Numeriek is de bijna-singulariteit ook geen probleem (denk ik), omdat in de uiteindelijke uitdrukking de inverse van sigma niet voorkomt.}
 \end{document}

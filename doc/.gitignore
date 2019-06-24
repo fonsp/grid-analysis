@@ -262,3 +262,7 @@ TSWLatexianTemp*
 
 # standalone packages
 *.sta
+
+
+/thesis/*.pdf
+!/thesis/main.pdf
