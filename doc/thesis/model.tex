@@ -530,19 +530,20 @@ this is the moore-penrose pseudo-inverse,
 \end{align*}
 (We assumed a normalised profile, so $V_{op}=1$.)
 
-If the line capacities\index{line capacity} are $\mat{W}=(W_1, \dots, W_m)^T \in \mathbb{R}^m$\todo{C already used}, then we can define the \emph{normalised line flow}\index{line flow!normalised} as:
+If the line thresholds\index{line threshold} are $\mat{W}=(W_1, \dots, W_m)^T \in \mathbb{R}^m$, then we can define the \emph{normalised line flow}\index{line flow!normalised} as:
 $$\mat{f} = \diag(\mat{W})^{-1}\hat{\mat{f}}$$
 and we find:
 \begin{empheq}[box=\fbox]{gather}\label{eq:LPF}
     \mat{f}=\mat{F}\mat{p} \tag{LPF}\\[3mm]
     \text{where }\quad\mat{F}=\diag(\mat{W})^{-1}\diag(i\mat{\eta})\mat{C}\mat{L^+} \notag
-\end{empheq}
+\end{empheq}\todo{Dit is }
 
-\emph{This is a linear transformation from a power injection vector $\mat{p}$ to the normalised line flow $\mat{f}$ that it induces.}\todo{$\mathbf{F}$ is not the unique transformation with this property (otherwise $\mathbf{F}$ would be square and non-singular). Does $\mathbf{F}$ minimise $\norm{\mathbf{f}}$?}
+\emph{This is a linear transformation from a power injection vector $\mat{p}$ to the normalised line flow $\mat{f}$ that induces it.}
+\todo[inline]{$\mathbf{F}$ is not the unique transformation with this property (otherwise $\mathbf{F}$ would be square and non-singular). Does $\mathbf{F}$ minimise $\norm{\mathbf{f}}$? $\mathbf{F}$}
 
 \todo{line drop: (real) power flowing out of a node is slightly more than power }
 
-\towrite{Leg het verband tussen de LPF en het hoofdstuk over grafen}
+\towrite{Leg het verband tussen de LPF en het hoofdstuk over grafen: de af}
 
 \subsection{Line removal}
 \towrite{Expliciete uitdrukking voor de nieuwe matrix}
