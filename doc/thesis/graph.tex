@@ -1,7 +1,7 @@
 \documentclass[main.tex]{subfiles}
  
 \begin{document}
-%We will study flows along a network using the tools of linear algebra, revealing interesting parallels with the field of graph theory. In particular, the \emph{Linear Power Flow} function, mapping line flows to the 
+%We will study flows along a network using the tools of linear algebra, revealing interesting parallels with the field of graph theory. In particular, the \emph{Flow Response Transformation}, mapping line flows to the 
 %We conclude this chapter by deducing a 
 
 \section{Directed graphs}
@@ -54,30 +54,30 @@ for each node $i \in \mathcal{N}$.
 \end{definition}
 Note that $\mat{p}$ is uniquely defined for every choice of $\mat{f}$, under the condition that $G$ has no \emph{isolated nodes}\index{isolated node}: nodes with no lines connecting them.\todo{not necessary} This allows us to define a function:
 \begin{definition}
-Suppose $G$ has no isolated nodes. We define the \define{Linear Power Flow} ($\LPF$) as the function
+Suppose $G$ has no isolated nodes. We define the \define{Flow Response Transformation} ($\FRT$) as the function
 \begin{gather*}
-    \LPF: \mathbb{K}^m \rightarrow \mathbb{K}^n
+    \FRT: \mathbb{K}^m \rightarrow \mathbb{K}^n
 \end{gather*}
 which maps a flow $\mat{f} \in \mathbb{K}^m$ to the unique injection $\mat{p} \in \mathbb{K}^n$ that it induces.
 \end{definition}
 
-From (\ref{eq:inducedflow}), it follows that $\LPF$ is a linear map. In fact, when written in matrix form, we find a familiar result: the transposed edge-vertex incidence matrix of $G$!\todo{blub}
-$$\LPF = \mat{C}^T$$
+From (\ref{eq:inducedflow}), it follows that $\FRT$ is a linear map. In fact, when written in matrix form, we find a familiar result: the transposed edge-vertex incidence matrix of $G$!\todo{blub}
+$$\FRT = \mat{C}^T$$
 
-The fact that $\LPF$ is a linear map raises an interesting question: how can the image and kernel of $\LPF$ be interpreted in the context of digraph flows?
+The fact that $\FRT$ is a linear map raises an interesting question: how can the image and kernel of $\FRT$ be interpreted in the context of digraph flows?
 The reader is invited to revisit Example \todo{examples} to visualise these sets.
 
-One can interpret the image of $\LPF$ as the set of injections that can be redistributed along the network. Because a flow only serves to redistribute injections from one node to another, nothing is lost or gained in the network. This imposes the condition that an injection vector must have \emph{zero sum}. Moreover, when $G$ is connected, \emph{all} zero sum injections can be induced by a flow.
+One can interpret the image of $\FRT$ as the set of injections that can be redistributed along the network. Because a flow only serves to redistribute injections from one node to another, nothing is lost or gained in the network. This imposes the condition that an injection vector must have \emph{zero sum}. Moreover, when $G$ is connected, \emph{all} zero sum injections can be induced by a flow.
 
-The kernel can be interpreted as the set of all flows that result in zero injections. Besides the trivial case of zero flow, any constant flow along a closed loop induces zero injection. We will find that these \emph{loop flows} generate \emph{all} flows in the kernel of $\LPF$. 
+The kernel can be interpreted as the set of all flows that result in zero injections. Besides the trivial case of zero flow, any constant flow along a closed loop induces zero injection. We will find that these \emph{loop flows} generate \emph{all} flows in the kernel of $\FRT$. 
 
 When $G$ is a planar graph, loops around the faces of $G$ actually form a \emph{basis} for the kernel. In the more general case that $G$ is connected, but not necessarily planar, such a basis can also be constructed by fixing a \emph{spanning subtree} of $G$.
 
-As an added bonus, applying the Rank-Nullity theorem to $\LPF$ when $G$ is planar provides us with an alternative proof of Euler's Formula.
+As an added bonus, applying the Rank-Nullity theorem to $\FRT$ when $G$ is planar provides us with an alternative proof of Euler's Formula.
 
-These statements will be made more precise in the next sections, when we study the image and kernel of $\LPF$ in more detail.
+These statements will be made more precise in the next sections, when we study the image and kernel of $\FRT$ in more detail.
 
-\subsection{Image of $\LPF$}
+\subsection{Image of $\FRT$}
 \towrite{intro}
 \begin{definition}
 The function $\sigma : \mathbb{K}^n \rightarrow \mathbb{K}$ defined by
@@ -93,22 +93,22 @@ When $G$ is connected, this is exactly the set of injections that can be induced
 \begin{theorem}\label{thm:imageLPF}
 Suppose that $G$ is connected. Then
 \begin{empheq}[box=\fbox]{gather}
-    \Ima \LPF = \left\{ \mat{p} \in \mathbb{K}^n \, \mid \, \sum_{i=1}^n \mel{p}_i = 0 \right\} \cong \mathbb{K}^{n-1}
+    \Ima \FRT = \left\{ \mat{p} \in \mathbb{K}^n \, \mid \, \sum_{i=1}^n \mel{p}_i = 0 \right\} \cong \mathbb{K}^{n-1}
 \end{empheq}
 \end{theorem}
 
-We will prove this equality by considering the two inclusions $\subseteq$ and $\supseteq$ separately. The first inclusion follows from the observation that $\LPF = \mat{C}^T$:
+We will prove this equality by considering the two inclusions $\subseteq$ and $\supseteq$ separately. The first inclusion follows from the observation that $\FRT = \mat{C}^T$:
 \begin{lemma}\label{lem:imlpfsubsetkersigma}
 Suppose that $G$ is connected. 
 \begin{gather}
-\Ima \LPF \subseteq \ker \sigma\label{eq:LPFfin}
+\Ima \FRT \subseteq \ker \sigma\label{eq:LPFfin}
 \end{gather}
 \end{lemma}
 \begin{proof}
 We write $\mat{e}^1, \dots, \mat{e}^m$ for the standard basis of $\mathbb{K}^m$.
 
-Since $\LPF$ is linear, one only needs to verify that $\LPF(\mat{f}) \in \ker \sigma$ for each $\mat{f}=\mat{e}^k$ in the basis.
-The vectors $\LPF(\mat{e}^1), \dots, \LPF(\mat{e}^m)$ are exactly the columns of the matrix $\LPF = \mat{C}^T$, which all have zero sum. 
+Since $\FRT$ is linear, one only needs to verify that $\FRT(\mat{f}) \in \ker \sigma$ for each $\mat{f}=\mat{e}^k$ in the basis.
+The vectors $\FRT(\mat{e}^1), \dots, \FRT(\mat{e}^m)$ are exactly the columns of the matrix $\FRT = \mat{C}^T$, which all have zero sum. 
 \end{proof}
 
 To prove the inclusion $\supseteq$ implied by Theorem \ref{thm:imageLPF}, we first consider the special case that $G$ is a \emph{tree}.
@@ -116,40 +116,40 @@ To prove the inclusion $\supseteq$ implied by Theorem \ref{thm:imageLPF}, we fir
 \begin{lemma}\label{lem:connectedtree}
 Suppose that $G$ is a (connected) tree.
 \begin{gather}
-\Ima \LPF \supseteq \ker \sigma
+\Ima \FRT \supseteq \ker \sigma
 \end{gather}
 \end{lemma}
 
 \begin{proof}\todo{This proof could benefit from an illustration.}
-$G$ is a tree, so $m=n-1$. Because $\mathbb{K}^m$ and $\ker \sigma$ both have dimension $n-1$, we only need to prove that $\LPF$ is injective: when $\LPF$ has nullity $0$, it must have rank $n-1$. 
+$G$ is a tree, so $m=n-1$. Because $\mathbb{K}^m$ and $\ker \sigma$ both have dimension $n-1$, we only need to prove that $\FRT$ is injective: when $\FRT$ has nullity $0$, it must have rank $n-1$. 
 
-If $n=1$, then the digraph consist of a single node, and no lines. It then follows from (\ref{eq:inducedflow}) that the only injection that can be induced is $\mat{p}=(0) \in \mathbb{K}^1$, so $\LPF$ can only be injective.\todo{A single-node graph is not connected?}
+If $n=1$, then the digraph consist of a single node, and no lines. It then follows from (\ref{eq:inducedflow}) that the only injection that can be induced is $\mat{p}=(0) \in \mathbb{K}^1$, so $\FRT$ can only be injective.\todo{A single-node graph is not connected?}
 
 If $n>1$, we will use the fact that the statement holds for any tree with fewer than $n$ nodes. \emph{(Proof by induction.)}
 
-Suppose that $f \in \mathbb{K}^{m}$, such that $\mat{p}=\LPF(\mat{f})=\mat{0}$. Because $G$ is a tree, we can\footnote{Write $\gr(i)$ for the number of lines connected to $i$. $G$ is connected, so $\gr(i)\geq1$ for each $i \in \mathcal{N}$. \emph{If no $i$ exists with $\gr(i)=1$}, then $\gr(i)\geq 2$ for each $i \in \mathcal{N}$, giving $\sum_{i = 1}^n \gr(i) \geq 2n$. On the other hand, each of the $n-1$ lines connects exactly two nodes, so $\sum_{i = 1}^n \gr(i) = 2(n-1) < 2n$, a contradiction.} pick a \emph{leaf} $i \in \mathcal{N}$, which has a unique line $\mathcal{L}_k$ connecting $i$ to some $j \in \mathcal{N}$. (We have either $\mathcal{L}_k = (i,j)$ or $\mathcal{L}_k=(j,i)$.)
+Suppose that $f \in \mathbb{K}^{m}$, such that $\mat{p}=\FRT(\mat{f})=\mat{0}$. Because $G$ is a tree, we can\footnote{Write $\gr(i)$ for the number of lines connected to $i$. $G$ is connected, so $\gr(i)\geq1$ for each $i \in \mathcal{N}$. \emph{If no $i$ exists with $\gr(i)=1$}, then $\gr(i)\geq 2$ for each $i \in \mathcal{N}$, giving $\sum_{i = 1}^n \gr(i) \geq 2n$. On the other hand, each of the $n-1$ lines connects exactly two nodes, so $\sum_{i = 1}^n \gr(i) = 2(n-1) < 2n$, a contradiction.} pick a \emph{leaf} $i \in \mathcal{N}$, which has a unique line $\mathcal{L}_k$ connecting $i$ to some $j \in \mathcal{N}$. (We have either $\mathcal{L}_k = (i,j)$ or $\mathcal{L}_k=(j,i)$.)
 
 Only one line is connected to $i$, so (\ref{eq:inducedflow}) gives: $\mel{p}_i = \pm \mel{f}_k$. (The sign depends on the orientation of $\mathcal{L}_k$.) We assumed $\mel{p}_i=0$, so we must have $f_k = 0$.
 
-By removing node $i$ and line $\mathcal{L}_k$, we obtain a smaller tree, for which the statement already holds. The Linear Power Flow of this subtree is essentially the restriction of $\LPF$ to the set $\left\{\mat{f} \in \mathbb{K}^m \, \mid \, \mel{f}_k = 0\right\}$.\todo{Make this mapping explicit? The fact that $\mel{p}_i=0$ is required?} Because the restriction is injective, all other coefficients of $\mat{p}$ are also zero. This shows that $\LPF$ is injective, and the result follows.
+By removing node $i$ and line $\mathcal{L}_k$, we obtain a smaller tree, for which the statement already holds. The Flow Response Transformation of this subtree is essentially the restriction of $\FRT$ to the set $\left\{\mat{f} \in \mathbb{K}^m \, \mid \, \mel{f}_k = 0\right\}$.\todo{Make this mapping explicit? The fact that $\mel{p}_i=0$ is required?} Because the restriction is injective, all other coefficients of $\mat{p}$ are also zero. This shows that $\FRT$ is injective, and the result follows.
 \end{proof}
 
 \begin{proof}[Proof of Theorem \ref{thm:imageLPF}]
-To prove $\Ima \LPF = \ker \sigma$, it remains to show that 
+To prove $\Ima \FRT = \ker \sigma$, it remains to show that 
 \begin{gather}
-\Ima \LPF \supseteq \ker \sigma
+\Ima \FRT \supseteq \ker \sigma
 \end{gather}
 holds for \emph{any} connected $G$, not just for trees.
 
 Since $G$ is connected, we can choose a minimum spanning subtree: choose $T \subseteq \range{m}$ with $\# T = n-1$ such that $G_T=(\mathcal{N}, \{\mathcal{L}_k\}_{k \in T})$ is such a connected subdigraph.
 
 Define $F_T = \linspan \{\mat{e}^k\}_{k \in T} \subseteq \mathbb{K}^m$ as the subset of flows on $G$ that are zero outside of $G_T$. Because $F_T$ is a linear subspace of $\mathbb{K}^m$, we have
-$$\Ima \LPF = \LPF (\mathbb{K}^m) \supseteq \LPF(F_T),$$
-which reduces the problem to $\LPF(F_T) \supseteq \ker \sigma$, which follows from Lemma \ref{lem:connectedtree}.\todo{Is this clear enough?}
+$$\Ima \FRT = \FRT (\mathbb{K}^m) \supseteq \FRT(F_T),$$
+which reduces the problem to $\FRT(F_T) \supseteq \ker \sigma$, which follows from Lemma \ref{lem:connectedtree}.\todo{Is this clear enough?}
 
 This shows that
 \begin{gather*}
-    \Ima \LPF = \ker \sigma.
+    \Ima \FRT = \ker \sigma.
 \end{gather*}
 Because $\sigma : \mathbb{K}^n \rightarrow \mathbb{K}$ is surjective, it has rank $1$. It therefore has nullity $n-1$, or equivalently, $\ker \sigma \cong \mathbb{K}^{n-1}$. 
 \end{proof}
@@ -162,17 +162,17 @@ Because $\sigma : \mathbb{K}^n \rightarrow \mathbb{K}$ is surjective, it has ran
 
 
 
-\subsection{Kernel of $\LPF$}
+\subsection{Kernel of $\FRT$}
 
-Again, assume that $G$ is connected. In Theorem \ref{thm:imageLPF}, we derived an explicit formulation for the image of $\LPF$, showing that $\nullity \LPF = n-1$. 
+Again, assume that $G$ is connected. In Theorem \ref{thm:imageLPF}, we derived an explicit formulation for the image of $\FRT$, showing that $\nullity \FRT = n-1$. 
 
-Concerning the kernel of $\LPF$, we already know that $\mat{0} \in \ker \LPF$, reflecting the fact that zero flow induces zero injection. In the special case that $G$ is a tree, this is the only such flow. In general, however, the kernel of $\LPF$ is much bigger.
+Concerning the kernel of $\FRT$, we already know that $\mat{0} \in \ker \FRT$, reflecting the fact that zero flow induces zero injection. In the special case that $G$ is a tree, this is the only such flow. In general, however, the kernel of $\FRT$ is much bigger.
 \towrite{introduce loops}
 
 \begin{proposition}\label{prop:nullityLPF}
-Suppose that $G$ is connected. The dimension of $\ker \LPF$ equals
+Suppose that $G$ is connected. The dimension of $\ker \FRT$ equals
 \begin{gather*}
-    \nullity \LPF = m - (n - 1).
+    \nullity \FRT = m - (n - 1).
 \end{gather*}
 \end{proposition}
 \begin{proof}
@@ -181,10 +181,10 @@ This follows directly from the Rank-Nullity theorem, \todo{state}applied to Theo
 
 
 \begin{corollary}
-If $G$ is a tree, then $\ker \LPF = \{\mat{0}\}$, and $\LPF$ is a bijection between $\mathbb{K}^m$ and $\ker \sigma$.
+If $G$ is a tree, then $\ker \FRT = \{\mat{0}\}$, and $\FRT$ is a bijection between $\mathbb{K}^m$ and $\ker \sigma$.
 \end{corollary} 
 \begin{proof}
-Applying Proposition \ref{prop:nullityLPF} with $m = n-1$, we find that $\nullity \LPF = 0$, so that ${\ker \LPF = \{\mat{0}\}}$. Together with Theorem \ref{thm:imageLPF}, we find the result.
+Applying Proposition \ref{prop:nullityLPF} with $m = n-1$, we find that $\nullity \FRT = 0$, so that ${\ker \FRT = \{\mat{0}\}}$. Together with Theorem \ref{thm:imageLPF}, we find the result.
 \end{proof}
 
 \towrite{talk about loops, use an example graph}
@@ -200,20 +200,20 @@ Suppose that $G$ is connected and that $(i_1, i_2, \dots, i_p)$ is a closed loop
     \hphantom{-}0 & \text{otherwise,}
     \end{cases}\label{eq:loopflowdef}
 \end{gather}
-for each line $\mathcal{L}_k$, is an element of the kernel of $\LPF$.\todo{this thm only works for Eulerian paths...}
+for each line $\mathcal{L}_k$, is an element of the kernel of $\FRT$.\todo{this thm only works for Eulerian paths...}
 \end{theorem}
 \begin{proof}
-We will verify that $\mat{p}=\LPF(\mat{f})$ is zero. 
+We will verify that $\mat{p}=\FRT(\mat{f})$ is zero. 
 Choose any $i \in \mathcal{N}$.
 
 Because the loop is closed, there is an \emph{even} number (possibly zero) of lines with non-zero flow that connect to $i$. This means that the sums in (\ref{eq:inducedflow}) cancel each other (note the negative sign for reversed lines in (\ref{eq:loopflowdef})), resulting in $\mel{p}_i=0$.
 \end{proof}
 
 \begin{remark}
-Because $\LPF$ is linear, multiplying a loop flow with a scalar $\gamma \in \mathbb{K}$, or adding two loop flows, creates a new flow that induces zero injection. (The result of addition is a flow, but in general not a \emph{loop} flow.)
+Because $\FRT$ is linear, multiplying a loop flow with a scalar $\gamma \in \mathbb{K}$, or adding two loop flows, creates a new flow that induces zero injection. (The result of addition is a flow, but in general not a \emph{loop} flow.)
 \end{remark}
 
-Now that we know the dimension of $\ker \LPF$, a natural next step is to look for a \emph{basis} that generates the kernel. Motivated by the previous theorem, we will look for a basis consisting of \emph{loop flows}.
+Now that we know the dimension of $\ker \FRT$, a natural next step is to look for a \emph{basis} that generates the kernel. Motivated by the previous theorem, we will look for a basis consisting of \emph{loop flows}.
 
 When looking at the previous examples, a logical choice for this basis would be the set of all flows in \emph{loops surrounding the faces contained in the graph}. This approach, which only works for \emph{planar graphs}, will be discussed in the next section.
 
@@ -224,10 +224,10 @@ For now, we would like to find a basis of loop flows for the more general case t
 \end{definition}
 
 \begin{theorem}
-The ???? constructed in Definition ??? is a basis for $\ker \LPF$.
+The ???? constructed in Definition ??? is a basis for $\ker \FRT$.
 \end{theorem}
 \begin{proof}
-Because the number of fundamental loops equals the dimension of $\ker \LPF$, one only needs to prove that they are linearly indepent. Indeed, for each $k \in \range{m}\setminus T$??????, ??$^k$ is the only fundamental loop for which the $k$th element is non-zero. Therefore, ???$^k$ cannot be written as linear combination of the other fundamental loops.
+Because the number of fundamental loops equals the dimension of $\ker \FRT$, one only needs to prove that they are linearly indepent. Indeed, for each $k \in \range{m}\setminus T$??????, ??$^k$ is the only fundamental loop for which the $k$th element is non-zero. Therefore, ???$^k$ cannot be written as linear combination of the other fundamental loops.
 \end{proof}
 
 
