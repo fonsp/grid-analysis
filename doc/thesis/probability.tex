@@ -139,11 +139,11 @@ Current studies (notably \cite{Nesti2018emergentfailures} and \cite{Chertkov2011
 
 \begin{theorem}\label{thm:modeofaplaneconditional}
 Let $\mat{X} \, \sim \, \gaussdistr(\mat{\mu}, \mat{\Sigma})$ be a normally distributed $p$-vector with density function $f_{\mat{X}}$, and let $A\subseteq \mathbb{R}^p$ be a plane, given by a pillar $\mat{r}_A \in \mathbb{R}^p$. Then $\mat{X} \mid A$ \todo{hier bestaat vast notatie voor} is Gaussian distributed, and has mode\todo{$A$ is not an event, but $\mathbf{X}^{-1}(A)$ is.}
-\[
-\breve{\mat{x}}_{A} = \argmax_{\mat{x} \in A} f_{\mat{X}}(\mat{x}) = \mat{\mu}  + \frac{1 - \left\langle \mat{\mu}, \mat{r}_A \right\rangle}{\left\langle  \mat{\Sigma} \mat{r}_A, \mat{r}_A \right\rangle} \mat{\Sigma} \mat{r}_A.
-\]
+\begin{equation}
+\tilde{\mat{x}}_{A} = \argmax_{\mat{x} \in A} f_{\mat{X}}(\mat{x}) = \mat{\mu}  + \frac{1 - \left\langle \mat{\mu}, \mat{r}_A \right\rangle}{\left\langle  \mat{\Sigma} \mat{r}_A, \mat{r}_A \right\rangle} \mat{\Sigma} \mat{r}_A.\label{eq:modeofaplaneconditional}
+\end{equation}
 \end{theorem}
-\begin{proof}
+\begin{proof}\todo{inproduct rx is verkeerd om}
 We will start with the special case of $\mat{\Sigma} = \mat{I}$, and work our way towards the general case.\footnote{This process uses the so-called the \emph{standardised}\index{distribution!standardised normal} form of $\mat{X}$.}
 
 \emph{Step 1. The case of unit covariance.}\\
@@ -198,7 +198,7 @@ We can now apply our earlier result, and we find:
 \end{gather*}
 
 \emph{Step 3. The general case.}\\
-Finally, we consider the general case where $\mat{X}$ is normally distributed. If so, there exists orthogonal $\mat{Q}$ such that $\mat{\Sigma}=\mat{Q}\mat{\Lambda}\mat{Q}^{-1}$, with $\mat{\Lambda}$ a diagonal matrix. In other words, the orthogonal map $\mat{Q}^{-1}$ maps $\mat{X}$ into an \emph{elementary} normally distributed vector.
+Finally, we consider the general case where $\mat{X}$ is normally distributed. If so, there exists orthogonal $\mat{Q}$ such that $\mat{\Sigma}=\mat{Q}\mat{\Lambda}\mat{Q}^{-1}$, with $\mat{\Lambda}$ a diagonal matrix. In other words, the orthogonal map $\mat{Q}^{-1}$ maps $\mat{X}$ into an \emph{elementary} normally distributed vector.\footnote{$\mat{Q}^{-1}\mat{X}$ is elementary normally distributed, but it does not necessarily have a unit covariance matrix.}
 Applying the same transformation $\mat{Q}^{-1}$ to $A$ yields a new plane, which is defined by the pillar $\mat{Q}^{-1}\mat{r}_A$. This derivation is more straightforward, since $\mat{Q}^{-1}$ is orthogonal:
 
 For each $\mat{x} \in \mathbb{R}^p$, we have
@@ -236,6 +236,13 @@ Using our previous result, we find:
 
 \end{proof}
 
+When we replace the \emph{plane} $A$ by a \emph{half-space} $B$ in Theorem \ref{thm:modeofaplaneconditional}, there are two cases to consider. If $\mat{\mu} \in B$, then $\tilde{\mat{x}}_{B} = \mat{\mu}$, because the mode of $\mat{X}$ is $\mat{\mu}$, which is contained in $B$. 
+
+In the non-trivial case of $\mat{\mu} \notin B$, we find that $\tilde{\mat{x}}_{B} = \tilde{\mat{x}}_{A}$, where $A \defeq \partial B$ is the \emph{boundary} of $B$, which is a plane, given by the same pillar: $\mat{r}_A = \mat{r}_B$. A geometrical argument is as follows: by reducing to the case of an elementary normally distributed $\mat{X}$ with a unit covariance matrix, the mode is the point of $B$ that minimises the distance to $\mat{\mu}$. Since $\mat{\mu} \notin B$, this point must lie on the boundary of $B$, \ie $\tilde{\mat{x}}_{B} \in A$. Because $A$ is a subset of $B$, we can proceed to compute $\tilde{\mat{x}}_{A}$, which is then necessarily the mode of $\mat{X} \, \mid \, B$.
+
+For a half-plane $B$, we now have an explicit expression for $\tilde{\mat{x}}_{B}$, \ie the \emph{most likely value} of $\mat{X}$, given that $\mat{X} \in B$. What can we say about the \emph{expected value} of $\mat{X} \, \mid \, B$? Geometrically, one can imagine that $\EXP [\mat{X} \, \mid \, \mat{X} \in B]$ lies close to $\tilde{\mat{x}}_{B}$, but `shifted inwards', away from $\partial B$ (in the direction of its pillar). We have not found a direct method to compute this expected value. \cite{Nesti2018emergentfailures} introduce a scaling factor $\epsilon>0$ to the covariance of $\mat{X}$ (\ie $\mat{X}_{\epsilon} \, \sim \, \gaussdistr(\mat{\mu}, \epsilon\mat{\Sigma})$), and show that the expected value \emph{converges} to $\tilde{\mat{x}}_{B}$, the mode,\footnote{The factor $\epsilon$ disappears in (\ref{eq:modeofaplaneconditional}).} as $\epsilon \rightarrow 0$, using the tools of Large Deviations Theory.
+
+One can interpret this result as saying that the probability density of $\mat{X}_{\epsilon} | B$ gets \emph{concentrated close to the boundary of $B$}. In the one-dimensional case, this statement\footnote{\ie the \emph{tail distribution} of $X \, \sim \, \gaussdistr(0,\epsilon^2)$, given $X \geq 1$, becomes \emph{steeper} as $\epsilon \rightarrow 0$.} is easy to demonstrate, see \eg \cite{Touchette2009}.
 
 \todo[inline]{Is de marginale verdeling gaussiaans verdeeld? (Ze is niet normaal verdeeld.) Wat is de covariantiematrix? Je zou als Stap 0 kunnen transformeren naar een $\mathbf{r}_A$ die parallel aan een van de assen loopt, en dan dat coordinaat gelijk aan $\norm{\mathbf{r}_A}$ stellen? Maar dan klopt de verwachtingswaarde niet meer?}
 
