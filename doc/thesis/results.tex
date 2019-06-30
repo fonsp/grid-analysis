@@ -1,8 +1,36 @@
 \documentclass[main.tex]{subfiles}
  
 \begin{document}
+In this final chapter, we 
+
+\section{SciGRID data}
+The SciGRID dataset needs to be translated into the our model, as it contains more information than we need, not yet in the desired format. 
+
+\subsection{Properties}
+\emph{(A more detailed analysis of dataset properties is available on the GitHub repository.)}
+
+Before any processing, we find that the SciGRID network (obtained from \texttt{PyPSA} example code, the exact dataset used by \cite{Nesti2018emergentfailures}) contains 585 buses, 1423 generators (of all sources) and 489 loads. It also contains 38 storage units (all are pumped hydroelectric), but these were excluded from our analysis.\footnote{More specifically, they were used in solving the OPF problem, but their initial charge was set to zero.} There are 852 transmission lines in the dataset, at possible voltage levels $220 \, \si{\kilo\volt}$ and $380 \, \si{\kilo\volt}$, and there are 96 transformers (between these two voltages). Transmission lines have per-kilometre estimates for admittance, from which the total admittance can be deduced.
+
+\subsubsection{Voltages}
+In our model, we \emph{normalise} the grid voltage. To do so, we multiply all line admittances by the \emph{square} of their operating voltages, after which all voltages can be assumed to be $1$, and a unit of current is proportional to a unit of transmitted power. Of the 585 buses, 192 are part of one of the 96 \emph{voltage pairs}: these are two buses at the same location, with the same name (except for the voltage suffix), connected via a transformer. By merging these pairs, we find 489 geographically unique buses, at normalised voltage. From now on, we will refer to these (possibly merged) buses as the buses of the network: $n=489$, $\mathcal{N} = \range{489}$.
+
+\subsubsection{Loads}
+There is exactly 1 load connected to each bus. In reality, there are of course thousands of loads connected to a bus, but the load in the dataset is the \emph{aggregated} load at that bus. We have hourly time series (\ie amount of $\si{\mega\watt}$ being consumed) for each node in the year 2011, which only includes active power consumption.
+
+\subsubsection{Generators}
+Generators are connected to the geographically closest bus, and there is at most one generator per bus of each type.\footnote{In order of installed capacity: \emph{Wind Onshore} ($37\,\si{\giga\watt}$), \emph{Solar} ($37\,\si{\giga\watt}$), \emph{Hard Coal} ($25\,\si{\giga\watt}$), \emph{Gas} ($24\,\si{\giga\watt}$), \emph{Brown Coal} ($21\,\si{\giga\watt}$), \emph{Nuclear} ($12\,\si{\giga\watt}$), \emph{Run of River} ($4\,\si{\giga\watt}$), \emph{Other} ($3\,\si{\giga\watt}$), \emph{Wind Offshore} ($3\,\si{\giga\watt}$), \emph{Oil} ($2.7\,\si{\giga\watt}$), \emph{Waste} ($1.6\,\si{\giga\watt}$), \emph{Storage Hydro} ($1.4\,\si{\giga\watt}$), \emph{Multiple} ($0.15\,\si{\giga\watt}$) and \emph{Geothermal} ($32\,\si{\mega\watt}$).} This means that generation is \emph{aggregated}: multiple generators of the same type are combined into one. There are 489 solar generators, 488 onshore wind generators and 5 offshore wind generators. Offshore wind generators are connected to buses at the north coast of Germany. This means that every bus houses stochastic generation. Their geographic distribution is shown in Figure~\ref{fig:solarwind}.
+
+\subsubsection{Lines}
+Line voltages and admittances are normalised as described above. For each line, we have the names of the two original buses that it connects, which can easily be converted to the new bus collection.
+
+During the study of cascading failures, we found that the network contains \emph{parallel lines}: lines that connect the same pairs of buses. In some cases, there are up to four different lines that are all parallel. When examining these cases on OpenStreetMap, we find that there are indeed parallel lines in the physical network. This is reflected by the \emph{lengths} of parallel lines, as given by SciGRID: these are not the great-circle distances between buses, but rather the distance measured along the line (which makes some turns and bends).
+
+Because our model only holds for \emph{digraphs}, which cannot have parallel lines, we \emph{combine} parallel lines, by summing their (voltage normalised) admittances, and summing their thresholds.\footnote{The results regarding the kernel of $\FRT$, and the Optimised method for analysis cascading failures, break down without this property.} \cite{Nesti2018emergentfailures} do not mention this anomaly, and use the original set of lines. For comparison, we computed some results for both versions of the network, and found the results to be somewhat similar, in general. Because we did not consider the case of parallel lines in our model, combining parallel lines in the dataset seems like the \emph{correct} choice.
+
+Of the 852 original lines, there are 705 unique links between original buses before normalising voltages, and there are 695 unique links between buses. There are never two parallel lines with opposite orientation. These 695 lines were used in our model, and will be referred to as simply the \emph{lines} of the network: $m = 695$.
 
 \section{Bus covariance}
+
 
 \section{Line covariance}
 

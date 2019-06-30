@@ -1,6 +1,13 @@
 \documentclass[main.tex]{subfiles}
  
 \begin{document}
+%The electric grid 
+
+%The thesis that you are currently reading
+
+%Unless you are reading a handwritten copy of this thesis in your back yard, 
+
+
 \towrite{
 
 (100W = 16-candela = 200lm = 2.2Watt bij ikea)
@@ -18,14 +25,35 @@ why interconnect? separate generation and load; economy of scale; security (dist
 
 \emph{This chapter is based on the books \emph{Electric Power Systems} by \cite{VonMeier2006}, which provides a clear summary of the working and operation of electric grids, and \emph{Electric Power Principles: Sources, Conversion, Distribution and Use} by \cite{Kirtley2010}, a more quantitative approach to the subject.}
 \section{Overview}
-\towrite{basics, scale, nomenclature}
+One could say that the electric grids of this word are some of the largest machines built by humans. 
+
+As this system was built by clever engineers, its behaviour is, on a small scale (individual lines, transformers, and so on) \emph{well-understood}. In fact, one of the reasons that all transmission lines, substations and switchboxes look so similar, is to increase the \emph{homogeneity} of the network.
+
+On a larger scale, however, the behaviour of this machine is not always well understood, and .
+
+Because of their scale and complexity
+
+%The screen that you are reading this thesis on, or the printer that was used to print it, is most likely connected
+\towrite{basics, scale, transmission-distribution-?, europe-US, security }
 \section{Generators}
-Almost all sources of electric power in the electric grid use an \emph{AC generator}\index{generator} to convert (rotational) kinetic energy to electric energy.\footnote{A notable exception is the photovoltaic cell (PV cell) used in solar panels. PV cells produce a direct current, which is converted to AC power at nominal voltage using an \define{inverter}. Solar inverters are often complicated systems, capable of using battery storage, synchronising with the AC grid and varying PV operating voltage to maximise PV efficiency.} 
+Almost all sources of electric power in the electric grid use an \define{AC generator}\index{generator} to convert (rotational) kinetic energy to electric energy.\footnote{A notable exception is the photovoltaic cell (PV cell) used in solar panels. PV cells produce a direct current, which is converted to AC power at nominal voltage using an \define{inverter}. Solar inverters are often complicated systems, capable of using battery storage, synchronising with the AC grid and varying PV operating voltage to maximise PV efficiency.} 
 At a hydroelectric plant, the weight of water applies direct torque to the water pumps, mechanically connected to the generator shaft.\footnote{Some hydroelectric plants are \emph{reversible}: their generators can be used as electric motors, pumping water back up into a reservoir. This is a form of large-scale \define{energy storage}, which can increase the usability of intermittent renewable energy sources.}
 At most other types of plants (including coal-fired and nuclear plants), generators are powered by steam pressure. 
+
+The term \define{AC generator} denotes a specific device that uses \emph{electromagnetic induction} to convert rotational kinetic energy into AC power. Somewhat confusingly, we use the term \define{generator} to denote \emph{any} energy source connected to the grid, where we consider a power plant (which might house multiple AC generators) as a single generator. Solar parks and lithium batteries are generators, but they do not use an AC generator. They use an AC inverter, which \emph{mimics}, to some extent, the behaviour of a classical AC generator.
+
 \towrite{coils, 3 phase}
+ 
 \section{Loads}
 \towrite{load profiling, load series, fridge duty cycle example, reactive load, power factor}
+Unlike other utilities like gas and water, the transfer of electrical energy is \emph{instantaneous}.\footnote{Within the limits of special relativity, of course. That is, while the drift speed electrons is nowhere near the speed of light, the actual \emph{signal} propagates at about two thirds the speed of light, depending on the type of cable.} Of course, energy storage does exist,\footnote{Most commonly as \emph{reversible} hydro-electric generators; other examples include hydrogen storage (electrolysis of water produces hydrogen and oxygen, which can be stored and combusted at a later time) and lithium storage (very large phone batteries) (some electric vehicles can also return energy back to grid!)} but this energy is not stored as `high-voltage AC energy', but as \emph{potential} (mechanical or chemical) energy. Potential energy needs to be converted before it can be transmitted, which is not instantaneous. When switching on your lights, there will be an \emph{instant} increase in demand, which must be generated somewhere (otherwise it would violate the Law of Conservation of Energy). Of course, via the electric grid, your light bulb is connected to generators, which then start converting an additional $10 \, \si{\watt}$ to power the light bulb. But how do the generators know when to increase their output, if you never called them to say that you are turning on your lights? 
+
+The answer is called \define{electric inertia}. A classic AC generator (in a hydroelectric plant, for example) contains a heavy rotor, which is spinning at (a rational fraction of) the grid frequency. Because of its weight, a lot of energy is stored in the spinning of the rotor. When the total load on an AC network is increased, there is no instantaneous increase in burning of fuel, flowing of water, or otherwise. Instead, this increase in power demand will `take' its energy from the \emph{inertial energy} of all rotational AC generators in the grid, \emph{slowing down} their rotation. As a result, the AC frequency of the entire grid starts slowing down. When grid operators notice a drop in AC frequency (we are talking about differences on the order of $0.001\,\si{\hertz}$ here), they can increase the amount of fuel being burned, open water valves or lift control rods from between radioactive cores to increase the amount of energy converted by the AC generator. This will start to increase the AC frequency again, until it settles at the predetermined utility frequency ($60\,\si{\hertz}$ in North America and Northern South America; $50\,\si{\hertz}$ in the rest of the world, with some exceptions).
+Most modern AC generators have an automatic feedback loop to control the steam valve, to allow for frequency adjustments on the smallest scale.
+
+
+
+
 \section{Transmission}
 \towrite{Should cover: lines, transformers, circuit breakers, grid security}
 \subsection{DC transmission}
@@ -132,6 +160,8 @@ In general, one can assume that the price offered for renewable energy is close 
 Energy from company B is generally more expensive, since it has a marginal cost (price of coal, labour wages, and so on), on top of paying back the investment.\footnote{In some cases, coal plants offer their electricity for a lower, or even negative, price, to avoid power off the plant. With the exception of open-cycle gas turbines, turning on non-renewable energy plants is expensive, and might take several hours. It might be cheaper for company B to offer their energy for free for one hour than to turn off the plant.}
 
 \towrite{Misschien is dit een goede plek om de \emph{environmental cost} van elk type generator te geven}
+
+Besides offering their marginal price, generators will also state their \define{generation capacity}.\footnote{This use of the word \emph{capacity} is entirely different from the \emph{capacity} of a capacitor, used in electrical engineering.} For some generators, this will always be the same amount. For a solar park, however, this capacity varies drastically, and needs to be estimated.
 
 \subsubsection*{Phase two: grid operator}
 Now that all generators have offered a price, the grid operator needs to decide where to buy its energy from. Grid operators have a fairly good estimate for the load (energy demand) during the coming hour, based on the current load, historical load series, weather forecasts, sporting events, television programme schedules, and so on. Such a model is called a \define{load profile}. \todo{load profile plotje}
