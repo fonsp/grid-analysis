@@ -4,8 +4,10 @@ import numpy as np
 import pandas as pd
 import scipy as sp
 import logging
-
+import json
 from pathlib import Path
+
+import src.globals
 
 pypsapath = "C:/dev/py/PyPSA/"
 if sys.path[0] != pypsapath:
@@ -29,6 +31,14 @@ class SciGRID_network():
         #self.network.generators.carrier = self.network.generators.source
         self.contingency_factor_scaled = False
 
+        self.operating_voltage_lines = self.network.lines.voltage.values
+        pypsa.pf.apply_line_types(self.network)
+
+        X = self.network.lines.x.values
+        R = self.network.lines.r.values
+        minusB = X / (X*X + R*R)
+        self.i_times_lineadmittance_old = minusB * self.operating_voltage_lines * self.operating_voltage_lines
+
         self.reload()
 
     def reload(self):
@@ -40,40 +50,57 @@ class SciGRID_network():
         generator_buses = self.network.generators.bus.unique()
 
         self.n = len(generator_buses)
-        self.m = len(self.network.lines)
 
         # N:
         self.new_nodes = sorted(list(generator_buses))
 
         # L:
-        self.new_lines = [(self.node_index(a), self.node_index(b)) for _, a, b in self.network.lines[['bus0', 'bus1']].itertuples()]
+        self.old_lines = [(self.node_index(a), self.node_index(b)) for _, a, b in self.network.lines[['bus0', 'bus1']].itertuples()]
 
-        self.operating_voltage_lines = self.network.lines.voltage.values
+        # There are duplicate lines!
+        # We will combine them by adding admittances
+
+        self.old_line_indices = {l: [i for i, l_old in enumerate(self.old_lines) if l_old == l] for l in self.old_lines}
+        self.scigrid_line_indices = [[self.network.lines.index.values[i] for i in indices] for indices in self.old_line_indices.values()]
+
+        self.new_lines = list(self.old_line_indices)
+        self.m = len(self.new_lines)
+
+        self.old_index_to_new = [self.new_lines.index(old) for old in self.old_lines]
+        self.new_index_to_old = [indices[0] for indices in self.old_line_indices.values()]
+
+        self.line_lengths = [self.network.lines.length[i] for i in self.new_index_to_old]
+
+        self.i_times_lineadmittance_new = self.map_to_new_line_array(self.i_times_lineadmittance_old)
+
+        X = self.network.lines.x.values / self.operating_voltage_lines
+        R = self.network.lines.r.values / self.operating_voltage_lines
+        X_new = self.map_to_new_line_array(X)
+        R_new = self.map_to_new_line_array(R)
+        minusB_new = X_new / (X_new*X_new + R_new*R_new)
+        self.i_times_lineadmittance_new = minusB_new
+
+        logging.info("Combined {} parallel lines".format(len(self.network.lines) - self.m))
 
         # %% Flow matrix
         self.C = SciGRID_network.edge_vertex_incidence_matrix(self.new_nodes, self.new_lines)
-        self.CV = sp.sparse.diags(self.operating_voltage_lines) * self.C
 
-        pypsa.pf.apply_line_types(self.network)
+        self.line_threshold = self.network.lines.s_nom.values.copy()
+        self.line_threshold = self.map_to_new_line_array(self.line_threshold)
 
-        X = self.network.lines.x.values
-        R = self.network.lines.r.values
-        minusB = X / (X*X + R*R)
-        self.i_times_lineadmittance = minusB# * operating_voltage_lines
-
-        # TODO: contingency factor
-        self.line_threshold = self.network.lines.s_nom.values.copy()# * 1e6 / operating_voltage_lines
         # There are some infeasibilities without small extensions
         for line_name in ["316", "527", "602"]:
             line_index = next(i for i, s in enumerate(self.network.lines.index) if s == line_name)
-            self.line_threshold[line_index] = 1200
-        if self.contingency_factor_scaled:
-            self.line_threshold = self.network.lines.s_nom.values / .7
+            self.line_threshold[self.old_index_to_new[line_index]] = 1200
+        # if self.contingency_factor_scaled:
+        #     self.line_threshold = self.network.lines.s_nom.values / .7
 
-        self.L = self.CV.T.dot(sp.sparse.diags(self.i_times_lineadmittance)).dot(self.CV)
+        self.L = self.C.T @ sp.sparse.diags(self.i_times_lineadmittance_new) @ self.C
         self.Linv = np.array(np.linalg.pinv(self.L.todense()))
 
-        self.F = np.multiply((self.operating_voltage_lines * self.i_times_lineadmittance)[:, np.newaxis], self.CV.dot(self.Linv))
+        self.F = np.multiply((self.i_times_lineadmittance_new)[:, np.newaxis], self.C @ self.Linv)
+
+        self.M = self.F @ self.C.T - np.identity(self.m)
 
         self.locations = pd.DataFrame(self.network.buses.loc[self.new_nodes][["x", "y"]])
         self.locations.index = range(self.n)
@@ -188,8 +215,91 @@ class SciGRID_network():
             self.line_flow_linear.loc[t, :] += self.F @ p.values
             self.line_saturation_linear.loc[t, :] += self.line_flow_linear.loc[t, :] / self.line_threshold
 
-        self.line_flow_nonlinear = self.network.lines_t.p0.iloc[:24, :]
+        self.line_flow_nonlinear = self.map_to_new_line_df(self.network.lines_t.p0.iloc[:24, :])
+
         self.line_saturation_nonlinear = self.line_flow_nonlinear / self.line_threshold
+
+    def most_likely_power_injection_given_line_failure(self, first_failure, bus_covariance, time=None):
+        if time is None:
+            time = self.network.generators_t.p.index[11]
+        mup = self.injection_total.loc[time]
+        muf = self.line_saturation_nonlinear.loc[time] # should be line_saturation_linear to be mathematically correct
+
+        sigmap = bus_covariance
+        line_cov = self.F @ bus_covariance @ self.F.T
+        sigmaf = (line_cov * (1.0/self.line_threshold)) * ((1.0/self.line_threshold)[:, np.newaxis])
+
+        def sign_mod(x):
+            """The regular sign function, with the modification that `sign_mod(0.0)==1.0`, instead of zero."""
+            return 1.0 if x >= 0.0 else -1.0
+
+        return mup + (sign_mod(muf[first_failure]) - muf[first_failure]) / sigmaf[first_failure, first_failure] * (sigmap @ (self.F[first_failure] / self.line_threshold[first_failure]))
+
+    def line_outage_flow_difference(self, failed_lines, nominal_flow, verbose_rank_loss=False):
+        # Mzeroed = self.M.copy()
+        # Mzeroed[np.abs(Mzeroed) < 1e-10] = 0.0
+        # MN = Mzeroed[:, failed_lines]
+        MN = self.M[:, failed_lines]
+        NtMN = MN[failed_lines, :]
+        Ntf = nominal_flow[failed_lines]
+
+        NtMNinvNtf, residuals, NtMNrank, _ = np.linalg.lstsq(NtMN, Ntf, rcond=None)
+        # print(NtMNinvNtf)
+        if verbose_rank_loss and NtMNrank < len(failed_lines):
+            print("Loss of rank: {}".format(len(failed_lines) - NtMNrank))
+        return np.dot(-MN, NtMNinvNtf)
+
+    def simulate_cascade(self, first_failure, bus_covariance, time=None, iter_lim=50):
+        if time is None:
+            time = self.network.generators_t.p.index[11]
+        failed_lines = {first_failure}
+        assumed_injection = self.most_likely_power_injection_given_line_failure(first_failure, bus_covariance=bus_covariance, time=time)
+        base_flow = self.F @ assumed_injection
+
+        for _i in range(iter_lim):
+            fl_list = list(failed_lines)
+            new_flow = base_flow + self.line_outage_flow_difference(fl_list, base_flow)
+
+            # Uncomment to check validity:
+            #assert np.max(np.abs(new_flow[fl_list])) < 1e-10
+
+            yield (fl_list, new_flow)
+            new_failures = {l for l in range(self.m) if new_flow[l] >= self.line_threshold[l]} - failed_lines
+            if not new_failures:
+                return
+            failed_lines |= new_failures
+        logging.warning("Cascade simulation: iteration limit {} reached. First failure: {}".format(iter_lim, first_failure))
+
+    def export_cascades_to_json(self, bus_covariance, filename=None, first_failures=None, time=None, iter_lim=50):
+        cascades = dict()
+        cascades_approx = dict()
+        if first_failures is None:
+            first_failures = range(self.m)
+
+        for l in tqdm(first_failures):
+            try:
+                casc = list(self.simulate_cascade(l, bus_covariance=bus_covariance, time=time, iter_lim=iter_lim))
+                cascades[l] = [(failed, list(flow)) for failed, flow in casc]
+
+                casc_approx = []
+                for failed, flow in casc:
+                    sat_approx = np.clip(np.abs(flow) / self.line_threshold, 0.0, 1.0)
+                    out = "".join('#' if i in failed else chr(48 + int(el * 64)) for i, el in enumerate(sat_approx))
+                    casc_approx.append(out)
+                cascades_approx[l] = casc_approx
+            except np.linalg.LinAlgError:
+                print("Simulating cascade of line {} failed with LinAlgError".format(l))
+
+        if filename is None:
+            filename = "simulated_cascades"
+
+        with open(src.globals.data_path / "processed" / (filename + ".json"), "w") as f:
+            print("Writing to {}".format(f.name))
+            json.dump(cascades, f, separators=(',', ':'))
+
+        with open(src.globals.data_path / "processed" / (filename + "_interactive.json"), "w") as f:
+            print("Writing to {}".format(f.name))
+            json.dump(cascades_approx, f, separators=(',', ':'))
 
 
     @staticmethod
@@ -210,6 +320,26 @@ class SciGRID_network():
         j += j >= i
         return i, j
 
+    def map_to_old_line_array(self, x):
+        x_mapped = [0.0]*len(self.network.lines)
+        for val, i in enumerate(x):
+            x_mapped[self.new_index_to_old[i]] = val
+        if type(x) is np.ndarray:
+            return np.array(x_mapped)
+        return x_mapped
+
+    def map_to_new_line_array(self, x):
+        x_mapped = [sum(x[l] for l in indices) for indices in self.old_line_indices.values()]
+        if type(x) is np.ndarray:
+            return np.array(x_mapped)
+        return x_mapped
+
+    def map_to_new_line_df(self, d):
+        return pd.DataFrame.from_dict(dict((i, self.map_to_new_line_array(r)) for i, r in d.iterrows()), orient="index")
+
+    def scigrid_name_to_new_line_number(self, name):
+        return next(i for i, names in enumerate(self.scigrid_line_indices) if name in names)
+
     @staticmethod
     def lon2km(deg):
         return np.cos(50 * np.pi/180) * 40000 * (deg / 360)
@@ -223,3 +353,28 @@ class SciGRID_network():
             return z*z
 
         return np.sqrt(s(SciGRID_network.lon2km(self.locations.x[a] - self.locations.x[b]))+s(SciGRID_network.lat2km(self.locations.y[a] - self.locations.y[b])))
+
+    def bus_array_to_plot(self, x):
+        bus_sizes = [0]*len(self.network.buses)
+        if x is None:
+            return bus_sizes, ['#00000000']*len(self.network.buses)
+        bus_colors = ['g']*len(self.network.buses)
+
+        for i, bus_name in enumerate(self.network.buses.index):
+            if bus_name in self.new_nodes:
+                val = x[self.node_index(bus_name)]
+                bus_sizes[i] = np.abs(val) / 10
+                bus_colors[i] = '#6fd08c' if val > 0 else '#7b9ea8'
+        return bus_sizes, bus_colors
+
+    def line_array_to_plot(self, color, width=None):
+        if width is None:
+            width = np.ones(self.m)
+        line_colors = [0]*len(self.network.lines)
+        line_widths = [0]*len(self.network.lines)
+
+        for i, (c, w) in enumerate(zip(color, width)):
+            old_i = self.new_index_to_old[i]
+            line_colors[old_i] = color[i]
+            line_widths[old_i] = width[i]
+        return line_colors, line_widths
