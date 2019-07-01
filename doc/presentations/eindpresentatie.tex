@@ -35,6 +35,12 @@
   \endgroup
 }
 
+\newcommand{\plaatjeframe}{{\setbeamercolor{palette primary}{fg=black, bg=white}
+\begin{frame}[standout]
+  \href{https://observablehq.com/@olivier_plas/cascading-line-failures-caused-by-renewable-fluctiations}{\texttt{fonsp.com/plaatje}}
+\end{frame}
+}}
+
 
 % https://coolors.co/ed1c24-f5bb00-fdfffc-235789-020100
 \definecolor{donker}{HTML}{0D2032}
@@ -96,8 +102,8 @@
 
 \begin{frame}{Transmission network of Germany}
     \begin{figure}
-    \includegraphics[height=.69\paperheight]{img/nominalload.pdf}
-    \caption{The $n=585$ nodes and $k=852$ lines of the SciGRID dataset.}
+    \includegraphics[height=.69\paperheight]{img/just_the_network.pdf}
+    \caption{The $n=585$ nodes and $k=695$ lines of the SciGRID dataset.}
     \end{figure}
 \end{frame}
 
@@ -120,7 +126,7 @@
 
 \begin{frame}{Line limits}
     \begin{figure}
-    \includegraphics[height=.69\paperheight]{img/nominallineflow.pdf}
+    \includegraphics[height=.69\paperheight]{img/nominal_flow_and_injection.pdf}
     \caption{Line saturation at 11am, 1 Jan 2011.}
     \end{figure}
 \end{frame}
@@ -164,7 +170,7 @@
         \begin{tikzpicture}[scale=.6]
         \node[draw, circle](b) at (6,3){1};
         \node[draw, circle](f) at (1,2){-2};
-        \node[draw, circle](l) at (5,0){1};
+        \node[draw, circle](l) at (5,0){0};
         \node[above, opacity=.6] at ($(b.north) + (.3,.1)$) {\emph{Berlin   }};
         \node[below, opacity=.6] at ($(f.south) - (.6,.1)$) {\emph{Frankfurt}};
         \node[below, opacity=.6] at (l.south) {\emph{Leipzig  }};
@@ -210,12 +216,12 @@
     \column{0.5\textwidth}
     \[\mat{f}=\begin{pmatrix}
     1\\2\\6\\-1\\4
-    \end{pmatrix} \in \mathbb{R}^k, \quad \mat{v}=\begin{pmatrix}
+    \end{pmatrix} \in \mathbb{R}^k, \quad \mat{p}=\begin{pmatrix}
     ?\\?\\?\\?
     \end{pmatrix}\in \mathbb{R}^n\]
     {\metroset{block=fill}
     \begin{block}{\textbf{Power transmission is linear}}
-        \[\mat{v} = \mat{C}\cdot \mat{f}\]
+        \[\mat{p} = \mat{C}\cdot \mat{f}\]
       \end{block}
       }
     \[\mat{C} \in \mathbb{R}^{n\times k}\]
@@ -237,7 +243,7 @@
     \column{0.5\textwidth}
     {\metroset{block=fill}
     \begin{block}{\textbf{Power transmission is linear}}
-        \[\mat{v} = \mat{C}\cdot \mat{f}\]
+        \[\mat{p} = \mat{C}\cdot \mat{f}\]
       \end{block}
       }
     \[\mat{C}=\begin{pmatrix}
@@ -246,7 +252,7 @@
      0&-1&+1& 0&-1\\
     -1&+1& 0& 0& 0\\
     \end{pmatrix}\]
-    \[\text{we get: } \mat{v}=\mat{C}\cdot\mat{f}=\begin{pmatrix}
+    \[\text{we get: } \mat{p}=\mat{C}\cdot\mat{f}=\begin{pmatrix}
     -6\\5\\0\\1
     \end{pmatrix}\]
     \column{0.5\textwidth}
@@ -373,8 +379,8 @@
 
 
 {
-\usebackgroundtemplate{\includegraphics[height=\paperheight]{img/torontomedres.jpg}}
-\setbeamertemplate{frame footer}{\color{white}{Wikimedia Commons}}
+\usebackgroundtemplate{\includegraphics[height=\paperheight]{img/schaalmodel_sepia.jpg}}
+\setbeamertemplate{frame footer}{\color{white}{Instructables	}}
 \setbeamertemplate{headline}{\vskip-\headheight}
 \begin{frame}[noframenumbering]
 
@@ -421,7 +427,7 @@
 
 \section{Stochastic power injections}
 
-\begin{frame}{Linearised Power Flow (LPF)}
+\begin{frame}{Deterministic power injection $\mat{p}$}
     Given a power injection $\mat{p} \in \mathbb{R}^n$:
     \begin{itemize}
         \item \alert{\textbf{Linearised Power Flow} computes \emph{line current}}
@@ -463,10 +469,10 @@ f_5 = \raisebox{-1mm}{\inlinebar{.3}{green}}
     When the power injection $\mat{P}$ is \textbf{stochastic}:
     \begin{itemize}
         \item \alert{\textbf{LPF} now gives the line current \emph{distribution}}
-        \item \textbf{Large deviations theory} estimates:
+        \item For each line, we have:
         \begin{itemize}
             \item the failure \emph{probability}
-            \item the \emph{most likely power injection $\hat{\mat{p}}$} that would cause that failure
+            \item the \emph{most likely power injection $\tilde{\mat{p}}$} that would cause that failure
         \end{itemize}
     \end{itemize}
     \vspace{10mm}
@@ -488,7 +494,7 @@ F_3 \sim \raisebox{-1mm}{\inlineprob{0.9}{100.0}{orange}} \\
 F_4 \sim \raisebox{-1mm}{\inlineprob{1.1}{10.0}{orange}} \\
 F_5 \sim \raisebox{-1mm}{\inlineprob{0.7}{5.0}{orange}}
 \end{pmatrix}
-\tikz{\draw[|->,thick] (0,0) -- (10mm,0) node[above,midway] {\begin{tabular}{c} Large \\ Dev. \end{tabular}};}
+\tikz{\draw[|->,thick] (0,0) -- (10mm,0) node[above,midway] {};}
 \begin{pmatrix}
 \phantom{0}0.001\%\phantom{0}\\
 \phantom{0}0.0001\%\\
@@ -497,43 +503,133 @@ F_5 \sim \raisebox{-1mm}{\inlineprob{0.7}{5.0}{orange}}
 10.0\%\phantom{000}
 \end{pmatrix}, 
 \begin{pmatrix}
-\hat{\mat{p}}\,\mid \, F_1>1\\
-\hat{\mat{p}}\,\mid \, F_2>1\\
-\hat{\mat{p}}\,\mid \, F_3>1\\
-\hat{\mat{p}}\,\mid \, F_4>1\\
-\hat{\mat{p}}\,\mid \, F_5>1
+\tilde{\mat{p}}\,\mid \, F_1>1\\
+\tilde{\mat{p}}\,\mid \, F_2>1\\
+\tilde{\mat{p}}\,\mid \, F_3>1\\
+\tilde{\mat{p}}\,\mid \, F_4>1\\
+\tilde{\mat{p}}\,\mid \, F_5>1
 \end{pmatrix}
 \]
 \end{frame}
 
-\section{Progress}
-\begin{frame}{Progress}
-    
-\begin{table}[]
-\begin{tabular}{ll}
-\Checkmark & \textit{Find a thesis subject} \\[2mm]
-\Checkmark & Derive \textbf{LPF} from circuit laws \\[2mm]
-\Checkmark & Solar, wind, load \& structure data set \\[2mm]
-\Checkmark & OPF simulation $\rightarrow$ \textbf{complete data set}\\[4mm]
-\tododot & Recreate solar/wind model \\[2mm]
-\tododot & Apply Large Deviation Statistics\\[2mm]
-\tododot & Study cascading failures\\[4mm]
-\maybetododot & Just Germany?\\[2mm]
-\maybetododot & Solar/wind \textbf{model accuracy}
+\plaatjeframe
+
+\begin{frame}{Stochastic power injection $\mat{P}$}
+When the power injection $\mat{P}$ is \textbf{Gaussian}:
+\[
+\mat{P} \, \sim \, \mathcal{N}(\mat{\mu}, \Sigma),
+\]
+then then line flow vector $\mat{F}$ is also Gaussian:
+\begin{align*}
+\mat{F} &= \mat{LPF}\cdot\mat{P} \\ 
+\mat{F} &\sim \, \mathcal{N}(\mat{LPF}\cdot\mat{\mu}, \quad\mat{LPF} \cdot \Sigma \cdot \mat{LPF}^T).
+\end{align*}
+\end{frame}
+
+\begin{frame}{Correlated injections, night-time}
+    \begin{figure}
+    \includegraphics[height=.65\paperheight]{img/bus_correlation_345_iid_and_fullcov_night.pdf}
+    \caption{Covariance relative to bus 345, wind only.}
+    \end{figure}
+\end{frame}
+
+\begin{frame}{Correlated injections, daytime}
+    \begin{figure}
+    \includegraphics[height=.65\paperheight]{img/bus_correlation_345_iid_and_fullcov_day.pdf}
+    \caption{Covariance relative to bus 345, wind \& solar.}
+    \end{figure}
+\end{frame}
+
+\begin{frame}{Correlated flow, daytime}
+    \begin{figure}
+    \includegraphics[height=.65\paperheight]{img/flow_correlation_251_iid_and_fullcov.pdf}
+    \caption{Covariance relative to line 251.}
+    \end{figure}
+\end{frame}
+
+
+\begin{frame}{Correlated flow, daytime}
+    \begin{figure}
+    \includegraphics[height=.65\paperheight]{img/flow_correlation_387_iid_and_fullcov.pdf}
+    \caption{Covariance relative to line 387.}
+    \end{figure}
+\end{frame}
+
+\begin{frame}{Long-range correlations}
+    \begin{figure}
+    \includegraphics[height=.65\paperheight]{img/line_covariance_vs_line_distance.pdf}
+    \caption{Covariances of $10^5$ random line pairs, versus their distance.}
+    \end{figure}
+\end{frame}
+
+\section{Cascading failures}
+\begin{frame}{Conclusions}
+Flow redistribution causes new failures!
+
+\end{frame}
+
+
+\plaatjeframe
+
+\begin{frame}{Top 10 risky lines!}
+\begin{table}
+\begin{tabular}{lrr}
+\toprule
+line & $\mathbb{P}[|F_l| \geq 1]$ & cascaded \\
+\midrule
+651 &      9.56 \% &        1 \\
+652 &      8.96 \% &        1 \\
+411 &      7.06 \% &        1 \\
+54  &      6.21 \% &        1 \\
+298 &      3.45 \% &       13 \\
+473 &      3.13 \% &        1 \\
+213 &      2.37 \% &        1 \\
+25  &      2.11 \% &        2 \\
+645 &      2.02 \% &       32 \\
+74  &      1.96 \% &        1 \\
+\bottomrule
 \end{tabular}
 \end{table}
+\end{frame}
+
+\begin{frame}{Less risky lines: lower top 50}
+\begin{table}
+\begin{tabular}{llr}
+\toprule
+line & $\mathbb{P}[|F_l| \geq 1]$ & cascaded \\
+\midrule
+459 &  $9.51\cdot 10^{-7}$ &      137 \\
+280 &  $7.90\cdot 10^{-7}$ &      185 \\
+481 &  $7.61\cdot 10^{-7}$ &      216 \\
+337 &  $5.82\cdot 10^{-7}$ &        3 \\
+22  &  $3.47\cdot 10^{-7}$ &      125 \\
+416 &  $3.12\cdot 10^{-7}$ &      178 \\
+144 &  $2.69\cdot 10^{-7}$ &      198 \\
+654 &  $1.26\cdot 10^{-7}$ &      175 \\
+188 &  $1.02\cdot 10^{-7}$ &      152 \\
+18  &  $6.43\cdot 10^{-8}$ &      162 \\
+\bottomrule
+\end{tabular}
+
+\end{table}
+\end{frame}
+
+\section{Conclusions}
+\begin{frame}{Conclusions}
+\begin{itemize}
+\item \textbf{Long-distance correlations} in line currents are \textbf{increased} because of correlated weather.
+\item \alert{If an emergent failure occurs, it can \textbf{coincide with} or \textbf{cause} other failures.}
+\end{itemize}
+\hphantom{x}\\[2em]
+\begin{itemize}
+\item Complex behaviour of transmission networks arises from simple, \emph{elegant} mathematical structure
+\end{itemize}
 \end{frame}
 
 
 {\setbeamercolor{palette primary}{fg=black, bg=black}
 \begin{frame}[standout]
   Questions?
-\end{frame}
-}
-
-{\setbeamercolor{palette primary}{fg=black, bg=white}
-\begin{frame}[standout]
-  \href{https://observablehq.com/@olivier_plas/cascading-line-failures-caused-by-renewable-fluctiations}{\texttt{fonsp.com/plaatje}}
 \end{frame}
 }
 
@@ -573,7 +669,7 @@ F_5 \sim \raisebox{-1mm}{\inlineprob{0.7}{5.0}{orange}}
 }
 
 \begin{frame}{Github}
-  \begin{center}\href{https://github.com/fons-/grid-analysis}{github.com/fons-/grid-analysis}\end{center}
+  \begin{center}\href{https://github.com/fonsp/grid-analysis}{github.com/fonsp/grid-analysis}\end{center}
 \end{frame}
 
 
