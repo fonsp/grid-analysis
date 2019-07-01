@@ -219,6 +219,31 @@ class SciGRID_network():
 
         self.line_saturation_nonlinear = self.line_flow_nonlinear / self.line_threshold
 
+    def get_line_ratings(self, bus_covariance, time=None):
+        if time is None:
+            time = self.network.generators_t.p.index[11]
+
+        f = self.line_saturation_nonlinear.loc[time]
+        line_cov = self.F @ bus_covariance @ self.F.T
+
+        def true_prob(mu_l, sigma_l):
+            return 1.0 - (sp.stats.norm.cdf(1.0, loc=mu_l, scale=sigma_l) - sp.stats.norm.cdf(-1.0, loc=mu_l, scale=sigma_l))
+
+        def rate(mu_l, sigma_l):
+            return np.square(1-np.abs(mu_l))/(2.0*np.square(sigma_l))
+
+        line_ratings = pd.DataFrame({"l": self.scigrid_line_indices,
+                                     "f": f,
+                                     "σ": np.sqrt(np.diagonal(line_cov)) / self.line_threshold})
+
+        ε_Σ = 1
+        line_ratings["P>1"] = true_prob(line_ratings.f, line_ratings.σ*ε_Σ)
+        line_ratings["rate"] = rate(line_ratings.f, line_ratings.σ*ε_Σ)
+
+        # line_ratings["Pnorm"] = line_ratings["P>1"] / np.max(line_ratings["P>1"])
+
+        return line_ratings
+
     def most_likely_power_injection_given_line_failure(self, first_failure, bus_covariance, time=None):
         if time is None:
             time = self.network.generators_t.p.index[11]
@@ -249,12 +274,15 @@ class SciGRID_network():
             print("Loss of rank: {}".format(len(failed_lines) - NtMNrank))
         return np.dot(-MN, NtMNinvNtf)
 
-    def simulate_cascade(self, first_failure, bus_covariance, time=None, iter_lim=50):
+    def simulate_cascade(self, first_failure, bus_covariance, time=None, linearity_correction=True, iter_lim=50):
         if time is None:
             time = self.network.generators_t.p.index[11]
         failed_lines = {first_failure}
         assumed_injection = self.most_likely_power_injection_given_line_failure(first_failure, bus_covariance=bus_covariance, time=time)
         base_flow = self.F @ assumed_injection
+
+        if linearity_correction:
+            base_flow += self.line_flow_nonlinear.loc[time] - self.line_flow_linear.loc[time]
 
         for _i in range(iter_lim):
             fl_list = list(failed_lines)
@@ -270,7 +298,7 @@ class SciGRID_network():
             failed_lines |= new_failures
         logging.warning("Cascade simulation: iteration limit {} reached. First failure: {}".format(iter_lim, first_failure))
 
-    def export_cascades_to_json(self, bus_covariance, filename=None, first_failures=None, time=None, iter_lim=50):
+    def export_cascades_to_json(self, bus_covariance, filename=None, first_failures=None, time=None, linearity_correction=True, iter_lim=50):
         cascades = dict()
         cascades_approx = dict()
         if first_failures is None:
@@ -278,7 +306,7 @@ class SciGRID_network():
 
         for l in tqdm(first_failures):
             try:
-                casc = list(self.simulate_cascade(l, bus_covariance=bus_covariance, time=time, iter_lim=iter_lim))
+                casc = list(self.simulate_cascade(l, bus_covariance=bus_covariance, time=time, linearity_correction=linearity_correction, iter_lim=iter_lim))
                 cascades[l] = [(failed, list(flow)) for failed, flow in casc]
 
                 casc_approx = []
@@ -301,12 +329,12 @@ class SciGRID_network():
             print("Writing to {}".format(f.name))
             json.dump(cascades_approx, f, separators=(',', ':'))
 
-
     @staticmethod
     def edge_vertex_incidence_matrix(vertices, edges):
         row_indices = np.arange(len(edges)).repeat(2)
         column_indices = np.concatenate(edges)
         data = np.repeat([[1, -1]], repeats=len(edges), axis=0).flatten()
+        # data = np.array([[1, -1] if a < b else [-1, 1] for a, b in edges]).flatten()
         return sp.sparse.csr_matrix((data, (row_indices, column_indices)), shape=(len(edges), len(vertices)))
 
     def node_index(self, bus_name):
@@ -354,7 +382,7 @@ class SciGRID_network():
 
         return np.sqrt(s(SciGRID_network.lon2km(self.locations.x[a] - self.locations.x[b]))+s(SciGRID_network.lat2km(self.locations.y[a] - self.locations.y[b])))
 
-    def bus_array_to_plot(self, x):
+    def bus_array_to_plot(self, x=None):
         bus_sizes = [0]*len(self.network.buses)
         if x is None:
             return bus_sizes, ['#00000000']*len(self.network.buses)
@@ -367,7 +395,9 @@ class SciGRID_network():
                 bus_colors[i] = '#6fd08c' if val > 0 else '#7b9ea8'
         return bus_sizes, bus_colors
 
-    def line_array_to_plot(self, color, width=None):
+    def line_array_to_plot(self, color=None, width=None):
+        if color is None:
+            color = np.zeros(self.m)
         if width is None:
             width = np.ones(self.m)
         line_colors = [0]*len(self.network.lines)
