@@ -131,7 +131,23 @@
     \end{figure}
 \end{frame}
 
-\begin{frame}{Goal}
+{
+\usebackgroundtemplate{\includegraphics[width=\paperwidth]{img/tornado.jpg}}
+\setbeamertemplate{frame footer}{\color{white}{Wikimedia Commons}}
+\setbeamertemplate{headline}{\vskip-\headheight}
+\begin{frame}[noframenumbering]
+\end{frame}
+
+\usebackgroundtemplate{\includegraphics[width=\paperwidth]{img/oostenrijkstoppen.JPG}}
+\begin{frame}[noframenumbering]
+\end{frame}
+
+\usebackgroundtemplate{\includegraphics[width=\paperwidth]{img/chinastoppen.jpg}}
+\begin{frame}[noframenumbering]
+\end{frame}
+}
+
+\begin{frame}{Summary}
     \begin{columns}[T,onlytextwidth]
     \column{0.4\textwidth}
     Given:
@@ -332,6 +348,31 @@
         {?}
     \end{figure}
 \end{frame}
+
+\begin{frame}{Inverse problem: Linear Power Flow (LPF)}
+The $\mat{LPF}$ is a (linear) \emph{right-inverse} of $\mat{C}$:
+\[
+\mat{C} \cdot \mat{LPF} = \mat{I}.
+\]
+Many linear maps satisfy this property, but there is only one \emph{right} $\mat{LPF}$ that satisfies \textbf{Kirchoff's Circuit Laws} and \textbf{Ohm's Law}.
+\\[3em]
+The $\mat{LPF}$ is difficult to compute: requires \emph{Singular Value Decomposition} of a $k \times k$ matrix.
+\end{frame}
+
+\begin{frame}{Electric model - HV Layer}
+  \begin{figure}
+      \centering
+      \includegraphics[width=.8\textwidth]{img/vettegraaftoplayer.pdf}
+      \caption{Top layer of the electric circuit used in the model. Transmission lines are modelled as impedances.}
+      \label{fig:my_label}
+  \end{figure}
+\end{frame}
+
+{
+\usebackgroundtemplate{\includegraphics[width=\paperwidth, trim={0 0 0 10mm},clip]{img/vettegraaf.pdf}}
+\begin{frame}[plain]
+\end{frame}
+}
 
 \begin{frame}{Unknown generation: Linear Optimum Power Flow (LOPF)}
     \begin{figure}
@@ -563,9 +604,50 @@ then then line flow vector $\mat{F}$ is also Gaussian:
 \end{frame}
 
 \section{Cascading failures}
-\begin{frame}{Conclusions}
-Flow redistribution causes new failures!
-
+\begin{frame}{Cascades}
+Flow redistributions cause new failures!
+\begin{figure}
+\begin{tikzpicture}[scale=.5]
+    \node[draw, circle](b1) at (6,9){8};
+    \node[draw, circle](f1) at (1,8){-9};
+    \node[draw, circle](l1) at (5,6){1};
+    
+    
+    \draw[-latex] (b1) -- node[midway, right] {2 (3)} (l1);
+    \draw[-latex] (l1) -- node[midway, below]{1 (7)} (f1);
+    \draw[-latex] (b1) -- node[midway, above]{\color{red}{5 (5)}} (f1);
+    
+    
+    \node[draw, circle](b2) at (16,9){8};
+    \node[draw, circle](f2) at (11,8){-9};
+    \node[draw, circle](l2) at (15,6){1};
+    
+    
+    \draw[-latex] (b2) -- node[midway, right] {\color{red}{7 (3)}} (l2);
+    \draw[-latex] (l2) -- node[midway, below]{6 (7)} (f2);
+    \draw[dotted] (b2) --  (f2);
+    
+    
+    \node[draw, circle](b3) at (6,3){8};
+    \node[draw, circle](f3) at (1,2){-9};
+    \node[draw, circle](l3) at (5,0){1};
+    
+    
+    \draw[dotted] (b3) -- (l3);
+    \draw[-latex] (l3) -- node[midway, below]{\color{red}{10 (7)}} (f3);
+    \draw[dotted] (b3) --  (f3);
+    
+    
+    \node[draw, circle](b4) at (16,3){8};
+    \node[draw, circle](f4) at (11,2){-9};
+    \node[draw, circle](l4) at (15,0){1};
+    
+    
+    \draw[dotted] (b4) -- (l4);
+    \draw[dotted] (l4) -- (f4);
+    \draw[dotted] (b4) --  (f4);
+\end{tikzpicture}
+\end{figure}
 \end{frame}
 
 
@@ -635,7 +717,6 @@ line & $\mathbb{P}[|F_l| \geq 1]$ & cascaded \\
 
 \appendix
 
-
 \section{Appendix}
 
 \begin{frame}{LPF accuracy}
@@ -668,24 +749,39 @@ line & $\mathbb{P}[|F_l| \geq 1]$ & cascaded \\
 \end{frame}
 }
 
+\begin{frame}{ARMA?}
+    \begin{figure}
+        \centering
+        \includegraphics[height=.65\paperheight]{img/cov_direct_vs_proxy_solar.png}
+        \caption{Two methods for estimating bus covariances}
+    \end{figure}
+\end{frame}
+
+{
+\usebackgroundtemplate{\includegraphics[width=\paperwidth]{img/cov_falloff_solar.png}}
+\begin{frame}[plain]
+\end{frame}
+}
+
+\begin{frame}{ARMA?}
+    \begin{figure}
+        \centering
+        \includegraphics[height=.65\paperheight]{img/cov_direct_vs_proxy_wind.png}
+        \caption{Two methods for estimating bus covariances}
+    \end{figure}
+\end{frame}
+
+{
+\usebackgroundtemplate{\includegraphics[width=\paperwidth]{img/cov_falloff_wind.png}}
+\begin{frame}[plain]
+\end{frame}
+}
+
 \begin{frame}{Github}
   \begin{center}\href{https://github.com/fonsp/grid-analysis}{github.com/fonsp/grid-analysis}\end{center}
 \end{frame}
 
 
-\begin{frame}{Electric model - HV Layer}
-  \begin{figure}
-      \centering
-      \includegraphics[width=.8\textwidth]{img/vettegraaftoplayer.pdf}
-      \caption{Top layer of the electric circuit used in the model. Transmission lines are modelled as impedances.}
-      \label{fig:my_label}
-  \end{figure}
-\end{frame}
 
-{
-\usebackgroundtemplate{\includegraphics[width=\paperwidth, trim={0 0 0 10mm},clip]{img/vettegraaf.pdf}}
-\begin{frame}[plain]
-\end{frame}
-}
 
 \end{document}
