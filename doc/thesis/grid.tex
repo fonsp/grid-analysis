@@ -44,7 +44,7 @@ The term \define{AC generator} denotes a specific device that uses \emph{electro
 
 \towrite{coils, 3 phase}
  
-\section{Loads}
+\section{Loads}\label{sec:loads}
 \towrite{load profiling, load series, fridge duty cycle example, reactive load, power factor}
 Unlike other utilities like gas and water, the transfer of electrical energy is \emph{instantaneous}.\footnote{Within the limits of special relativity, of course. That is, while the drift speed electrons is nowhere near the speed of light, the actual \emph{signal} propagates at about two thirds the speed of light, depending on the type of cable.} Of course, energy storage does exist,\footnote{Most commonly as \emph{reversible} hydro-electric generators; other examples include hydrogen storage (electrolysis of water produces hydrogen and oxygen, which can be stored and combusted at a later time) and lithium storage (very large phone batteries) (some electric vehicles can also return energy back to grid!)} but this energy is not stored as `high-voltage AC energy', but as \emph{potential} (mechanical or chemical) energy. Potential energy needs to be converted before it can be transmitted, which is not instantaneous. When switching on your lights, there will be an \emph{instant} increase in demand, which must be generated somewhere (otherwise it would violate the Law of Conservation of Energy). Of course, via the electric grid, your light bulb is connected to generators, which then start converting an additional $10 \, \si{\watt}$ to power the light bulb. But how do the generators know when to increase their output, if you never called them to say that you are turning on your lights? 
 
@@ -144,7 +144,10 @@ Unless this phase drift is corrected for (by temporarily increasing or decreasin
 %Every hour, grid operators try to predic
 \clearpage
 \subsection{The energy market}
-\towrite{intro. Very simplified world:}
+Modern power grids play the role of a competitive economic market. There are many possible ways to supply everyone with power, because there is more \emph{installed capacity} than there is demand. As a result, generation shares are largely determined by \emph{bidding}. Different generation technologies (gas, wind, etc.) form a \emph{stacking order}: in general, wind energy will always be cheaper than coal. Yet, it is not uncommon for renewable, cheap energy sources to be \emph{curtailed}, in favour of more expensive, possibly non-renewable energy sources. One of the reasons for grid operators to do so, is to protect vulnerable lines from overloading. 
+
+\emph{In this section, we will describe a \textbf{very simplified} version of the energy market, to illustrate how grid operators ensure \emph{grid security} while minimising costs.}
+
 Every hour, all parties involved in the generation and transmission of power come together, to decide \emph{what the configuration during the following hour will be}. For the sake of simplicity, we will assume that each power plant (renewable or non-renewable) is owned by its own company, and that the entire transmission network is owned by a single grid operator.
 
 \subsubsection*{Phase one: offering prices}
