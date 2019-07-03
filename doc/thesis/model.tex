@@ -627,13 +627,13 @@ For realistic networks we have $m > n$, which means that $\mat{F}$ is not surjec
 \subsection{Overload probabilities}
 For a line $l$, the probability distribution of the current through that line is simply the marginal distribution $\mel{f}_l$. Therefore, the probability of an emergent failure of line $l$ is given by: \footnote{Remember that the \emph{sign} of $\mel{f}_l$ corresponds to the \emph{direction} of current through the line. The line orientations were chosen arbitrarily, and only have meaning in our bookkeeping.}
 \[
-\PROB\left[|\mel{f}_l| \geq 1 \right] = \PROB\left[\mel{f}_l \leq 1 \right] + \PROB\left[\mel{f}_l \geq 1 \right]
+\PROB\left[|\mel{f}_l| \geq 1 \right(ght] = \PROB\left[\mel{f}_l \leq 1 \right] + \PROB\left[\mel{f}_l \geq 1 \right]
 \]
 From Theorem \ref{prop:gaussianmarginaldistr} it follows that $\mel{f}_l \, \sim \, \gaussdistr(\mel{\mu}_{\mat{f}\,l}, \mel{\Sigma}_{\mat{f}\,ll})$, and $\PROB\left[|\mel{f}_l| \geq 1 \right]$ can now be computed using standard techniques.\todo{Or estimated using the LDP}
 
 The probability of \emph{any} emergent failure is $\PROB\left[\exists_{l \in \range{m}} |\mel{f}_l| \geq 1 \right]$, which can be approximated by an upper and lower bound:
 \[
-\min_{l \in \range{m}} \PROB\left[|\mel{f}_l| \geq 1 \right]
+\max_{l \in \range{m}} \PROB\left[|\mel{f}_l| \geq 1 \right]
 \quad\leq\quad
 \PROB\left[\exists_{l \in \range{m}} |\mel{f}_l| \geq 1 \right]
 \quad\leq\quad
