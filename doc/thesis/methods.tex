@@ -107,8 +107,34 @@ The default implementation has an estimated (single-core) runtime of 101 hours (
 
 The modified version is able to fit all generation series successfully. The use of this more computationally expensive method increases the runtime to an estimated 224 hours (9.4 days). Because of the long runtime, fits were computed in parallel on a 40-core machine\footnote{Specifications: two \textit{Intel Xeon E5 2630L v4} 10-core processors @2GHz with hyperthreading; 64GB RAM. CPU time was used as estimate for single-core runtime.}, provided by the IT department of the Radboud University.\footnote{Thank you!} This reduced the total runtime down to 7 hours. The results are publicly available at the GitHub repository.
 
-\subsection{Stochastic line flows}
+\section{Stochastic line flows}
 
-\section{Line failures}
+\subsection{Line failures}
+
+
+\section{Most likely power injection}
+The most likely power injection, given the failure of a line, was computed directly using Theorem~\ref{thm:mostlikelyinjection}. This method is numerically stable, even when the failure probability is, to numerical approximation, equal to $0$. Furthermore, while the proof of Theorem~\ref{thm:mostlikelyinjection} uses (the existence of) the inverse of $\mat{\Sigma}_{\mat{p}}$, it is not required in the final expression.
+
+When examining the result of this calculation for a number of lines, we found two problems with the final result, which are more prominent when stable lines (those with negligible overload probability). 
+
+\subsection{Non-zero net injection}
+First, the most likely injection might not have zero sum. We can safely apply the matrix $\mat{F}$ to an injection $\mat{p}$ that does not have zero sum. Nevertheless, under our assumptions, $\mat{p}$ must have zero sum. As part of the DC approximation, we found that the power injection is the image of $\mat{L} = \mat{C}^T\diag(i\mat{\eta})\mat{C}$, applied to the vector of phase angles, $\mat{\theta}$ (Equation \ref{eq:approxnodeflowlineq}). From Theorem~\ref{thm:imageLPF} it then follows that the power injection should have zero sum.
+
+Instead of concluding that our model, and the results that follow, are therefore entirely invalid, we will simply \emph{ignore this problem}. We do so with the same reasoning as \cite{Nesti2018emergentfailures}: in reality, the total power injection is never exactly of zero sum. As discussed in Section \ref{sec:loads}, turning any grid-connected device on or off will change the total injection. This does \emph{not} cause the power grid to `promptly vanish in a puff of logic', but rather, it physically causes a \emph{change of AC frequency}. This change in frequency is then measured by grid operators and generators, who react by changing their energy output to compensate for the change in frequency. This feedback loop is \emph{stable} \citep{VonMeier2006}, as long as frequency changes are small, and the demand can be met.\footnote{Note that this is a one-sentence simplification of the study of \define{grid stability}.}
+
+The generators (or rather, the the buses that they are connected to) that respond to a change in AC frequency are called the \emph{slack buses}\index{slack bus} of the network, and they are chosen by the grid operator. In our discussion of the energy market (\ref{sec:energymarkey}), we assumed, for didactic simplicity, that a single generator is assigned to be the slack bus. 
+
+\cite{Nesti2018emergentfailures} assume, for mathematical simplicity, that all generators play this role, which is called \emph{distributive slack}. The individual amounts of change in generation is chosen such that \emph{the line flows after all generators have settled into a zero-sum are exactly equal to $\mat{F}\mat{p}^{init}$, where $\mat{p}^{init}$ is the initial, non-zero power injection. This redistributed injection is given by:
+\[
+\mat{p}^{slack} = \mat{C}^T\mat{F}\mat{p}^{init}.
+\]
+When $\mat{p}^{init}$ \emph{does} have zero sum, we find $\mat{p}^{slack} = \mat{p}^{init}$, since $\mat{F}$ is the right-inverse of $\mat{C}^T$, when restricted to the set of zero-sum injections.
+
+\subsection{Unrealistic renewable fluctuations}
+The second problem with the most likely injection is that it might not be realistic, simply because there are not enough solar panels and wind turbines to produce the predicted injection. A simple way to check this condition is to calculate the predicted increase in renewable generation at each node, and compare it to the installed capacity. 
+
+\towrite{In Nesti is duurzame opbrengst een som van stochasten, en dus kan de maximale capaciteit wel worden overschreden (de capaciteit is dan 'een schatting van een gemiddelde bovengrens' oid). We kunnen dus beter berekenen met hoeveel procent we de capaciteiten moeten rekken daarvoor. Verder is de data slechts een schatting van capaciteit.}
+
+
 \section{Cascading line failures}
 \end{document}

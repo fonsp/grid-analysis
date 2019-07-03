@@ -648,7 +648,7 @@ The classical approach is to use the nominal power injection, $\mat{\mu}_{\mat{p
 
 Because we have estimated a probability distribution for $\mat{p}$, we can find \emph{the most likely power injection, given that line $l$ overloaded}. We can compute this injection explicitly, leveraging the fact that the LPF map is linear.
 
-\begin{theorem}
+\begin{theorem}\label{thm:mostlikelyinjection}
 Suppose a grid with LPF $\mat{F}$ has a $\gaussdistr(\mat{\mu}_p, \mat{\Sigma}_{\mat{p}})$-distributed power injection $\mat{p}$. The most likely power injection $\tilde{\mat{p}}^{(l)}$, given the emergent failure of a line $l$, is uniquely given by
 \begin{empheq}[box=\fbox]{gather}\label{eq:mostlikelyinjection}
     \tilde{\mat{p}}^{(l)} = \mat{\mu}_{\mat{p}}  + \frac{\sign(\mel{\mu}_{\mat{f}\, l} ) - \mel{\mu}_{\mat{f}\, l} }{ \mel{\Sigma}_{\mat{f}\, ll}} \mat{\Sigma}_{\mat{p}} \mat{F}^*\mat{e}_l
