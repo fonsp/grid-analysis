@@ -115,7 +115,7 @@
 \toprule
                          & \color{renewablegreen}{\textbf{green}} & \textbf{\textbf{grey}} \\
                          \midrule
-\emph{Operation costs} & \textbf{0-10 €/MWh}       & 30-35 €/MWh      \\
+\emph{Marginal cost} & \textbf{0-10 €/MWh}       & 30-35 €/MWh      \\
 \emph{CO2eq-emissions} & \textbf{0 kg/MWh}          & 490 - 820 kg/MWh\footnote{IPCC 2014} \\
 \emph{Controllable?}   & wind \& hydro               & \textbf{yes}             \\
 \emph{Output}          & stochastic       & \textbf{deterministic}\\
@@ -147,7 +147,7 @@
 \end{frame}
 }
 
-\begin{frame}{Summary}
+\begin{frame}{My thesis}
     \begin{columns}[T,onlytextwidth]
     \column{0.4\textwidth}
     Given:
@@ -187,9 +187,9 @@
         \node[draw, circle](b) at (6,3){1};
         \node[draw, circle](f) at (1,2){-2};
         \node[draw, circle](l) at (5,0){0};
-        \node[above, opacity=.6] at ($(b.north) + (.3,.1)$) {\emph{Berlin   }};
-        \node[below, opacity=.6] at ($(f.south) - (.6,.1)$) {\emph{Frankfurt}};
-        \node[below, opacity=.6] at (l.south) {\emph{Leipzig  }};
+        \node[above, opacity=.6] at ($(b.north) + (.3,.1)$) {\emph{Nijmegen   }};
+        \node[below, opacity=.6] at ($(f.south) - (.6,.1)$) {\emph{Eindhoven}};
+        \node[below, opacity=.6] at (l.south) {\emph{Maastricht  }};
         
         \draw[-latex] (b) -- node[midway, left] {1} (l);
         \draw[-latex] (l) -- node[midway, above]{2} (f);
@@ -382,10 +382,10 @@ The $\mat{LPF}$ is difficult to compute: requires \emph{Singular Value Decomposi
         \node[draw, rectangle](h) at (0,6){$?+{\color{renewablegreen}{12}}-8$};
         \node[draw, rectangle](f) at (1,2){$?+{\color{renewablegreen}{3}}-11$};
         \node[draw, rectangle](l) at (5,0){$?+{\color{renewablegreen}{4}}-6$};
-        \node[above, opacity=.6] at ($(b.north) + (.3,.1)$) {\emph{Berlin   }};
-        \node[above, opacity=.6] at (h.north) {\emph{Hamburg  }};
-        \node[below, opacity=.6] at ($(f.south) - (.6,.1)$) {\emph{Frankfurt}};
-        \node[below, opacity=.6] at (l.south) {\emph{Leipzig  }};
+        \node[above, opacity=.6] at ($(b.north) + (.3,.1)$) {\emph{Nijmegen   }};
+        \node[above, opacity=.6] at (h.north) {\emph{Amsterdam  }};
+        \node[below, opacity=.6] at ($(f.south) - (.6,.1)$) {\emph{Eindhoven}};
+        \node[below, opacity=.6] at (l.south) {\emph{Maastricht  }};
         
         \draw[-latex] (b) -- node[midway, left] {?} (l);
         \draw[-latex] (l) -- node[midway, above]{?} (f);
