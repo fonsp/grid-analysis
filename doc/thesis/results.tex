@@ -4,9 +4,9 @@
 In this final chapter, we 
 
 \section{SciGRID data}
-The SciGRID dataset needs to be translated into the our model, as it contains more information than we need, not yet in the desired format. 
+The SciGRID dataset needs to be translated into the language of our model. It contains more information than we need, and it is not yet in the desired format. 
 
-\subsection{Properties}
+\subsection{Structure}
 \emph{(A more detailed analysis of dataset properties is available on the GitHub repository.)}
 
 Before any processing, we find that the SciGRID network (obtained from \texttt{PyPSA} example code, the exact dataset used by \cite{Nesti2018emergentfailures}) contains 585 buses, 1423 generators (of all sources) and 489 loads. It also contains 38 storage units (all are pumped hydroelectric), but these were excluded from our analysis.\footnote{More specifically, they were used in solving the OPF problem, but their initial charge was set to zero.} There are 852 transmission lines in the dataset, at possible voltage levels $220 \, \si{\kilo\volt}$ and $380 \, \si{\kilo\volt}$, and there are 96 transformers (between these two voltages). Transmission lines have per-kilometre estimates for admittance, from which the total admittance can be deduced.
@@ -29,54 +29,25 @@ Because our model only holds for \emph{digraphs}, which cannot have parallel lin
 
 Of the 852 original lines, there are 705 unique links between original buses before normalising voltages, and there are 695 unique links between buses. There are never two parallel lines with opposite orientation. These 695 lines were used in our model, and will be referred to as simply the \emph{lines} of the network: $m = 695$.
 
+\subsection{State}
+Our dataset contains hourly values for load and stochastic (wind and solar) generation for the year 2011. Deterministic generation is estimated using the OPF algorithm, as implemented by \texttt{PyPSA} \citep{PyPSA}, a Python package designed for this purpose. Following common practice, we first multiply all line thresholds by a \define{contingency factor}: $0.70$. This forces the optimisation process to leave a safety margin at every line, and also accounts for the error of using the DC approximation. Figure~\ref{fig:nominalflowandinjection} shows the resulting injection at 1 January 2011 at 11:00. Line currents can then be computed using the LPF.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=.6\textwidth]{img/nominal_flow_and_injection.pdf}
+    \caption{
+    \label{fig:nominalflowandinjection}Nominal line flow during 11:00-12:00, as fraction of line capacity. Node size represents net power injection. When generation exceeds load, the injection is positive (green), otherwise negative (greyish blue). \emph{Compare with Figure 1a of \cite{Nesti2018emergentfailures}.}}
+\end{figure}
+
 \section{Bus covariance}
 
-
-\section{Line covariance}
-
-By incorporating bus covariances in our model (which result from correlated weather), we hope to find new structure in the line covariances. 
-To assess the effect of estimating bus covariances, we compare three possible bus covariance matrices:
-\begin{enumerate}
-	\item \emph{The identity matrix}: all bus injections are independently Gaussian distributed with the same variance. (They are almost IID, but their means differ.)
-	\item \emph{The diagonal of estimated variances}: all bus injections are independently Gaussian distributed, but their variances and means differ.
-	\item \emph{The estimated covariances}: the vector of bus injections is (multivariate) Gaussian distributed. All bus injections are, in general, dependent on each other, and their variances and means differ.
-\end{enumerate}
-
-We expect the covariance of a random pair of lines to be relatively low, when their physical separation (measured either in kilometres or in graph distance) is high. 
-Because weather is correlated, even at high distance, using the bus full covariance might result in higher covariances between lines with high separation. (This was concluded by \cite{Nesti2018emergentfailures}.) 
-
-Using a different bus covariance matrix will likely result in a overall increase or decrease of line covariances. Note, however, that the line covariance matrix is scaled by an arbitrary factor $\epsilon$, so any overall change in covariance has no significance in the model. \todo{Maar als je normaliseert op variantie?}
-
-\towrite{Compare three bus covariance }
-
-
-\begin{figure}
+\begin{figure}[ht]
     \centering
-    \includegraphics[width=.4\textwidth]{img/load.png}
-    \caption{PLACEHOLDER: The load distribution of Germany at ???.}
-    \label{fig:loaddistribution}
+    \includegraphics[width=\textwidth]{img/bus_correlation_123_fullcov_day_and_night.pdf}
+    \caption{
+    \label{fig:buscov}Covariance of all buses, relative to the circled bus. Normalised using installed renewable capacity.}
 \end{figure}
-\begin{figure}
-    \centering
-    \includegraphics[width=\textwidth]{img/solarwind.png}
-    \caption{PLACEHOLDER: Solar, wind onshore, wind offshore generation at ?? in Germany.}
-    \label{fig:solarwind}
-\end{figure}
-\begin{figure}
-    \centering
-    \includegraphics[width=.4\textwidth]{img/genprop.png}
-    \caption{PLACEHOLDER: Generation capacity technology shares in Germany in 2011.}
-    \label{fig:generationtech}
-\end{figure}
-\begin{figure}
-    \centering
-    \includegraphics[width=.6\textwidth]{img/nominallineflow.pdf}
-    \caption{Nominal line flow during 11:00-12:00, as fraction of line capacity. Node size represents net power injection. When generation exceeds load, the injection is positive (yellow), otherwise negative (green). \emph{Compare with Figure 1a of \cite{Nesti2018emergentfailures}.}}
-    \label{fig:generationtech}
-\end{figure}
-asdf
 
-\todo{Plotjes van kansen zoals in \label{stochasticpowerinjections}}
 
 \begin{table}[]
     \centering
@@ -113,11 +84,108 @@ Dec & \texttt{317} & \texttt{\textbf{482}} & \texttt{\textbf{7}} & \texttt{\text
     }
     \label{tab:arimafitstats}
 \end{table}
-failures
+
+\section{Line covariance}
+
+By incorporating bus covariances in our model (which result from correlated weather), we hope to find new structure in the line covariances. 
+To assess the effect of estimating bus covariances, we compare three possible bus covariance matrices:
+\begin{enumerate}
+	\item \emph{The identity matrix}: all bus injections are independently Gaussian distributed with the same variance. (They are almost IID, but their means differ.)
+	\item \emph{The diagonal of estimated variances}: all bus injections are independently Gaussian distributed, but their variances and means differ.
+	\item \emph{The estimated covariances}: the vector of bus injections is (multivariate) Gaussian distributed. All bus injections are, in general, dependent on each other, and their variances and means differ.
+\end{enumerate}
+
+It is well known that local changes to the grid structure have long-range effects. For example, \cite{Witthaut2013} showed that \emph{adding} a new line to a heavily congested, but stable network can cause the failure of another line, possibly far away from the added line.\footnote{The counter-intuitive fact that adding a line, or increasing the impedance of existing lines, can make a network \emph{more} congested, is known as \define{Braess' Paradox}. Similarly, some line failures can be \emph{prevented} by switching off other lines in the network. See Figure~\ref{fig:braess} for a minimal example.} This is reflected in our model by the fact that line currents have non-zero covariance, even when bus injections are independently distributed. (In this case, $\mat{\Sigma}_{\mat{f}} = \mat{F}\mat{I}\mat{F}^* = \mat{F}\mat{F}^*$, which is generally not a diagonal matrix.) Figure~\ref{fig:linecov1} and Figure~\ref{fig:linecov2} show the covariances of all lines, relative to a chosen line. We see that covariance is generally high for lines that are close, but there are some clear exceptions. There seems to be a general trend that lines are highly (positively or negatively) correlated when they are close, and \emph{oriented in the same direction} (\eg East-West) as the chosen line.
+
+
+
+\begin{figure}
+\centering
+\includegraphics[width=\textwidth]{img/braesstekening.png}
+\caption{\label{fig:braess} PLACEHOLDER: An example of Braess' Paradox. A network transporting $5$ units of power from left to right; all lines have the same admittance, and threshold $3$. On the left, one line (lower right) is overloaded. When this line fails, all power will travel through the upper branch, causing it to overload as well, leaving the network disconnected. If instead, the \emph{lower left} line is switched off, the flow of power will be more evenly distributed, and no line will overload. Of course, this example also illustrates how adding a line could lead to overloads.}
+\end{figure}
+
+\begin{figure}[ht]
+\begin{subfigure}{\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{img/flow_correlation_387_iid_and_justvar_and_fullcov.pdf}
+    \caption{}\label{fig:linecov1}
+\end{subfigure}
+\begin{subfigure}{\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{img/flow_correlation_651_iid_and_justvar_and_fullcov.pdf}
+    \caption{}\label{fig:linecov2}
+\end{subfigure}
+    \caption{Covariance of all lines, relative to the enlarged line. Normalised using installed renewable capacity. Signs (red or green) are chosen arbitrarily. Absolute covariance is therefore proportional to color \emph{saturation}.}
+\end{figure}
+
+The covariance of a random pair of lines is relatively high, when their physical separation (measured either in kilometres or in graph distance) is low. Because weather is correlated, even at high distance, using the bus full covariance might result in higher covariances between lines with high separation. (This was concluded by \cite{Nesti2018emergentfailures}.) 
+
+Using a different bus covariance matrix will likely result in a overall increase or decrease of line covariances. Note, however, that the line covariance matrix is scaled by an arbitrary factor $\epsilon$, so any overall change in covariance has no significance in the model. 
+
+This makes it difficult to compare the three bus covariance matrices, as any absolute difference in line covariance should be ignored. Instead, we will examine the covariance of two lines, \emph{relative to their own variances}. This way, the effect of any absolute, proportional increase in covariance is avoided. First, let us choose a number of lines, and examine the covariances of all other lines with the chosen line, relative to its variance. 
+
+In particular, we are interested in the decay of covariance over distance. \cite{Jung2016} studied the decay of the Line Addition Distribution Factor (difference in flow after adding a line) over distance, also using the SciGRID network. This is not the same as covariance, of course, but both are measures of the \emph{global effect} of local changes in flow. They first determined the largest 2-connected component of the network, and removed all other lines from the model. In the remaining network, they studied the 880 possible additions of short new lines, and found a general \emph{exponential} decay of change in currents as a function of graph distance.
+
+To study the decay of covariance, we collect the geographical separation and covariance (resulting from the three possible bus covariance matrices) of $10^5$ random pairs of lines in the network. Because of power flow physics, these covariances are highly spread out. However, when averaging the covariances in groups of $25 \, \si{\kilo\metre}$ (Figure~\ref{fig:linecovdecay}), we find are able to see the differences in decay. 
+
+\begin{figure}
+\centering
+\includegraphics[width=\textwidth]{img/covariance_linepairs_with_average.pdf}
+\caption{\label{fig:linecovdecay} For $10^5$ random pairs of lines, the covariance and distance (between line centres) is shown, for three possible bus covariance matrices. The averages (over $25 \, \si{\kilo\metre}$) show that correlated buses increase long-range correlations in line flows. Covariances are normalised using average line variance.}
+\end{figure}
+
+ \todo{Maar als je normaliseert op variantie?}
+Outage
+\towrite{Compare three bus covariance }
+
+
+\begin{figure}
+    \centering
+    \includegraphics[width=.4\textwidth]{img/load.png}
+    \caption{PLACEHOLDER: The load distribution of Germany at ???.}
+    \label{fig:loaddistribution}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{img/solarwind.png}
+    \caption{PLACEHOLDER: Solar, wind onshore, wind offshore generation at ?? in Germany.}
+    \label{fig:solarwind}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=.4\textwidth]{img/genprop.png}
+    \caption{PLACEHOLDER: Generation capacity technology shares in Germany in 2011.}
+    \label{fig:generationtech}
+\end{figure}
+
+\todo{Plotjes van kansen zoals in \label{stochasticpowerinjections}}
+
+
+\section{Most vulnerable lines}
+Using the nominal injection at 1 January, 11:00, we compute the failure probability of each line. The 20 most vulnerable lines are given in Table~\ref{tab:top20}. We identify the same vulnerable lines as \cite{Nesti2018supplemental}, but the ranking is different. This can be attributed to two differences in approach. First, we have combined parallel lines,\footnote{all 20 most vulnerable lines were not part of a parallel combination} which changes the vulnerability order significantly. It is unclear why this changes the result. For comparison, the ranking that we get \emph{without} combining parallels is given in Table~\ref{tab:top20old}, which is more similar that of \cite{Nesti2018supplemental}. The second major difference is the use of a different covariance matrix, although it is reassuring to see that the same lines are identified.\todo{Check hun cov}
+
+\subsection{Cascades}
+In addition to the failure probability, we compute the most likely injection to cause that failure, and simulate the resulting cascade. The number of lines that either failed jointly with the initial failure, or failed during the subsequent cascade, is also given in the Table. This extends the result of \cite{Nesti2018supplemental}, which only provides the failure probability.
+
+We find that among the 20 most vulnerable lines (at 11:00), 
+
+
+\subsection{Evolution of line vulnerabilities}
+
+
+
+
+\section{Lines vulnerable to cascades}
+
+
+
 \begin{table}
 \input{tables/top20lines.tex}
 \caption{TODO}
-\label{tab:top20}
+\label{tab:top20old}
 \end{table}
 
 \section{Previous work}
