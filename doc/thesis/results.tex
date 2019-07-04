@@ -183,7 +183,7 @@ Of course, the method above can be applied to any nominal injection, not just th
 
 Instead of providing 23 additional tables, we have summarised the results of a full day in Figure~\ref{fig:evolution_vulnerabilities}. Here, we see that some lines (like 337) are only vulnerable at one point during the day, while others (298 and 54) have a consistently high overload probability. There is a clear distinction between daytime and night-time, since the time of day determines which covariance matrix is used in the calculation. In fact, this highlights how a change in covariance influences results: some lines are only vulnerable because of the covariances brought upon by solar generation, while others are relatively unaffected.
 
-A most striking result is that the overload probabilities of 25 and 298 are perfectly \emph{constant} for sustained periods, and both are likely to cause a cascade, resulting in an average of 108 and 76 failures, respectively. When examining these two lines in more detail, we find that both are \emph{branches out of the network towards coastal cities of the North Sea}, with high-capacity offshore wind generation. These generators were operating at full capacity during the studied day,\footnote{That is, according to our dataset.} which would cause a constant\footnote{except for the local energy usage, which is relatively small} power injection. Because the lines are \emph{branches} out of the larger graph, the flow through the line is exactly equal to the power injection at its end.
+A most striking result is that the overload probabilities of 25 and 298 are perfectly \emph{constant} for sustained periods, and both are likely to cause a cascade, resulting in an average of 108 and 76 failures, respectively. When examining these two lines in more detail, we find that both are \emph{branches out of the network towards coastal cities of the North Sea}, with high-capacity offshore wind generation. These generators were operating at full capacity during the studied day,\footnote{according to our dataset} which would cause a constant\footnote{except for the local energy usage, which is relatively small} power injection. Because the lines are \emph{branches} out of the larger graph, the flow through the line is exactly equal to the power injection at its end, and therefore constant.
 
 Regarding the subsequent cascades of these two lines, it seems like our model falls short of giving an accurate redistribution of flow, due to the singularity caused by their removal. (No flow redistribution exists that would not change the injection.) 
 
@@ -204,7 +204,7 @@ Regarding the subsequent cascades of these two lines, it seems like our model fa
 \begin{figure}[ht]
     \centering
     \includegraphics[width=\textwidth]{img/evolution_overload_probs_3_20_IID.pdf}
-    \caption{The same as Figure~\ref{fig:evolution_vulnerabilities_3_20}, computed using \emph{uncorrelated} injections.}\label{fig:evolution_vulnerabilities_3_20_IID}
+    \caption{For reference, the same as Figure~\ref{fig:evolution_vulnerabilities_3_20}, but computed using \emph{uncorrelated} injections.}\label{fig:evolution_vulnerabilities_3_20_IID}
 \end{figure}
 
 
