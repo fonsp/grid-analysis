@@ -1,10 +1,21 @@
 \documentclass[main.tex]{subfiles}
- 
-\begin{document}
-%We will study flows along a network using the tools of linear algebra, revealing interesting parallels with the field of graph theory. In particular, the \emph{Flow Response Transformation}, mapping line flows to the 
-%We conclude this chapter by deducing a 
 
-\section{Directed graphs}
+\begin{document}
+%We will study flows along a network using the tools of linear algebra, revealing interesting parallels with the field of graph theory. In particular, the \emph{Flow Response Transformation}, mapping line flows to the
+%We conclude this chapter by deducing a
+
+\section{Graph}
+The power grid forms an interconnected \emph{network} of transmission lines, which makes Graph Theory a logical choice for modelling it.
+In fact, most electrical systems are modelled using graphs. In Circuit Theory, \emph{nodes} represent electrically equivalent points in a circuit, and individual components (resistors, voltage sources) can be seen as the lines of the network.\footnote{This simplification is only true for components with 2 terminals. A transistor has 3 terminals, for example.}
+%More formally, circuit components can be defined as restrictions (boundary conditions) on the \emph{phase space} of the circuit. 
+%When we want to create an electric connection between two points, the most obvious way to so is using a \emph{wire}. This has the nice property that 
+We will study the electrical properties of the transmission network in Chapter~\ref{chap:model}, but for now, we will simply accept that the transmission network consists of \emph{nodes} and \emph{lines}, and that the lines can transfer power between nodes in a straightforward (linear) way. Physically, the power flows are determined by the amount of power injected at each node, which in turn is determined by the devices that we connect to the transmission network. In this chapter, we will study the \emph{converse}:
+\[
+\text{\textit{What does the flow of power tell us about the power injection at the nodes?}}
+\]
+To do so, we will build upon the tools of Linear Algebra and Graph Theory, as covered in most elementary textbooks on these subjects.
+
+\section{Directed graph}
 When studying the flow of current in a network, it is useful to fix a direction for each line, relative to which the flow can be expressed.
 Semantically, a \emph{positive} flow along an edge will mean a flow in the same direction as the edge, while a \emph{negative} flow describes a 'positive' flow in the opposite direction.\todo{When flow is complex-valued, there is no pos/neg.} The choice of line direction could be seen as arbitrary. \todo{It turns out that this concept is called a `Gain Graph` (wiki)}
 \begin{definition}
@@ -17,8 +28,8 @@ A \emph{directed graph}\index{graph!directed} is a pair $(\mathcal{N},\mathcal{L
 \begin{remark}
 Note that the second requirement follows from the first.
 \end{remark}
-\towrite{undirected graph, subgraph, path, loop, euler path, connected, k-edge-connectivity, tree, minimum spanning subtree}
-\towrite{thm: every connected garph contains a spanning subtree}
+\towrite{undirected graph, subgraph, path, loop, euler path, connected, k-edge-connectivity, tree, minimum spanning tree}
+\towrite{thm: every connected garph contains a spanning tree}
 \towrite{thm: G is a tree iff m=n-1}
 \towrite{thm: removing a leaf from a tree results in a new tree}
 \towrite{thm: euleriaans pad in een boom is uniek}
@@ -61,23 +72,22 @@ Suppose $G$ has no isolated nodes. We define the \define{Flow Response Transform
 which maps a flow $\mat{f} \in \mathbb{K}^m$ to the unique injection $\mat{p} \in \mathbb{K}^n$ that it induces.
 \end{definition}
 
-From (\ref{eq:inducedflow}), it follows that $\FRT$ is a linear map. In fact, when written in matrix form, we find a familiar result: the transposed edge-vertex incidence matrix of $G$!\todo{blub}
-$$\FRT = \mat{C}^T$$
+From (\ref{eq:inducedflow}), it follows that $\FRT$ is a linear map. In fact, when written in matrix form, we find a familiar result: $\mat{K}$ is the vertex-edge incidence matrix of $G$! \todo{hier definieren?}
 
 The fact that $\FRT$ is a linear map raises an interesting question: how can the image and kernel of $\FRT$ be interpreted in the context of digraph flows?
 The reader is invited to revisit Example \todo{examples} to visualise these sets.
 
 One can interpret the image of $\FRT$ as the set of injections that can be redistributed along the network. Because a flow only serves to redistribute injections from one node to another, nothing is lost or gained in the network. This imposes the condition that an injection vector must have \emph{zero sum}. Moreover, when $G$ is connected, \emph{all} zero sum injections can be induced by a flow.
 
-The kernel can be interpreted as the set of all flows that result in zero injections. Besides the trivial case of zero flow, any constant flow along a closed loop induces zero injection. We will find that these \emph{loop flows} generate \emph{all} flows in the kernel of $\FRT$. 
+The kernel can be interpreted as the set of all flows that result in zero injections. Besides the trivial case of zero flow, any constant flow along a closed loop induces zero injection. We will find that these \emph{loop flows} generate \emph{all} flows in the kernel of $\FRT$.
 
-When $G$ is a planar graph, loops around the faces of $G$ actually form a \emph{basis} for the kernel. In the more general case that $G$ is connected, but not necessarily planar, such a basis can also be constructed by fixing a \emph{spanning subtree} of $G$.
+When $G$ is a planar graph, loops around the faces of $G$ actually form a \emph{basis} for the kernel. In the more general case that $G$ is connected, but not necessarily planar, such a basis can also be constructed by fixing a \emph{minimum spanning tree} of $G$.
 
 As an added bonus, applying the Rank-Nullity theorem to $\FRT$ when $G$ is planar provides us with an alternative proof of Euler's Formula.
 
 These statements will be made more precise in the next sections, when we study the image and kernel of $\FRT$ in more detail.
 
-\subsection{Image of $\FRT$}
+\subsection{Image of $\mathbf{\FRT}$}
 \towrite{intro}
 \begin{definition}
 The function $\sigma : \mathbb{K}^n \rightarrow \mathbb{K}$ defined by
@@ -97,9 +107,9 @@ Suppose that $G$ is connected. Then
 \end{empheq}
 \end{theorem}
 
-We will prove this equality by considering the two inclusions $\subseteq$ and $\supseteq$ separately. The first inclusion follows from the observation that $\FRT = \mat{C}^T$:
+We will prove this equality by considering the two inclusions $\subseteq$ and $\supseteq$ separately. The first inclusion follows from the observation that $\mat{K}$ is the vertex-edge incidence matrix of $G$.
 \begin{lemma}\label{lem:imlpfsubsetkersigma}
-Suppose that $G$ is connected. 
+Suppose that $G$ is connected.
 \begin{gather}
 \Ima \FRT \subseteq \ker \sigma\label{eq:LPFfin}
 \end{gather}
@@ -108,7 +118,7 @@ Suppose that $G$ is connected.
 We write $\mat{e}^1, \dots, \mat{e}^m$ for the standard basis of $\mathbb{K}^m$.
 
 Since $\FRT$ is linear, one only needs to verify that $\FRT(\mat{f}) \in \ker \sigma$ for each $\mat{f}=\mat{e}^k$ in the basis.
-The vectors $\FRT(\mat{e}^1), \dots, \FRT(\mat{e}^m)$ are exactly the columns of the matrix $\FRT = \mat{C}^T$, which all have zero sum. 
+The vectors $\FRT(\mat{e}^1), \dots, \FRT(\mat{e}^m)$ are exactly the columns of the matrix $\mat{K}$, which all have zero sum: a column corresponds to a line in $G$, and has exactly two non-zero entries: $1$ for the entering node, and $-1$ for the leaving node.
 \end{proof}
 
 To prove the inclusion $\supseteq$ implied by Theorem \ref{thm:imageLPF}, we first consider the special case that $G$ is a \emph{tree}.
@@ -121,7 +131,7 @@ Suppose that $G$ is a (connected) tree.
 \end{lemma}
 
 \begin{proof}\todo{This proof could benefit from an illustration.}
-$G$ is a tree, so $m=n-1$. Because $\mathbb{K}^m$ and $\ker \sigma$ both have dimension $n-1$, we only need to prove that $\FRT$ is injective: when $\FRT$ has nullity $0$, it must have rank $n-1$. 
+$G$ is a tree, so $m=n-1$. Because $\mathbb{K}^m$ and $\ker \sigma$ both have dimension $n-1$, we only need to prove that $\FRT$ is injective: when $\FRT$ has nullity $0$, it must have rank $n-1$.
 
 If $n=1$, then the digraph consist of a single node, and no lines. It then follows from (\ref{eq:inducedflow}) that the only injection that can be induced is $\mat{p}=(0) \in \mathbb{K}^1$, so $\FRT$ can only be injective.\todo{A single-node graph is not connected?}
 
@@ -135,13 +145,13 @@ By removing node $i$ and line $\mathcal{L}_k$, we obtain a smaller tree, for whi
 \end{proof}
 
 \begin{proof}[Proof of Theorem \ref{thm:imageLPF}]
-To prove $\Ima \FRT = \ker \sigma$, it remains to show that 
+To prove $\Ima \FRT = \ker \sigma$, it remains to show that
 \begin{gather}
 \Ima \FRT \supseteq \ker \sigma
 \end{gather}
 holds for \emph{any} connected $G$, not just for trees.
 
-Since $G$ is connected, we can choose a minimum spanning subtree: choose $T \subseteq \range{m}$ with $\# T = n-1$ such that $G_T=(\mathcal{N}, \{\mathcal{L}_k\}_{k \in T})$ is such a connected subdigraph.
+Since $G$ is connected, we can choose a minimum spanning tree: choose $T \subseteq \range{m}$ with $\# T = n-1$ such that $G_T=(\mathcal{N}, \{\mathcal{L}_k\}_{k \in T})$ is such a connected subdigraph.
 
 Define $F_T = \linspan \{\mat{e}^k\}_{k \in T} \subseteq \mathbb{K}^m$ as the subset of flows on $G$ that are zero outside of $G_T$. Because $F_T$ is a linear subspace of $\mathbb{K}^m$, we have
 $$\Ima \FRT = \FRT (\mathbb{K}^m) \supseteq \FRT(F_T),$$
@@ -151,7 +161,7 @@ This shows that
 \begin{gather*}
     \Ima \FRT = \ker \sigma.
 \end{gather*}
-Because $\sigma : \mathbb{K}^n \rightarrow \mathbb{K}$ is surjective, it has rank $1$. It therefore has nullity $n-1$, or equivalently, $\ker \sigma \cong \mathbb{K}^{n-1}$. 
+Because $\sigma : \mathbb{K}^n \rightarrow \mathbb{K}$ is surjective, it has rank $1$. It therefore has nullity $n-1$, or equivalently, $\ker \sigma \cong \mathbb{K}^{n-1}$.
 \end{proof}
 
 
@@ -162,9 +172,9 @@ Because $\sigma : \mathbb{K}^n \rightarrow \mathbb{K}$ is surjective, it has ran
 
 
 
-\subsection{Kernel of $\FRT$}
+\subsection{Kernel of $\mathbf{\FRT}$}
 
-Again, assume that $G$ is connected. In Theorem \ref{thm:imageLPF}, we derived an explicit formulation for the image of $\FRT$, showing that $\nullity \FRT = n-1$. 
+Again, assume that $G$ is connected. In Theorem \ref{thm:imageLPF}, we derived an explicit formulation for the image of $\FRT$, showing that $\nullity \FRT = n-1$.
 
 Concerning the kernel of $\FRT$, we already know that $\mat{0} \in \ker \FRT$, reflecting the fact that zero flow induces zero injection. In the special case that $G$ is a tree, this is the only such flow. In general, however, the kernel of $\FRT$ is much bigger.
 \towrite{introduce loops}
@@ -182,7 +192,7 @@ This follows directly from the Rank-Nullity theorem, \todo{state}applied to Theo
 
 \begin{corollary}
 If $G$ is a tree, then $\ker \FRT = \{\mat{0}\}$, and $\FRT$ is a bijection between $\mathbb{K}^m$ and $\ker \sigma$.
-\end{corollary} 
+\end{corollary}
 \begin{proof}
 Applying Proposition \ref{prop:nullityLPF} with $m = n-1$, we find that $\nullity \FRT = 0$, so that ${\ker \FRT = \{\mat{0}\}}$. Together with Theorem \ref{thm:imageLPF}, we find the result.
 \end{proof}
@@ -192,7 +202,7 @@ Applying Proposition \ref{prop:nullityLPF} with $m = n-1$, we find that $\nullit
 Any flow along a \emph{closed loop} results in zero power injection. When interpreting a loop as an element $\mat{f}$ of $\mathbb{K}^m$, we must be careful to \emph{flip the sign of $\mel{f}_k$ if the line $\mathcal{L}_k$ is traversed in reverse.}
 
 \begin{theorem}\label{thm:loopflowkernel}
-Suppose that $G$ is connected and that $(i_1, i_2, \dots, i_p)$ is a closed loop. Then the \define{loop flow} $\mat{f} \in \mathbb{K}^m$ defined by:
+Suppose that $G$ is connected and that $(i_1, i_2, \dots, i_p)$ is a closed Eulerian loop. Then the \define{loop flow} $\mat{f} \in \mathbb{K}^m$ defined by:
 \begin{gather}
     \mel{f}_k = \begin{cases}
     \hphantom{-}1 & \text{if } (i_s\hphantom{_{+1}}, i_{s+1})=\mathcal{L}_k \text{ for any } 1 \leq s < p,\\
@@ -203,7 +213,7 @@ Suppose that $G$ is connected and that $(i_1, i_2, \dots, i_p)$ is a closed loop
 for each line $\mathcal{L}_k$, is an element of the kernel of $\FRT$.\todo{this thm only works for Eulerian paths...}
 \end{theorem}
 \begin{proof}
-We will verify that $\mat{p}=\FRT(\mat{f})$ is zero. 
+We will verify that $\mat{p}=\FRT(\mat{f})$ is zero.
 Choose any $i \in \mathcal{N}$.
 
 Because the loop is closed, there is an \emph{even} number (possibly zero) of lines with non-zero flow that connect to $i$. This means that the sums in (\ref{eq:inducedflow}) cancel each other (note the negative sign for reversed lines in (\ref{eq:loopflowdef})), resulting in $\mel{p}_i=0$.
@@ -219,15 +229,22 @@ When looking at the previous examples, a logical choice for this basis would be 
 
 For now, we would like to find a basis of loop flows for the more general case that $G$ is connected, but not necessarily planar. We proceed as follows:
 
-\begin{definition}
+\begin{definition}\label{def:cobwebbasis}
+Suppose that $G$ is connected, and that $T \subseteq \range{m}$ is a minimum spanning tree. For each remaining line $\mathcal{L}_k = (i,j) \in \left\lbrace \mathcal{L}_k \in \mathcal{L} \, \mid \, k \notin  T \right\rbrace $, there exists a \emph{unique Eulerian path} from $j$ to $i$, say 
+\[
+(i_1, i_2, \dots, i_p),\quad\text{ where $i_1=j$ and $i_p=i$.}
+\]
+Then $(i_1, i_2, \dots, i_p, j)$ is a closed Eulerian loop, which defines a loop flow $\mat{f}^k$.
 
+We define the \define{cobweb basis on $T$} as the set of loop flows defined in this way: $\{ \mat{f}^k \}_{k \in \range{m} \setminus T}$.
 \end{definition}
 
 \begin{theorem}
-The ???? constructed in Definition ??? is a basis for $\ker \FRT$.
+The \emph{cobweb basis on $T$} constructed in Definition \ref{def:cobwebbasis} is a basis for $\ker \FRT$.
 \end{theorem}
 \begin{proof}
-Because the number of fundamental loops equals the dimension of $\ker \FRT$, one only needs to prove that they are linearly indepent. Indeed, for each $k \in \range{m}\setminus T$??????, ??$^k$ is the only fundamental loop for which the $k$th element is non-zero. Therefore, ???$^k$ cannot be written as linear combination of the other fundamental loops.
+Because $T$ is a minimum spanning tree, it has $n-1$ elements, and so the cobweb basis consists of $m - (n-1)$ loop flows.
+Because the number of loops equals the dimension of $\ker \FRT$, one only needs to prove that they are linearly independent. Indeed, for each $k \in \range{m}\setminus T$, $\mat{f}^k$ is the only fundamental loop for which the $k$th element is non-zero. Therefore, ???$^k$ cannot be written as linear combination of the other fundamental loops.
 \end{proof}
 
 

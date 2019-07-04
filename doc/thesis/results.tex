@@ -40,7 +40,7 @@ Our dataset contains hourly values for load and stochastic (wind and solar) gene
 \end{figure}
 
 \section{Bus covariance}
-
+We discussed two alternatives to estimating the covariance matrix directly from generation series: the covariance of ARMA residuals and the covariance of difference series. 
 \begin{figure}[ht]
     \centering
     \includegraphics[width=\textwidth]{img/bus_correlation_123_fullcov_day_and_night.pdf}
@@ -165,10 +165,17 @@ Outage
 
 
 \section{Most vulnerable lines}
-Using the nominal injection at 1 January, 11:00, we compute the failure probability of each line. The 20 most vulnerable lines are given in Table~\ref{tab:top20}. We identify the same vulnerable lines as \cite{Nesti2018supplemental}, but the ranking is different. This can be attributed to two differences in approach. First, we have combined parallel lines,\footnote{all 20 most vulnerable lines were not part of a parallel combination} which changes the vulnerability order significantly. It is unclear why this changes the result. For comparison, the ranking that we get \emph{without} combining parallels is given in Table~\ref{tab:top20old}, which is more similar that of \cite{Nesti2018supplemental}. The second major difference is the use of a different covariance matrix, although it is reassuring to see that the same lines are identified.\todo{Check hun cov}
+Using the nominal injection at 1 January, 11:00, we compute the failure probability of each line. The 20 most vulnerable lines are given in Table~\ref{tab:top20}, and their positions are given in Figure~\ref{fig:nomflow_stdev_overload}. We identify the same vulnerable lines as \cite{Nesti2018supplemental}, but the ranking is different. This can be attributed to two differences in approach. First, we have combined parallel lines,\footnote{all 20 most vulnerable lines were not part of a parallel combination} which changes the vulnerability order significantly. It is unclear why this changes the result. For comparison, the ranking that we get \emph{without} combining parallels is given in Table~\ref{tab:top20old}, which is more similar that of \cite{Nesti2018supplemental}. The second major difference is the use of a different covariance matrix, although it is reassuring to see that the same lines are identified.\todo{Check hun cov}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{img/nomflow_stdev_trueoverloadprob_labeled.pdf}
+    \caption{Visualisation of $\bm{\mu}_{\mathbf{f}}$, $\bm{\Sigma}_{\mathbf{f}}$ and $(\PROB\left[|\mel{f}_l| \geq 1 \right])_{l \in \range{m}}$ at 1 January, 11:00. The 20 most vulnerable lines are labelled.}
+    \label{fig:nomflow_stdev_overload}
+\end{figure}
 
 \subsection{Cascades}
-In addition to the failure probability, we compute the most likely injection to cause that failure, and simulate the resulting cascade. The number of lines that either failed jointly with the initial failure, or failed during the subsequent cascade, is also given in the Table. This extends the result of \cite{Nesti2018supplemental}, which only provides the failure probability.
+In addition to the failure probability, we compute the most likely injection to cause that failure, and simulate the resulting cascade. The number of lines that either failed jointly with the initial failure, or failed during the subsequent cascade, is also given in Table \ref{tab:top20}. This extends the result of \cite{Nesti2018supplemental}, which only provides the failure probability.
 
 \towrite{We find that among the 20 most vulnerable lines (at 11:00),
 
