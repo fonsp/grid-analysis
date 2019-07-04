@@ -1,33 +1,41 @@
 \documentclass[main.tex]{subfiles}
 
 \begin{document}
-In this Chapter we will derive the \emph{Linear Power Flow} transformation: a linear map from the vector of power injections at the buses to the vector of currents flowing through the lines of the network.
-This equation can be derived explicitly by constructing an electric circuit that represents the whole transmission network and everything connected to it, and applying Ohm's Law and Kirchoff's Laws to relate line currents to power injections. We linearise the resulting \emph{node flow equations} to find the LPF matrix (page \pageref{eq:LPF}).
+In this Chapter we will derive the \emph{Linear Power Flow} (LPF) transformation: a linear map from the vector of power injections at the buses to the vector of currents flowing through the lines of the network.
+
+It is a \emph{right inverse} of $\FRT$, which means that applying $\LPF$ to a power injection gives a flow that would induce that injection. There are many possible candidates for a right inverse. One way to construct one is to fix a minimum spanning tree. When we set line currents outside of the tree to zero, all line currents inside the tree are uniquely determined.
+
+Yet, only one right inverse is \emph{physically correct}: the $\LPF$. This function can be derived explicitly by constructing an electric circuit that represents the whole transmission network and everything connected to it, and applying Ohm's Law and Kirchoff's Laws to relate line currents to power injections. We linearise the resulting \emph{node flow equations} to find the LPF matrix (page \pageref{eq:LPF}).
 
 Using this linear map, we can transform the normal distribution of stochastic injections to a Gaussian distribution of line flows. Using the results of Chapter \ref{chap:probability}, we can estimate the overload probability of each line, resulting in a ranking of most vulnerable lines. Additionally, for each such line, we compute the most probable injection to cause the failure, and simulate the subsequent \emph{cascading failures}.
 
-\towrite{intro state \& structure}
+\section{The model}
+The $\LPF$ is essentially the \emph{high-level model} used in the final chapters of this thesis (\ie the transmission network is modelled as a linear transformation). In this chapter, we derive a closed-form expression for this transformation from a lower-level, \emph{electrical} model.
 
+\subsection{Electrical model}
+We make a distinction between the \emph{structure} and the \emph{state} of the network. The structure is a directed graph, where each line is given an \emph{admittance}. The state collects the (real and reactive) power injected at each bus, the (complex) voltage of each bus, and the (complex) current flowing through each line.
+
+The use of complex-valued voltage and current (and therefore power) is essential when analysing AC circuits, even though we are only interested in \emph{real} power. For example, we will find that the amount of real power transmitted over a line is approximately inversely proportional to the inductance of the line (the \emph{imaginary} equivalent of resistance), and approximately proportional to the difference in phase angles at its ends (the \emph{complex argument} of voltage).
 % Feynman: What I cannot create, I do not understand.
 %This approach attempts to combine mathematical and physical theory, while maintaining a clear distinction between the two.
-%A grid is modelled as a directed graph TODO
 
+\subsection{Time invariance}
 The grid structure remains unchanged during normal operation, while the grid state is continually changing over time. For example, an important aspect of grid operation is \define{load profiling}: examining and predicting the total load connected to a node, as a function of time. As a result of changing loads, the flow of power in a grid is constantly changing.
 
 One example of a change in grid structure is a \emph{line failure}, which can be modelled as the removal of an edge from the graph. In some cases, the removal of an edge from the graph result in an unconnected graph (\ie there exist two nodes with no sequence of lines connecting them). This scenario is called \emph{power islanding}\index{power island}.
 Most transmission networks are designed in such a way that no single (or double) line failure can cause power islanding or a blackout, by increasing the \emph{edge-connectivity} of the graph.
 
 In the case of a \emph{line overload}, however, a line failure is caused by an exceptionally high power flow, as a result of high supply or demand.\footnote{These high power injections are not necessarily located at the two endpoints of an overloaded line; it could also be a grid-wide pattern of power injections, all adding up to a high power flow on that line. We will study the \emph{most likely power injection} in Chapter \ref{mostlikelypowerinjection}.}
-The failure of an overloaded line will cause a redistribution of power flow, since the power flowing through the failed line now needs to 'find another path' between the nodes. In a highly stressed network, this redistribution can cause a second failure, which can then cause a third failure, and so on, eventually causing a blackout. We will study these \define{cascading failures} in Chapter \ref{cascadingfailures}. \todo{We \emph{model} the line protection mechanism as deterministic: overload causes instantanious failure.}
+The failure of an overloaded line will cause a redistribution of power flow, since the power flowing through the failed line now needs to 'find another path' between the nodes. In a highly stressed network, this redistribution can cause a second failure, which can then cause a third failure, and so on, eventually causing a blackout. We will study these \define{cascading failures} in Section \ref{sec:cascades}. \todo{We \emph{model} the line protection mechanism as deterministic: overload causes instantanious failure.}
 
 \section{Grid structure}
-A transmission grid is modelled as a directed graph $(\mathcal{N},\mathcal{L})$.\todo{Require the graph to be connected? How about power islands?} As vertices we take the \emph{nodes} of the network, which are those points where transmission lines connect to a generator, load, or to each other. Nodes are electrically distinct, in the sense that there is some non-zero impedance between them, allowing them to sustain a potential difference. In a network of $n$ nodes, they are represented by the natural numbers $1,\dots,n$, in arbitrary order.
+A transmission grid is modelled as a directed graph $(\mathcal{N},\mathcal{L})$.\todo{Require the graph to be connected? How about power islands?} As vertices we take the \emph{nodes} of the network, which are those points where transmission lines connect to a generator, load, or to each other. Nodes are electrically distinct, in the sense that there is some non-zero impedance between them, allowing them to sustain a potential difference. In a network of $n$ nodes, they are represented by the natural numbers $1,\dots,n$, \ie $\mathcal{N}=\range{n}$.
 
-A pair of two nodes $(i,j)$ is contained in the set of edges $\mathcal{L}$ iff there is a transmission line connecting the nodes, and $i<j$. \todo{Not necessary} (Note that by construction, this transmission line has non-zero impedance.) The choice of line orientation can be arbitrary, but we fix the orientation to $i<j$. In a network of $m$ lines, lines are labeled $\mathcal{L}_1, \dots, \mathcal{L}_m$, in arbitrary order.
+A pair of two distinct nodes $(i,j)$ is contained in our set of lines $\mathcal{L}$ if there is a transmission line connecting the nodes. The choice of line orientation can be arbitrary, but we fix the orientation to $i<j$, \ie $(j,i) \notin \mathcal{L}$. This transmission line has non-zero impedance. (Otherwise $i$ and $j$ would be the same node.) In a network of $m$ lines, lines are labelled $\mathcal{L}_1, \dots, \mathcal{L}_m$. 
 
-Vertices will be called nodes, and edges will be called lines.
+In literature on the subject, \todo{and in this thesis, oopsie} buses\footnote{`bus' is short for `busbar': the latin `omnibus' in conjunction with `bar': some high-voltage cables are connected by welding them to a heavy metal bar.} are also called \emph{vertices} or \emph{nodes}, and lines can be called \emph{edges}, \emph{wires}, \emph{cables} or \emph{circuits}.
 
-Given a directed graph with $n$ nodes and $m$ lines, we define the vertex-edge incidence matrix $\mat{K} \in \mathbb{R}^{n \times m}$ as:
+Given a directed graph with $n$ buses and $m$ lines, we define the vertex-edge incidence matrix $\mat{K} \in \mathbb{R}^{n \times m}$ as:
 \begin{align*}
     \mel{K}_{i,k} =
     \begin{cases}
@@ -44,13 +52,7 @@ We model transmission lines as time-invariant impedances, which are assumed to b
 \begin{align*}
     \mathsf{I=VY}
 \end{align*}
-This allows us to define the admittance between two unconnected nodes as $0$. (\ie no current is induced by a potential difference.) \todelete{We now construct the \emph{admittance matrix}\index{admittance!matrix} $\mathbf{Y} \in \mathbb{C}^{n \times n}$, where $\mel{Y}_{i,j}$ is the admittance between nodes $i$ and $j$. Note that $\mathbf{Y}$ is a symmetric matrix, with only $2m$ non-zero entries.} \todo{$\mathbf{Y}$ is not used very often and conflicts with the \emph{Nodal admittance matrix} (wiki)}
-
-We \todelete{also }define $\mat{\eta} \in \mathbb{C}^m$ as the \emph{admittance vector}\index{admittance!vector}, where $\eta_l$ is the admittance of $\mathcal{L}_l$, for each $l \in \range{m}$. \todelete{Equivalently, one can write
-$\eta_l \coloneqq Y_{\mathcal{L}_l} \text{ for each }l\in\range{m}$
-since each $\mathcal{L}_l$ is a tuple of node indices.}
-
-
+This allows us to define the admittance between two unconnected nodes as $0$. (\ie no current is induced by a potential difference.) We define $\mat{\eta} \in \mathbb{C}^m$ as the \emph{admittance vector}\index{admittance!vector}, where $\eta_l$ is the admittance of $\mathcal{L}_l$, for each $l \in \range{m}$. 
 
 \begin{definition}\label{def:gridstructure}
 To summarise, an \emph{$(n,m)$-grid structure}\index{grid!structure} is defined as a tuple $((\mathcal{N},\mathcal{L}),\mat{K},\mat{\eta})$, where:
@@ -60,16 +62,14 @@ To summarise, an \emph{$(n,m)$-grid structure}\index{grid!structure} is defined 
     \item $(\mathcal{N},\mathcal{L})$ is a connected directed graph with $\mathcal{N}=\range{n}$;
     \item $\mat{K} \in \mathbb{R}^{n \times m}$ is the vertex-edge incidence matrix of $(\mathcal{N},\mathcal{L})$;
     \item $\mat{\eta} \in \mathbb{C}^m$ is the line admittance vector.
-\end{itemize}\todo{table}
+\end{itemize}
 \end{definition}
-
 \begin{figure}
     \centering
     \input{"fig/two nodes.tex"}
     \caption{The simple \emph{two-node}\index{network!two-node} transmission network of two nodes and one line.}
     \label{fig:twonodes}
 \end{figure}
-
 \begin{example}[Two-node network]\label{exa:twonodenetwork}
 A very simple transmission network is one with just two nodes, and a single line connecting them. This \emph{two-node network}\index{network!two-node} is drawn in Figure \ref{fig:twonodes}.
 Although real networks are much bigger, this example is useful to illustrate some of the concepts introduced in this chapter.
@@ -112,33 +112,42 @@ Note that this network is 2-edge connected, meaning that the network remains con
 \end{align*}
 \emph{(All unspecified elements are 0).}
 
-Note that columns of $\mat{K}$ correspond to lines of the network.
+Note that the \emph{columns} of $\mat{K}$ correspond to the lines of the network.
 \end{example}
 
+\begin{figure}
+    \centering
+    \includegraphics[width=.5\textwidth]{img/scigrid_boring.pdf}
+    \caption{The $n=489$ buses and $m=695$ lines of the SciGRID network. A description of this dataset is given in Part II.}
+    \label{fig:scigrid}
+\end{figure}
 \begin{example}[SciGRID Germany]\label{exa:scigridnetwork}
-TODO
+In Part II, we will apply our theory to the SciGRID dataset, which contains the network shown in Figure~\ref{fig:scigrid}. This network is much more realistic than the previous examples, as it is based on the real-world structure of the transmission network in Germany. 
 
-\towrite{Mostly for fun, and to emphasise that the dataset can be modelled in this form. The dataset will be treated in detail in Part II.\\
-Will also emphasise that in most real networks, $m>n$.}
+It is common for transmission networks to have a well-connected `core', with some branches out of the core towards the outer regions of the network. This means that in general, $m>n$.
+
+Indeed, in this network we have $n=489$ and $m=695$. The vertex-edge incidence matrix $\mat{K}$ has dimensions $489 \times 695$, and is \emph{sparse}: most entries are zero.
+
+It is important to note that this is only a \emph{section} of the actual transmission network of continental Europe, which is highly connected among different countries. As we will discuss in Section \ref{sec:constructingdataset}, accurate datasets of continental Europe do exist, but they are hard to obtain and analyse.
+%Because the laws of physics have no notion of national borders, we would 
+%As far as the laws of physics are concerned, taking the subset of lines within Germany is almost as arbitrary as, say, the subset of lines above a certain latitude.
 \end{example}
-
 \section{Power grid state}
-\towrite{TODO, I is directed along the graph edges}\todo{$\mathbf{I}$ could be left out of the grid state, since it is uniquely determined by $\mathbf{V}$ and the structure.}
+The \emph{state} of the network describes how the transmission network is being used (the (real and reactive) power injected at each node, and the voltage magnitudes) and how the electric circuit responds (voltage angles and (complex) line currents). More precisely, we use three physical quantities used in AC circuit analysis to describe the grid state:
 \begin{definition}\label{def:gridstate}
-To summarise, a \emph{grid state}\index{grid!state} of an $(n,m)$-grid structure is defined as a tuple $(\mat{S}, \mat{V}, \mat{I})$, where
+A \emph{grid state}\index{grid!state} of an $(n,m)$-grid structure is defined as a tuple $(\mat{S}, \mat{V}, \mat{I})$, where
 \begin{itemize}
     \item $\mat{S} \in \mathbb{C}^n$ is the \emph{complex power injection vector};
     \item $\mat{V} \in \mathbb{C}^n$ is the \emph{bus voltage vector};\todo{U instead of V? Not common in lit}
-    \item $\mat{I} \in \mathbb{C}^m$ is the \emph{line current vector}.
+    \item $\mat{I} \in \mathbb{C}^m$ is the \emph{line current vector}. (Currents are directed along digraph edges.)
 \end{itemize}
 \end{definition}
-
+\towrite{Uitleg van AC circuits, real and reactive power, complexe grootheden, etc mist nog. In Hoofdstuk 3 van \cite{VonMeier2006} is het erg duidelijk uitgelegd.}
 \section{State validity}
 
-Given an $(n,m)$-grid structure $((\mathcal{N},\mathcal{L}),\mat{K},\mat{\eta})$, only some states are physically possible. A state that satisfies Kirchoff's Laws and Ohm's Law is called \emph{valid}. Since we are studying a real-world system, we are mainly interested in states that are valid, or at least close to being valid (in the sense of \emph{DC-valid}, see Section \ref{DCapproximation}).
+Given an $(n,m)$-grid structure $((\mathcal{N},\mathcal{L}),\mat{K},\mat{\eta})$, only some states are physically possible. A state that satisfies Kirchoff's Laws and Ohm's Law will be called \emph{valid}. Since we are studying a real-world system, we are mainly interested in states that are valid, or at least close to being valid (in the sense of \emph{DC-valid}, see Section \ref{DCapproximation}).
 
-\subsection{Electrical representation}
-
+\subsection{Circuit representation}
 An $(n,m)$-grid structure $((\mathcal{N},\mathcal{L}),\mat{K},\mat{\eta})$ represents an electrical circuit, consisting of impedances and AC sources. A \emph{valid} grid state $(\mat{S}, \mat{V}, \mat{I})$ corresponds to a physical state of the circuit.
 Given the mathematical structure, we will construct the electric circuit in two layers, as follows:
 

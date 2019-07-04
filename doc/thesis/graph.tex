@@ -14,10 +14,20 @@ We will study the electrical properties of the transmission network in Chapter~\
 \text{\textit{What does the flow of power tell us about the power injection at the nodes?}}
 \]
 To do so, we will build upon the tools of Linear Algebra and Graph Theory, as covered in most elementary textbooks on these subjects.
+\towrite{We use, without proof:
 
+undirected graph, subgraph, path, loop, euler path, connected, k-edge-connectivity, tree, minimum spanning tree
+
+thm: every connected garph contains a minimum spanning tree
+
+thm: G is a tree iff m=n-1
+
+thm: removing a leaf from a tree results in a new tree
+
+thm: eulerian path in a tree is unique}
 \section{Directed graph}
 When studying the flow of current in a network, it is useful to fix a direction for each line, relative to which the flow can be expressed.
-Semantically, a \emph{positive} flow along an edge will mean a flow in the same direction as the edge, while a \emph{negative} flow describes a 'positive' flow in the opposite direction.\todo{When flow is complex-valued, there is no pos/neg.} The choice of line direction could be seen as arbitrary. \todo{It turns out that this concept is called a `Gain Graph` (wiki)}
+Semantically, a \emph{positive} flow along an edge will mean a flow in the same direction as the edge, while a \emph{negative} flow describes a 'positive' flow in the opposite direction.\todo{When flow is complex-valued, there is no pos/neg.} The choice of line direction could be seen as arbitrary. \todo{wikipedia calls this a `Gain Graph`}
 \begin{definition}
 A \emph{directed graph}\index{graph!directed} is a pair $(\mathcal{N},\mathcal{L})$ such that the set of \emph{nodes} $\mathcal{N}$ is finite, and the set of \emph{lines} $\mathcal{L}\subseteq \mathcal{N} \times \mathcal{N}$ satisfies:
 \begin{itemize}
@@ -25,18 +35,8 @@ A \emph{directed graph}\index{graph!directed} is a pair $(\mathcal{N},\mathcal{L
     \item For each $i \in \mathcal{N}$: $(i,i) \notin \mathcal{L}$. (\ie no node is directly connected to itself.)
 \end{itemize}
 \end{definition}
-\begin{remark}
-Note that the second requirement follows from the first.
-\end{remark}
-\towrite{undirected graph, subgraph, path, loop, euler path, connected, k-edge-connectivity, tree, minimum spanning tree}
-\towrite{thm: every connected garph contains a spanning tree}
-\towrite{thm: G is a tree iff m=n-1}
-\towrite{thm: removing a leaf from a tree results in a new tree}
-\towrite{thm: euleriaans pad in een boom is uniek}
 
-\towrite{If including maxwell derivation: graph topology, calculus on graphs}
 \section{Flow}
-\towrite{intro}
 For the remainder of this section, assume that $G=(\mathcal{N},\mathcal{L})$ is a directed graph, where the nodes are labelled $\mathcal{N}=\{1,2,\dots,n\}=\range{n}$ for some $n \in \mathbb{N}$.
 
 The $m = \# \mathcal{L}$ lines of the network are labelled $\mathcal{L}=\{\mathcal{L}_1,\mathcal{L}_2,\dots,\mathcal{L}_m\}$.
@@ -61,15 +61,15 @@ An injection $\mat{p} \in \mathbb{K}^n$ is \emph{induced}\index{induced injectio
     \sum_{\mathcal{L}_k=(i,j) \in \mathcal{L}} f_k -
     \sum_{\mathcal{L}_k=(j,i) \in \mathcal{L}} f_k \label{eq:inducedflow}
 \end{gather}
-for each node $i \in \mathcal{N}$.
+for each node $i \in \mathcal{N}$. ($\mel{p}_i = 0$ for isolated nodes.)
 \end{definition}
-Note that $\mat{p}$ is uniquely defined for every choice of $\mat{f}$, under the condition that $G$ has no \emph{isolated nodes}\index{isolated node}: nodes with no lines connecting them.\todo{not necessary} This allows us to define a function:
+Note that $\mat{p}$ is uniquely defined for every choice of $\mat{f}$. This allows us to define a function:
 \begin{definition}
 Suppose $G$ has no isolated nodes. We define the \define{Flow Response Transformation} ($\FRT$) as the function
 \begin{gather*}
     \FRT: \mathbb{K}^m \rightarrow \mathbb{K}^n
 \end{gather*}
-which maps a flow $\mat{f} \in \mathbb{K}^m$ to the unique injection $\mat{p} \in \mathbb{K}^n$ that it induces.
+that maps a flow $\mat{f} \in \mathbb{K}^m$ to the unique injection $\mat{p} \in \mathbb{K}^n$ that it induces.
 \end{definition}
 
 From (\ref{eq:inducedflow}), it follows that $\FRT$ is a linear map. In fact, when written in matrix form, we find a familiar result: $\mat{K}$ is the vertex-edge incidence matrix of $G$! \todo{hier definieren?}
@@ -229,42 +229,46 @@ When looking at the previous examples, a logical choice for this basis would be 
 
 For now, we would like to find a basis of loop flows for the more general case that $G$ is connected, but not necessarily planar. We proceed as follows:
 
-\begin{definition}\label{def:cobwebbasis}
-Suppose that $G$ is connected, and that $T \subseteq \range{m}$ is a minimum spanning tree. For each remaining line $\mathcal{L}_k = (i,j) \in \left\lbrace \mathcal{L}_k \in \mathcal{L} \, \mid \, k \notin  T \right\rbrace $, there exists a \emph{unique Eulerian path} from $j$ to $i$, say 
+\begin{definition}\label{def:spiderwebbasis}
+Suppose that $G$ is connected, and that $T \subseteq \range{m}$ is a minimum spanning tree. For each remaining line $\mathcal{L}_k = (i,j) \in \left\lbrace \mathcal{L}_k \in \mathcal{L} \, \mid \, k \notin  T \right\rbrace $, there exists a \emph{unique Eulerian path along the tree} from $j$ to $i$, say 
 \[
 (i_1, i_2, \dots, i_p),\quad\text{ where $i_1=j$ and $i_p=i$.}
 \]
-Then $(i_1, i_2, \dots, i_p, j)$ is a closed Eulerian loop, which defines a loop flow $\mat{f}^k$.
+By adding the chosen line $\mathcal{L}_k$ to this path, we find a closed Eulerian loop in $G$: $(i_1, i_2, \dots, i_p, j)$, which defines a loop flow $\mat{f}^k$. 
 
-We define the \define{cobweb basis on $T$} as the set of loop flows defined in this way: $\{ \mat{f}^k \}_{k \in \range{m} \setminus T}$.
+We define the \define{spider web basis on $T$} as the set of loop flows defined this way: $\{ \mat{f}^k \}_{k \in \range{m} \setminus T}$. (If $T$ were to represent a physical tree, a spider could spin a web from $i$ to $j$ by attaching a strand to $j$ and then walking the Eulerian path to $i$.\footnote{It turns out that this is not how most spiders cover large distances: instead, they produce a long thread, and let it drift in the wind until it sticks to another surface. Clever!})
 \end{definition}
 
 \begin{theorem}
-The \emph{cobweb basis on $T$} constructed in Definition \ref{def:cobwebbasis} is a basis for $\ker \FRT$.
+The \emph{spider web basis on $T$} constructed in Definition \ref{def:spiderwebbasis} is a basis for $\ker \FRT$.
 \end{theorem}
 \begin{proof}
-Because $T$ is a minimum spanning tree, it has $n-1$ elements, and so the cobweb basis consists of $m - (n-1)$ loop flows.
-Because the number of loops equals the dimension of $\ker \FRT$, one only needs to prove that they are linearly independent. Indeed, for each $k \in \range{m}\setminus T$, $\mat{f}^k$ is the only fundamental loop for which the $k$th element is non-zero. Therefore, ???$^k$ cannot be written as linear combination of the other fundamental loops.
+Because $T$ is a minimum spanning tree, it has $n-1$ elements, and so the spider web basis consists of $m - (n-1)$ loop flows.
+Because the number of elements in the basis equals the dimension of $\ker \FRT$, one only needs to prove that they are linearly independent. Indeed, for each $k \in \range{m}\setminus T$, the loop flow $\mat{f}^k$ is the only element for which the $k^{\text{th}}$ entry is non-zero. Therefore, $\mat{f}^k$ cannot be written as linear combination of the other fundamental loops.
 \end{proof}
 
-
-\towrite{th: (misschien eerst alleen voor K=F2) the fundamental group }
-
-
+\towrite{In het geval $\mathbb{K}=\mathbb{F}_2$ (het lichaam van 2 elementen) heet dit de fundamentele groep van de graaf.}
 
 \subsection{Planar Graphs}
+The spider web basis can be constructed for any connected graph. When the graph is also \emph{planar}, a more intuitive basis exists. Without providing a rigorous definition, we simply say that a graph is \define{planar} if it can be `drawn on a piece of paper without any crossing lines'. Such a drawing creates \emph{faces}: areas enclosed by lines.\footnote{We do not consider the infinite enclosing area as a `face'.} Different drawings can produce different collections of faces.
+
+If we fix a collection of faces for a planar graph, then each face is enclosed by some of the lines, which form an Eulerian loop in the graph. We define the \emph{planar basis on this drawing} as the set of loop flows defined by those Eulerian loops: each face becomes an element in the basis.
+
 \towrite{th: in a planar embedding of a planar graph, the loops surrounding faces form a basis.
-proof: (in F2): they are linearly independent: these loops are all loops with the property that exactly one face is contained in the loop. ??
-proof: (in F2): start with a fundamental basis.
-choose a loop f in the fundamental basis.
+proof: (in F2): 
+
+linearly independent: these loops are all loops with the property that exactly one face is contained in the loop.
+
+complete: start with a spider web basis.
+choose a loop f in the spider web basis.
 this loop f contains a number of faces. f is equal to the sum of the loops around these faces.
 this shows that f can be written as linear combination of planar loops. QED}
 
 \begin{corollary}[Euler's Formula]
-TODO In a planar, connected graph, we have:
+In a planar, connected graph, we have:
 $$v + f - e = 1$$
 where $v$ is the number of vertices, $e$ is the number of edges, and $f$ is the number of faces enclosed by edges, excluding the 'exterior face'.
 \end{corollary}
 
-\towrite{Grid connected iff admittance matrix has full rank?}
+\todo[inline]{Grid connected iff admittance matrix has full rank? or M?}
 \end{document}

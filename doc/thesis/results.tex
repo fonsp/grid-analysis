@@ -154,15 +154,6 @@ Outage
     \label{fig:solarwind}
 \end{figure}
 
-\begin{figure}
-    \centering
-    \includegraphics[width=.4\textwidth]{img/genprop.png}
-    \caption{PLACEHOLDER: Generation capacity technology shares in Germany in 2011.}
-    \label{fig:generationtech}
-\end{figure}
-
-\todo{Plotjes van kansen zoals in \label{stochasticpowerinjections}}
-
 
 \section{Most vulnerable lines}
 Using the nominal injection at 1 January, 11:00, we compute the failure probability of each line. The 20 most vulnerable lines are given in Table~\ref{tab:top20}, and their positions are given in Figure~\ref{fig:nomflow_stdev_overload}. We identify the same vulnerable lines as \cite{Nesti2018supplemental}, but the ranking is different. This can be attributed to two differences in approach. First, we have combined parallel lines,\footnote{all 20 most vulnerable lines were not part of a parallel combination} which changes the vulnerability order significantly. It is unclear why this changes the result. For comparison, the ranking that we get \emph{without} combining parallels is given in Table~\ref{tab:top20old}, which is more similar that of \cite{Nesti2018supplemental}. The second major difference is the use of a different covariance matrix, although it is reassuring to see that the same lines are identified.\todo{Check hun cov}

@@ -38,13 +38,14 @@ In China, as of 2019 the world's largest producer of renewable energy \emph{by a
 
 
 
-\section{Constructing a complete dataset}
-European grid operators have detailed datasets that describe the grid structure and state of the transmission network, but these are not (yet) publicly available. We use the work of \cite{PyPSA}, which combines open datasets from different sources, to obtain an approximate representation of the German transmission network.
+\section{Constructing a complete dataset}\label{sec:constructingdataset}
+European grid operators have detailed datasets that describe the grid structure and state of the transmission network, but these are not (yet) publicly available. We use the work of \cite{PyPSA}, which combines open datasets from different sources, to obtain an approximate representation of the German transmission network. 
+
 \subsection{Grid structure}
 The \emph{European Network for Transmission System Operators for Electricity} (ENTSO-E) was established in 2008 to promote the integration between the electricity markets of European member states, and to increase public transparency of these markets.
 %According to their website, ``ENTSO-E is committed to develop the most suitable responses to the challenge of a changing power system while maintaining security of supply.'' \tocite{https://www.entsoe.eu/about/inside-entsoe/objectives/ met datum}
 ENTSO-E provides a number of public datasets, including historical hourly load series, international energy flows, and yearly generation series.
-An up-to-date map can be viewed, containing almost all high-voltage transmission lines in Europe, and lines outside of Europe that are part of the synchronous grid of Continental Europe. Unfortunately, this dataset is not available in a computer-readable format, and only gives the operating voltage and number of parallel circuits of a line.
+An up-to-date map can be viewed, containing almost all high-voltage transmission lines in Europe, and lines outside of Europe that are part of the synchronous grid of Continental Europe. Unfortunately, this dataset is not available in a computer-readable format,\footnote{they provide a more on this later} and only gives the operating voltage and number of parallel circuits of a line.
 
 Luckily, the SciGRID project has assembled an open source dataset of grid structure, using an entirely different source. The OpenStreetMap project is a detailed, open source world map, maintained by a community of mappers. The map is so detailed, in fact, that it not only contains most transmission lines and substations of Europe, it even contains observations of the number of parallel circuits, the number of wires per cable\footnote{You can sometimes see that a cable is made up of three wires, with less than a metre of separation between them. This increases the total surface area of the cable with relatively low increase in volume (\ie cost).}, the frequency\footnote{which is always $50\,\si{\hertz}$ in Europe}, the name of the grid operator, the operating voltage\footnote{This can be deduced from the physical size of the insulators between the cable and the transmission tower (or you could ask the operator).}, and the names of the two buses that it connects. From these characteristics, line resistance and inductance can be estimated.
 The SciGRID dataset has aggregated OpenStreetMap data, and highly simplified the network, resulting in a complete grid structure.
@@ -69,6 +70,12 @@ Clearly, the resulting dataset is an \emph{estimation}, and any results that fol
 \towrite{some example graphs}
 \tocite{PyPSA: \cite{PyPSA}}
 \tocite{Maybe: PyPSA-EUR: \cite{PyPSAEUR}}
+
+\subsection{A note on larger datasets}
+Although the full ENTSO-E network can only be viewed on their official website, \cite{PyPSAEUR} were able to extract this information into a usable format. They provide the tools to construct a full dataset for European load en generation, but this process is too computationally demanding to take on in this thesis. 
+
+In fact, the limitation of our dataset does have a number of benefits. There are obvious computational benefits, which allow us to study the network without simplification,\footnote{In larger datasets, the set of buses often needs to be clustered to solve the OPF problem.} and the network is small enough for individual lines to be studied. One additional advantage is that the distribution of installed renewable generation is consistent within Germany (see Figure~\ref{fig:solarwind}), while a European dataset would see large differences among countries (which all have different policies). Finally, Germany has the highest share of stochastic\footnote{This does not include renewable deterministic generation, notably hydroelectricity.} generation among European countries: in 2011, 41\% of solar energy and 31\% of wind energy in the European Union was generated in Germany.\footnote{Sources: \emph{European Wind Energy Association} and \emph{EurObserv’ER}}
+
 \section{LPF}
 \subsection{Comparison with PyPSA results}
 \begin{figure}
@@ -136,5 +143,5 @@ The second problem with the most likely injection is that it might not be realis
 \towrite{In Nesti is duurzame opbrengst een som van stochasten, en dus kan de maximale capaciteit wel worden overschreden (de capaciteit is dan 'een schatting van een gemiddelde bovengrens' oid). We kunnen dus beter berekenen met hoeveel procent we de capaciteiten moeten rekken daarvoor. Verder is de data slechts een schatting van capaciteit.}
 
 
-\section{Cascading line failures}
+\section{Cascading line failures}\label{sec:cascades}
 \end{document}
