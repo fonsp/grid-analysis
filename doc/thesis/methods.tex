@@ -1,5 +1,5 @@
 \documentclass[main.tex]{subfiles}
- 
+
 \begin{document}
 The goal of the model described in this thesis can be summarised as follows:
 
@@ -34,20 +34,20 @@ Turning off functioning wind turbines is known as \emph{wind curtailment}\index{
 \footnote{Wind turbines can indeed be turned off, by twisting the rotor blades towards $0\si{\degree}$ pitch and applying the \emph{brakes}. In large turbines, common types are drum brakes (similar to a back-pedalling brake for bikes) and disk brakes. Brakes are especially important during maintenance.
 Solar panels are switched off using a simple mechanical or electronic switch (a relay). \citep{Denholm2015}}
 
-In China, as of 2019 the world's largest producer of renewable energy \emph{by a factor of two}, \tocite{ref, wiki} wind curtailment amounted to 16\% between 2010 and 2016. \citep{Qi2018} \todo{compare to european consumption} 
+In China, as of 2019 the world's largest producer of renewable energy \emph{by a factor of two}, \tocite{ref, wiki} wind curtailment amounted to 16\% between 2010 and 2016. \citep{Qi2018} \todo{compare to european consumption}
 
 
 
 \section{Constructing a complete dataset}
 European grid operators have detailed datasets that describe the grid structure and state of the transmission network, but these are not (yet) publicly available. We use the work of \cite{PyPSA}, which combines open datasets from different sources, to obtain an approximate representation of the German transmission network.
 \subsection{Grid structure}
-The \emph{European Network for Transmission System Operators for Electricity} (ENTSO-E) was established in 2008 to promote the integration between the electricity markets of European member states, and to increase public transparency of these markets. 
+The \emph{European Network for Transmission System Operators for Electricity} (ENTSO-E) was established in 2008 to promote the integration between the electricity markets of European member states, and to increase public transparency of these markets.
 %According to their website, ``ENTSO-E is committed to develop the most suitable responses to the challenge of a changing power system while maintaining security of supply.'' \tocite{https://www.entsoe.eu/about/inside-entsoe/objectives/ met datum}
-ENTSO-E provides a number of public datasets, including historical hourly load series, international energy flows, and yearly generation series. 
+ENTSO-E provides a number of public datasets, including historical hourly load series, international energy flows, and yearly generation series.
 An up-to-date map can be viewed, containing almost all high-voltage transmission lines in Europe, and lines outside of Europe that are part of the synchronous grid of Continental Europe. Unfortunately, this dataset is not available in a computer-readable format, and only gives the operating voltage and number of parallel circuits of a line.
 
 Luckily, the SciGRID project has assembled an open source dataset of grid structure, using an entirely different source. The OpenStreetMap project is a detailed, open source world map, maintained by a community of mappers. The map is so detailed, in fact, that it not only contains most transmission lines and substations of Europe, it even contains observations of the number of parallel circuits, the number of wires per cable\footnote{You can sometimes see that a cable is made up of three wires, with less than a metre of separation between them. This increases the total surface area of the cable with relatively low increase in volume (\ie cost).}, the frequency\footnote{which is always $50\,\si{\hertz}$ in Europe}, the name of the grid operator, the operating voltage\footnote{This can be deduced from the physical size of the insulators between the cable and the transmission tower (or you could ask the operator).}, and the names of the two buses that it connects. From these characteristics, line resistance and inductance can be estimated.
-The SciGRID dataset has aggregated OpenStreetMap data, and highly simplified the network, resulting in a complete grid structure. 
+The SciGRID dataset has aggregated OpenStreetMap data, and highly simplified the network, resulting in a complete grid structure.
 
 \subsection{Grid state}
 For our analysis, we need the \emph{hourly} generation series (for each generator at each node), and the hourly load series (aggregated at each node). This data is not publicly available. Yet, previous work \citep{PyPSA} has shown that these values can be estimated for the German network by combining public sources, in particular:
@@ -59,7 +59,7 @@ For our analysis, we need the \emph{hourly} generation series (for each generato
 \item Global Domestic Product (GDP) and population density of districts (\emph{Landkreise}) of Germany, for load sizes and locations;
 \item ENTSO-E hourly load series, for hourly load series.
 \end{itemize}
-We now have all the data that we need, except for the hourly generation series of \emph{non-stochastic} energy sources. To fill this gap, \cite{PyPSA} use the clever solution of running an Optimal Power Flow (OPF) simulation for each hour, to determine the cheapest generator configuration. The rationale behind this method is that grid operators \emph{use this exact method} to determine the hourly generator configuration. As long as the marginal costs of each generator are realistic, we hope to find a realistic generator configuration this way. 
+We now have all the data that we need, except for the hourly generation series of \emph{non-stochastic} energy sources. To fill this gap, \cite{PyPSA} use the clever solution of running an Optimal Power Flow (OPF) simulation for each hour, to determine the cheapest generator configuration. The rationale behind this method is that grid operators \emph{use this exact method} to determine the hourly generator configuration. As long as the marginal costs of each generator are realistic, we hope to find a realistic generator configuration this way.
 
 Clearly, the resulting dataset is an \emph{estimation}, and any results that follow from it should be taken with a grain of salt. With this in mind, we proceed with our analysis, not necessarily with the goal of providing accurate operational advice for grid operators, but to demonstrate that the model can be applied to real-world transmission networks. In addition, we hope that this model will provide \emph{qualitative insight} into the complex behaviour of grid failures.
 
@@ -86,15 +86,15 @@ Following \cite{Nesti2018emergentfailures}, the ARMA models were fitted to the f
 
 Unfortunately, the \texttt{arima} method failed to fit an ARMA model for 104 of the 489 buses, reflecting the hypothesis that these series are poorly modelled by an ARMA series. To recreate the results of \cite{Nesti2018emergentfailures}, it is crucial that a model can be fitted for \emph{every} bus. Therefore, a modified method is required.
 
-By the default, the \texttt{arima} method operates in two steps. First, a so-called Conditional-Sum-of-Squares (CSS) method is used as initial guess for the ARMA coefficients. Then, the coefficient \emph{likelihood} function is maximised with the Nelder-Mead optimisation method, using the CSS result as initial value. 
+By the default, the \texttt{arima} method operates in two steps. First, a so-called Conditional-Sum-of-Squares (CSS) method is used as initial guess for the ARMA coefficients. Then, the coefficient \emph{likelihood} function is maximised with the Nelder-Mead optimisation method, using the CSS result as initial value.
 
 In our case, the CSS method often finds initial values that are \emph{non-stationary}.\todo{define?} A possible reason is that solar generation is exactly zero during nighttime, which lasts for up to 16 consecutive hours.\footnote{In reality, solar generation is never \emph{exactly} zero, even after sunset, because solar panels also receive ambient light. This is not included in the (artificial) dataset.
-%Ambient light includes sunlight scattered by the atmosphere (\eg 3 hours of twilight in January), artificial light 
+%Ambient light includes sunlight scattered by the atmosphere (\eg 3 hours of twilight in January), artificial light
 %TODO
 }
-To resolve this issue, we use an optimisation method that works well without specifying an initial value: it should find the \emph{global} maximum independently. The Simulated Annealing (SANN) algorithm included in \texttt{R} is such a method, and was chosen for this analysis. 
+To resolve this issue, we use an optimisation method that works well without specifying an initial value: it should find the \emph{global} maximum independently. The Simulated Annealing (SANN) algorithm included in \texttt{R} is such a method, and was chosen for this analysis.
 
-With SANN as optimisation method, \texttt{arima} was able to fit solar models for 484 out of 489 buses. For the remaining 5 buses, a second technique is applied: to accommodate for the long periods of zero generation, a small amount of uniform noise is superimposed on the generation series. Initially, the noise magnitude is set to 1\% of the solar capacity of the bus. This percentage is increased iteratively, until the modified method is able to fit a solar model. In fact, 1\% noise proved sufficient for the remaining 5 buses in January, and no more than 2\% noise was needed for any bus in the remaining months. 
+With SANN as optimisation method, \texttt{arima} was able to fit solar models for 484 out of 489 buses. For the remaining 5 buses, a second technique is applied: to accommodate for the long periods of zero generation, a small amount of uniform noise is superimposed on the generation series. Initially, the noise magnitude is set to 1\% of the solar capacity of the bus. This percentage is increased iteratively, until the modified method is able to fit a solar model. In fact, 1\% noise proved sufficient for the remaining 5 buses in January, and no more than 2\% noise was needed for any bus in the remaining months.
 
 The modified method described in this section was used to fit solar and wind models to each bus of the network, for each month of 2011. Table \ref{tab:arimafitstats} lists the number of buses that can be analysed using the default and modified methods, showing the poor performance of the default for solar series, especially during the months of summer.
 \tocite{Belisle 1992, zie \texttt{optim} docs}
@@ -115,23 +115,23 @@ The modified version is able to fit all generation series successfully. The use 
 \section{Most likely power injection}
 The most likely power injection, given the failure of a line, was computed directly using Theorem~\ref{thm:mostlikelyinjection}. This method is numerically stable, even when the failure probability is, to numerical approximation, equal to $0$. Furthermore, while the proof of Theorem~\ref{thm:mostlikelyinjection} uses (the existence of) the inverse of $\mat{\Sigma}_{\mat{p}}$, it is not required in the final expression.
 
-When examining the result of this calculation for a number of lines, we found two problems with the final result, which are more prominent when stable lines (those with negligible overload probability). 
+When examining the result of this calculation for a number of lines, we found two problems with the final result, which are more prominent when stable lines (those with negligible overload probability).
 
 \subsection{Non-zero net injection}
-First, the most likely injection might not have zero sum. We can safely apply the matrix $\mat{F}$ to an injection $\mat{p}$ that does not have zero sum. Nevertheless, under our assumptions, $\mat{p}$ must have zero sum. As part of the DC approximation, we found that the power injection is the image of $\mat{L} = \mat{C}^T\diag(i\mat{\eta})\mat{C}$, applied to the vector of phase angles, $\mat{\theta}$ (Equation \ref{eq:approxnodeflowlineq}). From Theorem~\ref{thm:imageLPF} it then follows that the power injection should have zero sum.
+First, the most likely injection might not have zero sum. We can safely apply the matrix $\mat{F}$ to an injection $\mat{p}$ that does not have zero sum. Nevertheless, under our assumptions, $\mat{p}$ must have zero sum. As part of the DC approximation, we found that the power injection is the image of $\mat{L} = \mat{K}\diag(i\mat{\eta})\mat{K}^*$, applied to the vector of phase angles, $\mat{\theta}$ (Equation \ref{eq:approxnodeflowlineq}). From Theorem~\ref{thm:imageLPF} it then follows that the power injection should have zero sum.
 
 Instead of concluding that our model, and the results that follow, are therefore entirely invalid, we will simply \emph{ignore this problem}. We do so with the same reasoning as \cite{Nesti2018emergentfailures}: in reality, the total power injection is never exactly of zero sum. As discussed in Section \ref{sec:loads}, turning any grid-connected device on or off will change the total injection. This does \emph{not} cause the power grid to `promptly vanish in a puff of logic', but rather, it physically causes a \emph{change of AC frequency}. This change in frequency is then measured by grid operators and generators, who react by changing their energy output to compensate for the change in frequency. This feedback loop is \emph{stable} \citep{VonMeier2006}, as long as frequency changes are small, and the demand can be met.\footnote{Note that this is a one-sentence simplification of the study of \define{grid stability}.}
 
-The generators (or rather, the the buses that they are connected to) that respond to a change in AC frequency are called the \emph{slack buses}\index{slack bus} of the network, and they are chosen by the grid operator. In our discussion of the energy market (\ref{sec:energymarkey}), we assumed, for didactic simplicity, that a single generator is assigned to be the slack bus. 
+The generators (or rather, the the buses that they are connected to) that respond to a change in AC frequency are called the \emph{slack buses}\index{slack bus} of the network, and they are chosen by the grid operator. In our discussion of the energy market (\ref{sec:energymarkey}), we assumed, for didactic simplicity, that a single generator is assigned to be the slack bus.
 
 \cite{Nesti2018emergentfailures} assume, for mathematical simplicity, that all generators play this role, which is called \emph{distributive slack}. The individual amounts of change in generation is chosen such that the line flows after all generators have settled into a zero-sum are exactly equal to $\mat{F}\mat{p}^{init}$, where $\mat{p}^{init}$ is the initial, non-zero power injection. This redistributed injection is given by:
 \[
-\mat{p}^{slack} = \mat{C}^T\mat{F}\mat{p}^{init}.
+\mat{p}^{slack} = \mat{K}\mat{F}\mat{p}^{init}.
 \]
-When $\mat{p}^{init}$ \emph{does} have zero sum, we find $\mat{p}^{slack} = \mat{p}^{init}$, since $\mat{F}$ is the right-inverse of $\mat{C}^T$, when restricted to the set of zero-sum injections.
+When $\mat{p}^{init}$ \emph{does} have zero sum, we find $\mat{p}^{slack} = \mat{p}^{init}$, since $\mat{F}$ is the right-inverse of $\mat{K}$, when restricted to the set of zero-sum injections.
 
 \subsection{Unrealistic renewable fluctuations}
-The second problem with the most likely injection is that it might not be realistic, simply because there are not enough solar panels and wind turbines to produce the predicted injection. A simple way to check this condition is to calculate the predicted increase in renewable generation at each node, and compare it to the installed capacity. 
+The second problem with the most likely injection is that it might not be realistic, simply because there are not enough solar panels and wind turbines to produce the predicted injection. A simple way to check this condition is to calculate the predicted increase in renewable generation at each node, and compare it to the installed capacity.
 
 \towrite{In Nesti is duurzame opbrengst een som van stochasten, en dus kan de maximale capaciteit wel worden overschreden (de capaciteit is dan 'een schatting van een gemiddelde bovengrens' oid). We kunnen dus beter berekenen met hoeveel procent we de capaciteiten moeten rekken daarvoor. Verder is de data slechts een schatting van capaciteit.}
 
