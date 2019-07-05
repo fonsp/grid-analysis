@@ -1,24 +1,21 @@
 \documentclass[main.tex]{subfiles}
  
 \begin{document}
-\section{*Abstract Integration}
-\towrite{Lebesgue-Stieltjes integral}
-\todo{See Rynne or Garling or Analyse de Hilbert et de Fourier course notes}
-\section{*Probability Measure}
-\todo{See Pestman or MIT course notes or...}
-\towrite{Should cover: p. measure, cont. distr., stochastic vectors, E, moment gen?, CLT, multivar norm dist}
-\section{Large Deviation Theory}
-\todo{See Hugo or MIT course notes or ...}
-\towrite{Should cover: application to multivariate normal dist}
+%\section{*Abstract Integration}
+%\towrite{Lebesgue-Stieltjes integral}
+%\todo{See Rynne or Garling or Analyse de Hilbert et de Fourier course notes}
+%\section{*Probability Measure}
+%\todo{See Pestman or MIT course notes or...}
+%\towrite{Should cover: p. measure, cont. distr., stochastic vectors, E, moment gen?, CLT, multivar norm dist}
+%\section{Large Deviation Theory}
+%\todo{See Hugo or MIT course notes or ...}
+%\towrite{Should cover: application to multivariate normal dist}
 
 \section{Multivariate Gaussian distribution}
 \emph{This presentation of the multivariate Gaussian distribution is heavily based on Chapter VIII of \emph{Mathematical Statistics} by \cite{Pestman1998}, which provides proofs to all theorems listed below.}
 
-One distribution that will be particularly useful in our analysis is the \emph{multivariate Gaussian distribution}, which generalised the (one-dimensional) normal distribution. In the simplest case, we have a stochastic vector $\mat{E}=(\mel{E}_1, \dots, \mel{E}_p)$, which is the combination of $p$ normally distributed, \emph{independent} scalar variables. In general, however, we wish to study stochastic vectors produced by applying a \emph{linear transformation} $\mat{L} \in \mathcal{L}(\mathbb{R}^p, \mathbb{R}^q)$ to $\mat{E}$. In this case, the coordinate variables $(\mel{LE})_1,\dots,(\mel{LE})_q$ are not always independent! For example, the map $(\mel{E}_1, \mel{E}_2) \mapsto (\mel{E}_1, \mel{E}_1 + \mel{E}_2)$ transforms two independent normals into two dependent ones.
-
+One distribution that will be particularly useful in our analysis is the \emph{multivariate Gaussian distribution}, which generalised the (one-dimensional) normal distribution. In the simplest case, we have a stochastic vector $\mat{E}=(\mel{E}_1, \dots, \mel{E}_p)$, which is the combination of $p$ Gaussian distributed, \emph{independent} scalar variables. In general, however, we wish to study stochastic vectors produced by applying a \emph{linear transformation} $\mat{L} \in \mathcal{L}(\mathbb{R}^p, \mathbb{R}^q)$ to $\mat{E}$. In this case, the coordinate variables $(\mel{LE})_1,\dots,(\mel{LE})_q$ are not always independent! For example, the map $(\mel{E}_1, \mel{E}_2) \mapsto (\mel{E}_1, \mel{E}_1 + \mel{E}_2)$ transforms two independent normals into two dependent ones.
 %In particular, we answer the following question: ``For $i,j \in \range{q}$ and $x \in \mathbb{R}$, what is the distribution of $(\mel{LE})_i$, \emph{given that} $(\mel{LE})_j \geq x$?''
-\todo{Deze inleiding slaat het geval ${E}$ Gaussiaans maar niet normaal, over.}
-
 \subsection{Normal and Gaussian}
 Although they are often used interchangeably, we make a clear distinction between a \emph{normal} distribution and a \emph{Gaussian} distribution. The former should be familiar:
 
@@ -34,7 +31,7 @@ is the probability density of $E$.
 A scalar variable $E$ is said to be \emph{Gaussian distributed} if it is either normally distributed or constant. 
 \end{definition}
 
-One could interpret a constant $E$ with value $\mu$ as a normally distributed variable with mean $\mu$ and `standard deviation $0$'. Clearly, a linear combination of Gaussian distributed scalar variables is also Gaussian distributed.
+One could interpret a constant $E$ with value $\mu$ as a normally distributed variable with mean $\mu$ and `standard deviation $0$'. A linear combination of normally distributed \emph{scalar} variables is also normally distributed, and the same is true for Gaussian distributed scalars.
 
 \begin{definition}
 A stochastic vector $\mat{E}=(\mel{E}_1, \dots, \mel{E}_p)$ is \emph{elementary normally distributed}\index{distribution!elementary normal} if the scalar variables $\mel{E}_i$ are independent and normally distributed ($i \in \range{p}$).
@@ -43,7 +40,7 @@ $\mat{E}$ is \emph{elementary Gaussian distributed}\index{distribution!elementar
 
 \begin{definition}
 A stochastic vector $\mat{X}=(\mel{X}_1, \dots, \mel{X}_p)$ is \emph{normally distributed}\index{distribution!normal} if there exists an orthogonal operator $\mat{Q}$ such that $\mat{QX}$ is elementary normally distributed.
-$\mat{X}$ is \emph{Gaussian distributed}\index{distribution!Gaussian} if there exists an orthogonal operator $\mat{Q}$ such that $\mat{QX}$ is elementary normally distributed.
+$\mat{X}$ is \emph{Gaussian distributed}\index{distribution!Gaussian} if there exists an orthogonal operator $\mat{Q}$ such that $\mat{QX}$ is elementary Gaussian distributed.
 \end{definition}
 
 \towrite{Plaatjes vullen gaatjes}
@@ -62,14 +59,17 @@ Suppose $\mat{X}$ is a $\gaussdistr(\mat{\mu}, \mat{\Sigma})$-distributed $p$-ve
 \mat{X}+\mat{a} \, &\sim \, \gaussdistr(\mat{\mu}+\mat{a}, \mat{\Sigma}), \\
 \intertext{and for any linear map $\mat{L} \in \mathcal{L}(\mathbb{R}^p, \mathbb{R}^q)$:}
 \mat{L}\mat{X} \, &\sim \, \gaussdistr(\mat{L}\mat{\mu}, \mat{L}\mat{\Sigma}\mat{L}^*).
-\end{align}\todo{positive definite keer normaal is normaal}
+\end{align}
 \end{theorem}
+\begin{remark}
+If $\mat{X}$ is normally distributed, and $\mat{L} \in \mathcal{L}(\mathbb{R}^p, \mathbb{R}^q)$, then $\mat{L}\mat{X}$ is Gaussian distributed, but not necessarily normally distributed! A trivial example is the zero map: any normally distributed scalar is mapped to a constant (0), which does not exhibit a probability density function.
+\end{remark}
 \begin{corollary}\label{cor:innerproductisgaussian}
 For any $\mat{b} \in \mathbb{R}^p$, the mapping
 \[
-\mat{b}^* : \mathbb{R}^p \rightarrow \mathbb{R} : \mat{x} \mapsto \left\langle\mat{x}, \mat{b}\right\rangle
+\left\langle\mat{b}, \,\cdot\,\right\rangle : \mathbb{R}^p \rightarrow \mathbb{R} : \mat{x} \mapsto \left\langle\mat{b}, \mat{x}\right\rangle
 \]
-is \emph{linear}, and therefore the scalar variable $\mat{b}^*\mat{X} = \left\langle\mat{X}, \mat{b}\right\rangle$ is Gaussian distributed.
+is \emph{linear}, and therefore the scalar variable $\left\langle\mat{b}, \mat{X}\right\rangle$ is Gaussian distributed.
 \end{corollary}
 In particular, when applying Corollary \ref{cor:innerproductisgaussian} to each element of the standard basis $(\mat{e}_1, \dots, \mat{e}_p)$ of $\mathbb{R}^p$, we find that each of the \emph{coordinates} of $\mat{X}$ is Gaussian distributed:
 \begin{proposition}\label{prop:gaussianmarginaldistr}
@@ -80,7 +80,7 @@ Suppose $\mat{X}=(\mel{X}_1,\dots,\mel{X}_p)$ is a $\gaussdistr(\mat{\mu}, \mat{
 \end{proposition}
 
 
-For normal distributed vectors, a probability density function exists:
+For normally distributed vectors, a probability density function exists:
 \begin{theorem}
 Suppose $\mat{X}$ is a \emph{normally} distributed $p$-vector with expectation $\mat{\mu} =\EXP\left[\mat{X}\right]$ and covariance matrix $\mat{\Sigma}=\COVMAT(\mat{X})$. Then $\mat{X}$ has a \emph{probability density function} given by
 \begin{equation}\label{eq:multivarnormaldensity}
@@ -88,13 +88,12 @@ Suppose $\mat{X}$ is a \emph{normally} distributed $p$-vector with expectation $
 \end{equation}
 \end{theorem}
 \begin{remark}
-The condition that $\mat{X}$ is normally distributed is necessary: if $\mat{X}$ is Gaussian, but not normal, it will take values in an \emph{affine subspace of $\mathbb{R}^p$} (such as a plane, as subspace of $\mathbb{R}^3$). If a density function were to exist, it would have support of zero measure, and integrating over $\mathbb{R}^p$ would yield $0$, instead of $1$. \todo{Klopt dit?}
+The condition that $\mat{X}$ is normally distributed is necessary: if $\mat{X}$ is Gaussian, but not normal, it will take values in an \emph{affine subspace of $\mathbb{R}^p$} (such as a plane, as subspace of $\mathbb{R}^3$). If a density function were to exist, it would have support of zero measure, and integrating over $\mathbb{R}^p$ would yield $0$, instead of $1$.
 \end{remark}
-
-\begin{theorem}
-The mode of a Gaussian distribution is its mean.\todo{(waar) moet dit?}
-\end{theorem}
-\subsection{One linear condition}
+%\begin{theorem}
+%The mode of a Gaussian distribution is its mean.\todo{(waar) moet dit?}
+%\end{theorem}
+\section{One linear condition}
 \begin{definition}
 Given a $\mat{r} \in \mathbb{R}^p$ and $b \in \mathbb{R}$, the set $A\subseteq \mathbb{R}^p$ of solutions to the equation
 \[
@@ -105,14 +104,16 @@ is called a \emph{plane in $\mathbb{R}^p$}\index{plane}. The set $B \subseteq \m
 \left\langle \mat{r}, \mat{x} \right\rangle \leq b
 \]
 is a \emph{half-space in $\mathbb{R}^p$}.
-When $b=1$, we write $\mat{r}_A$, and we say that $\mat{r}_A$ is a \define{pillar} for $A$. Two planes are called \emph{parallel} if they do not intersect.
+When $b=1$, we write $\mat{r}_A$ (or $\mat{r}_B$), and we say that $\mat{r}_A$ ($\mat{r}_B$) is a \define{pillar} for $A$ (or $B$). Two planes are called \emph{parallel} if they do not intersect.
 \end{definition}
 \begin{remark}
-When $b \neq 1$, we can scale $\mat{r}$ to create a pillar for $A$ or $B$, unless $b=0$ (which is the case if and only if $\mat{0} \in A$, $B$, respectively).
+When $b \neq 1$, we can scale $\mat{r}$ to create a pillar for $A$ or $B$, unless $b=0$ (which is the case if and only if $\mat{0} \in A$).
 \end{remark}
 \begin{remark}
 $A = \partial B$.
 \end{remark}
+
+Geometrically, a pillar can be interpreted as a vector from the origin that crosses the plane orthogonally. Its length is \emph{not} the distance between the origin and the plane, but rather the \emph{inverse} of this distance.
 
 \towrite{Orthogonal projection onto a plane}
 
@@ -128,17 +129,18 @@ The boundary of a convex polyhedron is contained in the union of planes correspo
 The convex polyhedra in $\mathbb{R}$ are exactly all (possibly infinite) closed intervals. Convex polyhedra in $\mathbb{R}^3$ are familiar shapes, like a cube or a pyramid, but they might also be unbounded, like a pyramid with infinitely deep foundations. 
 Objects that are \emph{not} convex polyhedra are spheres (no finite intersection of half-spaces) and donuts (not convex, which as the name suggest, is a property of any convex polyhedron\footnote{Using the linearity of the inner product, one easily finds that half-spaces are convex, and so are their intersections.}).
 
-In this thesis, we model the \emph{power injection} of a grid as a normally distributed stochastic vector, where each coordinate corresponds to the amount of energy injected at a node of the network. Positive values denote net generation (injection) and negative values are assigned to net consumption. The stochastic behaviour originates from \emph{renewable sources}: wind and solar, and their correlations arise from correlated weather. 
+\subsection{Feasibility region}
+In this thesis, we model the \emph{power injection} of a grid as a normally distributed stochastic vector, where each coordinate corresponds to the amount of power injected at a node of the network. Positive values denote net generation (injection) and negative values are assigned to net consumption. The stochastic behaviour originates from \emph{renewable sources}: wind and solar, and their correlations arise from correlated weather. 
 
 The transmission network was built to transfer power from one node to another, \ie have a non-zero power injection.
-In Chapter \ref{chap:grid}, we will learn that not all power injections are \emph{feasible}, as some might cause one of the transmission lines to overload. The \emph{feasibility region} (the set of power injections that can be used) is, to some approximation, a \emph{convex polyhedron}.
+In Chapter \ref{chap:grid}, we will learn that not all power injections are \emph{feasible}, as some might cause one of the transmission lines to overload. The \emph{feasibility region} (the set of power injections that can be used) is, to some approximation,\footnote{We make this \emph{DC approximation} more precise in Chapter \ref{chap:model}.} a \emph{convex polyhedron}.
 
 Using historical generation series, we can estimate the covariance of this power injection. Because the amount of current flowing through a line is a linear function of the power injection (by the same approximation), we can use Corollary \ref{cor:innerproductisgaussian} to determine the marginal distribution of line current, which gives the probability of an overload failure. A failure of this kind (\ie caused by a fluctuation of renewable injection) is called an \define{emergent failure}.
 
-Current studies (notably \cite{Nesti2018emergentfailures} and \cite{Chertkov2011}) take this one step further, by determining \emph{the most probable power injection that caused the emergent failure to occur}. We follow the approach of \cite{Nesti2018emergentfailures}, which is generalised in the following Theorem. Here, the plane $A$ can be taken to be one of the \emph{boundary planes of the feasibility region, corresponding to one of the lines}, and the event $\mat{X} \in A$ is the \emph{moment that this line overloads}.
+Current studies (notably \cite{Nesti2018emergentfailures} and \cite{Chertkov2011}) take this one step further, by determining \emph{the most probable power injection that caused the emergent failure to occur}. We follow the approach of \cite{Nesti2018emergentfailures}, which is generalised in the following Theorem. Here, the plane $A$ can be taken to be one of the \emph{boundary planes of the feasibility region, corresponding to one of the lines}, and the event $\mat{X} \in A$ is the \emph{event that this line overloads}.
 
 \begin{theorem}\label{thm:modeofaplaneconditional}
-Let $\mat{X} \, \sim \, \gaussdistr(\mat{\mu}, \mat{\Sigma})$ be a normally distributed $p$-vector with density function $f_{\mat{X}}$, and let $A\subseteq \mathbb{R}^p$ be a plane, given by a pillar $\mat{r}_A \in \mathbb{R}^p$. Then $\mat{X} \mid A$ \todo{hier bestaat vast notatie voor} is Gaussian distributed, and has mode\todo{$A$ is not an event, but $\mathbf{X}^{-1}(A)$ is.}
+Let $\mat{X} \, \sim \, \gaussdistr(\mat{\mu}, \mat{\Sigma})$ be a normally distributed $p$-vector with density function $f_{\mat{X}}$, and let $A\subseteq \mathbb{R}^p$ be a plane, given by a pillar $\mat{r}_A \in \mathbb{R}^p$. Then $\mat{X} \mid \mat{X} \in A$ is Gaussian distributed, and has mode
 \begin{equation}
 \tilde{\mat{x}}_{A} = \argmax_{\mat{x} \in A} f_{\mat{X}}(\mat{x}) = \mat{\mu}  + \frac{1 - \left\langle \mat{\mu}, \mat{r}_A \right\rangle}{\left\langle  \mat{\Sigma} \mat{r}_A, \mat{r}_A \right\rangle} \mat{\Sigma} \mat{r}_A.\label{eq:modeofaplaneconditional}
 \end{equation}
@@ -151,15 +153,15 @@ Suppose $\mat{X}$ is \emph{elementary} normally distributed, with all marginal v
 \[
 \mat{x} \mapsto \frac{1}{\left(2\pi\right)^{p/2}} \exp\left[ \frac{-\norm{\mat{x} - \mat{\mu}}^2}{2}  \right].
 \]
-This is a \emph{decreasing} function of the \emph{distance between $\mat{x}$ and $\mat{\mu}$}, and so its mode is obtained when this distance is minimum.
+This is a \emph{decreasing} function of the \emph{distance between $\mat{x}$ and $\mat{\mu}$}, and so its mode is obtained when this distance is minimal.
 
-Because $A$ is an affine subspace of $\mathbb{R}^p$, the distance between $\mat{x} \in A$ and $\mat{\mu}$ is minimum when $\mat{x}$ is the \emph{orthogonal projection} of $\mat{\mu}$ onto $A$, which is given by:
+Because $A$ is an affine subspace of $\mathbb{R}^p$, the distance between $\mat{x} \in A$ and $\mat{\mu}$ is minimal when $\mat{x}$ is the \emph{orthogonal projection} of $\mat{\mu}$ onto $A$, which is given by:
 \[
 \tilde{\mat{x}}_{A} = \mat{\mu} + \frac{1 - \left\langle \mat{\mu}, \mat{r}_A \right\rangle}{\left\langle \mat{r}_A, \mat{r}_A \right\rangle} \mat{r}_A.
 \]
 
 \emph{Step 2. The case of an arbitrary elementary normal distribution.}\\
-Let us drop the assumption that all marginal variances are equal to one. There exist $\lambda_1, \dots, \lambda_p \in \mathbb{R}_{>0}$ such that $\mat{\Sigma} = \mat{\Lambda} = \diag(\lambda_1, \dots, \lambda_p)$, and $\mat{\Lambda}^{t} = \diag(\lambda_1^{t}, \dots, \lambda_p^{t})$ for any $t \in \mathbb{R}$. \todo{Dit zijnd e varianties, gebruikt simgasquared?} With $t=-\frac{1}{2}$, we find that $\mat{\Lambda}^{-\frac{1}{2}}\mat{X}$ is elementary normally distributed, with mean $\mat{\Lambda}^{-\frac{1}{2}}$ and unit covariance matrix.
+Let us drop the assumption that all marginal variances are equal to one. There exist $\lambda_1, \dots, \lambda_p \in \mathbb{R}_{>0}$ such that $\mat{\Sigma} = \mat{\Lambda} = \diag(\lambda_1, \dots, \lambda_p)$, and $\mat{\Lambda}^{t} = \diag(\lambda_1^{t}, \dots, \lambda_p^{t})$ for any $t \in \mathbb{R}$. \todo{Dit zijn de varianties, gebruik simgasquared?} With $t=-\frac{1}{2}$, we find that $\mat{\Lambda}^{-\frac{1}{2}}\mat{X}$ is elementary normally distributed, with mean $\mat{\Lambda}^{-\frac{1}{2}}$ and unit covariance matrix (Theorem \ref{thm:linearmapofgaussian}).
 Applying the same transformation $\mat{\Lambda}^{-\frac{1}{2}}$ to $A$ yields a new plane, which has pillar $\mat{\Lambda}^{\frac{1}{2}}\mat{r}_A$ (not $\mat{\Lambda}^{-\frac{1}{2}}\mat{r}_A$!):
 
 For each $\mat{x} \in \mathbb{R}^p$, we have
