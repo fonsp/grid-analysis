@@ -212,7 +212,7 @@ $$\mat{I} = i\diag(i\mat{\eta})\mat{K}^*\mat{V}$$
 \subsection{Kirchoff's Current Law (KCL)}
 Using KVL and Ohm's Law, we found a relation between line current and node voltages. We can use KCL to relate the power injection to currents leaving and entering a bus.
 
-We apply KCL to every high-voltage node in the electric circuit, as shown in Figure \ref{fig:KVLcircuitside}. For a bus $i \in \range{n}$, this gives us:
+We apply KCL to every high-voltage node in the electric circuit, as shown in Figure \ref{fig:KVLcircuitside}. For a bus $i \in \range{n}$, Kirchoff's Current Law states:
 \[
 \left[ \text{\textit{sum of currents leaving the node}}\right] \, - \, \left[\text{\textit{sum of currents entering the node}}\right] = 0.
 \]
@@ -226,11 +226,11 @@ The $i^{\text{th}}$ row of $\mat{K}$ corresponds to the bus $i$, and its entries
 \[
 \conj{\mel{S}_i \mel{V}_i^{-1}} + (\mel{K}\mel{I})_i = 0.
 \]
-Taking the complex conjugate, and multiplying both sides by $\mel{V}_i$ gives $\mel{S}_i + \conj{(\mel{K}\mel{I})}_i \mel{V}_i = 0$ for each $i \in \range{n}$, or in matrix form:
+Taking the complex conjugate and multiplying both sides by $\mel{V}_i$ gives $\mel{S}_i + \conj{(\mel{K}\mel{I})}_i \mel{V}_i = 0$ for each $i \in \range{n}$, or in matrix form:
 $$\mat{S}+\conj{(\mat{K} \mat{I})}\pointwise \mat{V} = \mat{0}.$$
 (The symbol $\pointwise$ denotes \emph{point-wise} multiplication.)
 \subsection{Validity conditions}
-\towrite{intro}
+Instead of \emph{requiring}\footnote{\cite{Slepian1968} gives an \emph{axiomatic} formulation of circuit theory.} the circuits laws to hold, we define them as an \emph{optional property} of the grid state.
 \begin{definition}\label{def:statevalidity}
 Given an $(n,m)$-grid structure $((\mathcal{N},\mathcal{L}),\mat{K},\mat{\eta})$, a grid state $(\mat{S}, \mat{V}, \mat{I})$ is \define{valid} if it satisfies the \define{KVL-Ohm equality}:
 \begin{align}\label{eq:KVLOhmeq}
@@ -256,11 +256,10 @@ and the \emph{KCL equality} states:
 
 \begin{proposition}
 Given a grid structure and state as in Definition \ref{def:statevalidity}, the following are equivalent:
-
 \begin{enumerate}[label=\roman*.]
     \item The grid state is valid.
     \item The grid state satisfies (\ref{eq:KVLOhmeq}) and (\ref{eq:KCLeq}).
-    \item The grid state satisfies (\ref{eq:KVLOhmeq}), and each node $i$ satisfies the \define{node flow equation}:
+    \item The grid state satisfies (\ref{eq:KVLOhmeq}), and each node $i$ satisfies the \define{node flow equation}, also called the \define{power mismatch equation}:
     \begin{empheq}[box=\fbox]{gather}
         \mel{S}_i = i\sum_{j=1}^{n} \conj{\mel{L}}_{i,j} |\mel{V}_i| |\mel{V}_{j}| e^{i(\theta_i - \theta_j)}\quad\quad\text{for each $i \in \range{n}$,}\label{eq:nodefloweq}\\
         \text{where }\mat{L}=\mat{K} \diag(i\mat{\eta}) \mat{K}^*
@@ -278,19 +277,22 @@ Note that (\ref{eq:nodefloweq}) does not depend on $\mat{I}$. This means that a 
 Writing in real and imaginary components, we get the node flow equations for real and reactive power for each node $i \in \range{n}$:
 \begin{align}
     %\mel{S}_i &= \sum_{j=1}^{n} (\Re(\conj{\mel{M}}_{i,j})+i\Im(\conj{\mel{M}}_{i,j})) |\mel{V}_i| |\mel{V}_{j}| (\cos(\theta_i - \theta_j)+i\sin(\theta_i - \theta_j)) \\
-    \phym{P}=\Re (\mel{S}_i) &= \sum_{j=1}^{n} |\mel{V}_i| |\mel{V}_{j}| \Big[\Re(\mel{M}_{i,j})\cos(\theta_i - \theta_j)+\Im(\mel{M}_{i,j})\sin(\theta_i - \theta_j)\Big]
+    %\phym{P}=\Re (\mel{S}_i) &= \sum_{j=1}^{n} |\mel{V}_i| |\mel{V}_{j}| \Big[\Re(\mel{M}_{i,j})\cos(\theta_i - \theta_j)+\Im(\mel{M}_{i,j})\sin(\theta_i - \theta_j)\Big]
+    \phym{P}=\Re (\mel{S}_i) &= \sum_{j=1}^{n} |\mel{V}_i| |\mel{V}_{j}| \Big[\Im(\mel{L}_{i,j})\cos(\theta_i - \theta_j)-\Re(\mel{L}_{i,j})\sin(\theta_i - \theta_j)\Big]
     \label{eq:realreactivenodefloweqreal}
     \\
-    \phym{Q}=\Im (\mel{S}_i) &= \sum_{j=1}^{n} |\mel{V}_i| |\mel{V}_{j}|\Big[\Re(\mel{M}_{i,j})\sin(\theta_i - \theta_j)-\Im(\mel{M}_{i,j})\cos(\theta_i - \theta_j)\Big]
+    %\phym{Q}=\Im (\mel{S}_i) &= \sum_{j=1}^{n} |\mel{V}_i| |\mel{V}_{j}|\Big[\Re(\mel{M}_{i,j})\sin(\theta_i - \theta_j)-\Im(\mel{M}_{i,j})\cos(\theta_i - \theta_j)\Big]
+    \phym{Q}=\Im (\mel{S}_i) &= \sum_{j=1}^{n} |\mel{V}_i| |\mel{V}_{j}|\Big[\Im(\mel{L}_{i,j})\sin(\theta_i - \theta_j)+\Re(\mel{L}_{i,j})\cos(\theta_i - \theta_j)\Big]
     \label{eq:realreactivenodefloweqreactive}
-\end{align}\todo{$\mathbf{M}$ should be $\pm i \mathbf{L}$}
-In literature on the subject, the node flow equation is often given in this form.
+\end{align}
+In literature on the subject, the node flow equation is often given in this form. The summands in the expression above are essentially the two-dimensional rotation matrix of angle $\theta_i - \theta_j$, applied to the vector $(\Re(i \conj{\mel{L}}_{i,j}), \Im(i \conj{\mel{L}}_{i,j}))^*$.
 
-We will later study so called \emph{DC-valid} grid structures, where the values of $\mat{M}$ are purely imaginary. If so, (\ref{eq:realreactivenodefloweqreal}) simplifies to:
+We will later study so called \emph{DC-valid} grid structures, where the values of $\mat{L}$ are real. If so, (\ref{eq:realreactivenodefloweqreal}) simplifies to:
 \begin{align*}
-    \phym{P}=\Re (\mel{S}_i) &= \sum_{j=1}^{n} \Im(\mel{M}_{i,j}) |\mel{V}_i| |\mel{V}_{j}| \sin(\theta_i - \theta_j),
+    \phym{P}=\Re (\mel{S}_i) &= \sum_{j=1}^{n} \Re(\mel{L}_{i,j}) |\mel{V}_i| |\mel{V}_{j}| \sin(\theta_j - \theta_i).
 \end{align*}
-which tells us that in a network of just two nodes and one line with purely imaginary admittance, the amount of real power transmitted is proportional to $\sin (\theta_2-\theta_1)$.\footnote{The quantity $\theta_2 - \theta_1$ is called the \define{power angle} of the transmission line, a common measure of the amount of power being transmitted. As discussed in Section \ref{gridstability}, a power angle greater than $45\si{\degree}$ will cause the nodes to lose synchronicity, making power transmission between the two nodes impossible. For long lines (over $100\si{\kilo\meter}$), this \define{stability limit} places an upper limit on the amount of power that a line can transmit. For shorter lines, the \emph{thermal limit} dominates.}
+(Notice that we flipped $\theta_i$ and $\theta_j$.)
+This tells us that in a network of just two nodes and one line with purely imaginary admittance, \todo{move to separate Example} the amount of real power transmitted is proportional to $\sin (\theta_2-\theta_1)$.\footnote{The quantity $\theta_2 - \theta_1$ is called the \define{power angle} of the transmission line, a common measure of the amount of power being transmitted. As discussed in Section \ref{gridstability}, a power angle greater than $45\si{\degree}$ will cause the nodes to lose synchronicity, making power transmission between the two nodes impossible. For long lines (over $100\si{\kilo\meter}$), this \define{stability limit} places an upper limit on the amount of power that a line can transmit. For shorter lines, the \emph{thermal limit} dominates.}
 
 
 \end{remark}
@@ -317,65 +319,90 @@ proving (ii) $\iff$ (iii).
 
 \section{Power Flow}
 In the previous section, we derived a fundamental result: the \emph{node flow equation} (\ref{eq:nodefloweq}).
-Recall from Section \ref{powerflow} that the \emph{power flow problem} entails the following:
-
+Recall from Section \ref{sec:powerflow} that the \emph{Power Flow problem} entails the following:
+\begin{empheq}{gather*}
+    \text{\emph{Given the production or consumption at each node,}}\\
+    \text{\emph{\textbf{find the current flowing through each line.}}}
+\end{empheq}
+In the context of our electric model, this translates to:
 \begin{empheq}{gather*}
     \text{\emph{Given an $(n,m)$-grid structure $((\mathcal{N},\mathcal{L}),\mat{K},\mat{\eta})$, and a power injection $\mat{S}$, }}\\
     \text{\emph{\textbf{find $\mat{V}$ and $\mat{I}$ such that $(\mat{S}, \mat{V}, \mat{I})$ is a valid state.}}}
 \end{empheq}
 
-Or put more simply:
-\begin{empheq}{gather*}
-    \text{\emph{Given the production or consumption at each node,}}\\
-    \text{\emph{\textbf{find the current flowing through each line.}}}
-\end{empheq}
-
-It turns out that the easiest way to solve this problem is to solve the node flow equation to obtain $\mat{V}$. Once $\mat{V}$ is known, one can easily compute $\mat{I}$ using \ref{eq:KVLOhmeq}, giving a state $(\mat{S}, \mat{V}, \mat{I})$ that is valid by construction.
+It turns out that the easiest way to solve this problem is to solve the node flow equation, obtaining $\mat{V}$. Once $\mat{V}$ is known, one can easily compute $\mat{I}$ using \ref{eq:KVLOhmeq}, giving a state $(\mat{S}, \mat{V}, \mat{I})$ that is valid by construction.
 
 The node flow equation is a system of non-linear equations, and no closed-form solution is known to exist in general. Fortunately, solving the node flow equation is essentially a root-finding problem. This means that well-established techniques, such as the Newton-Raphson algorithm, can be used to find a numerical solution.
 
-\towrite{Difficulty of finding initial values that convergence: flat start. Is DC approx used as initial value?}
+The only difficulty lies in the \emph{number of unknowns} ($2n$ real numbers\footnote{Actually, the voltage angle $\theta$ of one bus (the \emph{slack bus}) is usually fixed to $0$, since \ref{eq:nodefloweq} only depends on \emph{differences} in voltage angles. We then have $2n-1$ unknowns.}) and finding an \emph{initial value} that converges to the solution. When studying the evolution of the grid state over time, we can use the solution of a previous iteration as initial value. In general, however, we need to come up with an initial guess.
 
+The classical approach is to use the \define{flat start} as initial value: all voltage angles are set to $0$, and magnitudes are all set to the same value (say, $380 \, \si{\kilo\volt}$). For small networks, the Newton-Raphson algorithm then converges to a valid state, with small power angles between lines, and voltage magnitudes close to the initial value. For larger networks, however, this initial value rarely converges, and a valid is state can be `maddeningly difficult to obtain' \citep{Overbye2004}. 
+
+Instead, a common approach is to approximate the grid structure and to linearises the laws of physics. The more approximations that we make, the easier it is to find a solution. A particular combination of approximations is known as the \emph{DC approximation}, in which case a \emph{closed-form} solution always exists, known as the \emph{Linear Power Flow}. For accurate power flow analysis, this solution is then used as initial value for the original system of equations. In this thesis, however, we will only use the solution of the Linear Power Flow, as it is easier to compute and analyse. This is common practice when studying \emph{cascading failures} \citep{Nesti2018emergentfailures, Ronellenfitsch2017, Purchala}.
 \section{DC approximation}\label{DCapproximation}
+`DC approximation' is a name given to a collection of assumptions/approximations, described below. The name `DC' refers to the approximation that the network is \emph{decoupled}. Unlike the abbreviation might suggest (DC usually stands for `Direct Current'), the power grid is still modelled as an AC (Alternating Current) network. The first version of this technique was published by \cite{Scott1974}, allowing the node flow equations to be solved efficiently using the computational power available at that time.\footnote{Their method does solve the actual node flow equation, but they optimised the iterative root-finding process by \emph{approximating the Jacobian}.}
 
-
-``DC approximation'' is a name given to a collection of assumptions/approximations, described below. The name `DC' refers to the approximation that the network is decoupled. Unlike the abbreviation might suggest, the power grid is still modelled as an AC network.\tocite{Scott1974 for the origin of the DC approximation}
-
-
-\towrite{intro}
 Compare the following with Definitions \ref{def:gridstructure} and \ref{def:gridstate}.
 \begin{definition}\label{def:DCaproximated}
-Suppose $((\mathcal{N},\mathcal{L}),\mat{K},\mat{\eta})$ is an $(n,m)$-grid structure, with a grid state $(\mat{S}, \mat{V}, \mat{I})$.
+Suppose $((\mathcal{N},\mathcal{L}),\mat{K},\mat{\eta})$ is an $(n,m)$-grid structure.
 \begin{itemize}
-    \item If $\mat{\eta} \in i\mathbb{R}^m \subseteq \mathbb{C}^m$  (\ie $\mat{\eta}$ has purely imaginary values) then the grid structure \emph{satisfies the DC approximation}\index{DC approximation!structure}.
-    \footnote{In Nesti et al., we have $\beta=i\mat{\eta}$. Transmission line impedance ($\phym{Z=R+iX}$) is dominated by inductance, which is positive reactance  ($\phym{X}$). Resistance ($\phym{R}$) is always positive for passive components. Therefore, $\phym{Z}$ lies in the top-right quadrant of $\mathbb{C}$. Then the admittance, $\phym{Y=1/Z=G+iB}$, lies in the bottom-right quadrant of $\mathbb{C}$. In the DC approximation, line conductance ($\phym{G}$) is neglected, so ($\phym{Y=iB}$ with $\phym{B}<0$). Therefore, $\beta_k=i\eta_k=i\phym{Y}=-\phym{B}>0$ is the \emph{susceptance of line $k$, \textbf{with reversed sign.}}}
-    \todo{physics: conductance is neglected}
-    \item If $\mat{S} \in \mathbb{R}^n \subseteq \mathbb{C}^n$ then the grid state \emph{satisfies the DC approximation}\index{DC approximation!state}. (Note that $\mat{V}$ and $\mat{I}$ need not be real-valued.)
+    \item If $i\mat{\eta} \in \mathbb{R}^m \subseteq \mathbb{C}^m$  (\ie $\mat{\eta}$ has purely imaginary values) then the grid structure \emph{satisfies the DC approximation}\index{DC approximation!structure}.
+    \footnote{\cite{Nesti2018emergentfailures} write $\beta=i\mat{\eta}$. Transmission line impedance ($\phym{Z=R+iX}$) is dominated by inductance, which is positive reactance  ($\phym{X}$). Resistance ($\phym{R}$) is always positive for passive components. Therefore, $\phym{Z}$ lies in the top-right quadrant of $\mathbb{C}$. Then the admittance, $\phym{Y=1/Z=G+iB}$, lies in the bottom-right quadrant of $\mathbb{C}$. In the DC approximation, line conductance ($\phym{G}$) is neglected, so ($\phym{Y=iB}$ with $\phym{B}<0$). Therefore, $\beta_k=i\eta_k=i\phym{Y}=-\phym{B}>0$ is the \emph{susceptance of line $k$, \textbf{with reversed sign.}}}
+\end{itemize}
+For a grid state $(\mat{S}, \mat{V}, \mat{I})$ on the structure:
+\begin{itemize}
+    \item If $\mat{S} \in \mathbb{R}^n \subseteq \mathbb{C}^n$ then the grid state \emph{satisfies the DC approximation}\index{DC approximation!state}. (Note that $\mat{V}$ and $\mat{I}$ need not be real-valued! We are still studying an AC circuit.)
     \item If $\mat{V} \in \mathbb{T}^n \cdot V_{op} \subseteq \mathbb{C}^n$ (\ie $|V_i|=V_{op}$ for each node $i$) for some \define{operating voltage} $V_{op} \in \mathbb{R}_{\geq 0}$, then the grid state admits a \define{flat profile}.
 
-    In the special case $V_{op}=1$, the grid state admits a \define{normalised profile}. \todo{physics: only phase shifts are considered, unit is p.u. instead of Volts}
+    In the special case $V_{op}=1$, the grid state admits a \define{normalised profile}.
 \end{itemize}
 \end{definition}
-\todo{hyp: a (DC-?)valid state can only exist if the structure and state both satisfy the DC approx (otherwise no line drop can occur?)}
-\todo{discuss line drop}
+We note that $V_{op}=1$ does not necessarily mean that the transmission network is operating at $1 \, \si{\volt}$, it simply means that the network is operating at exactly \emph{one unit of electric potential} (which could be set to $1 \, \si{\volt}$, but also $380 \, \si{\kilo\volt}$, for example). This unit is known as a \define{power unit} (p.u.).
 
-By replacing the $\exp$ function in (\ref{eq:nodefloweq}) by $z \mapsto 1+z$ (the first two terms of the Maclaurin series of $\exp$) we get the \emph{approximate node flow equation}. These two conditions are different, but as we will later see, similar for networks with small phase shifts.
+\towrite{There is no line drop in a DC approximated structure}
+
 Compare the following with Definition \ref{def:statevalidity} and (\ref{eq:nodefloweq}).
-
-\begin{definition}\label{def:stateDCvalidity}
-Given an $(n,m)$-grid structure $((\mathcal{N},\mathcal{L}),\mat{K},\mat{\eta})$, a grid state $(\mat{S}, \mat{V}, \mat{I})$ is \emph{DC-valid}\index{valid!DC} if it satisfies the \emph{KVL-Ohm equality}:\todo{this is also approximated: $\mathbf{CV}$ is linearised.}
-\begin{align}
-    \mat{I} = i\diag(i\mat{\eta})\mat{K}^*\mat{V} \tag{\ref{eq:KVLOhmeq}}
+\begin{definition}\label{def:approximatestatevalidity}
+Given an $(n,m)$-grid structure $((\mathcal{N},\mathcal{L}),\mat{K},\mat{\eta})$ and a grid state $(\mat{S}, \mat{V}, \mat{I})$ that both satisfy the DC approximation. The grid state is \emph{approximately valid} if it satisfies the \emph{approximate KVL-Ohm equality}:
+\begin{align}\label{eq:approxKVLOhmeq}
+    \mat{I} = i\diag(i\mat{\eta})i\mat{K}^*\mat{\theta}V_{op} \tag{approx. KVL-Ohm}
 \end{align}
-and each node $i$ satisfies the \emph{approximate node flow equation}\index{node flow equation!approximate}:
+and the \emph{approximate KCL equality}:
+\begin{align}\label{eq:KCLeq}
+    \mat{S}+\conj{(\mat{K} \mat{I})} V_{op} = \mat{0}. \tag{approx. S-KCL}
+\end{align}
+\end{definition}
+The approximate KCL equality can be obtained by replacing the $\exp$ function in (\ref{eq:nodefloweq}) by $z \mapsto 1+z$ (the first two terms of the Maclaurin series of $\exp$):
+\begin{proposition}\label{prop:approxnodeflow}
+Given a grid structure state as in the previous definition, the state is approximately valid if and only if it satisfies the approximate KVL-Ohm equality and each node $i$ satisfies the \emph{approximate node flow equation}\index{node flow equation!approximate}:
 \begin{empheq}[box=\fbox]{align}
     \mel{S}_i &= i\sum_{j=1}^{n} \conj{\mel{L}}_{i,j} |\mel{V}_i| |\mel{V}_{j}| (1+i(\theta_i - \theta_j))\quad\quad\text{for each $i \in \range{n}$.}\label{eq:approxnodefloweq}
 \end{empheq}
+\end{proposition}
+\begin{proof}
+Suppose the approximate KVL-Ohm equality hold. The approximate node flow equality holds if and only if for each node $i$, we have:
+\begin{align*}
+\mel{S}_i &= i\sum_{j=1}^{n} \conj{\mel{L}}_{i,j} |\mel{V}_i| |\mel{V}_{j}| (1+i(\theta_i - \theta_j)) \\
+    &= i\sum_{j=1}^{n} \mel{L}_{i,j} |\mel{V}_i||\mel{V}_{j}| -  \sum_{j=1}^{n} \mel{L}_{i,j} |\mel{V}_i||\mel{V}_{j}|(\theta_i - \theta_j)\\
+    \intertext{We assumed a DC state ($\mel{S}_i \in \mathbb{R}$):}
+    &= -\sum_{j=1}^{n} \mel{L}_{i,j} |\mel{V}_i||\mel{V}_{j}|(\theta_i - \theta_j)\\
+    &= -\sum_{j=1}^{n} \mel{L}_{i,j} |\mel{V}_i||\mel{V}_{j}|\theta_i + \sum_{j=1}^{n} \mel{L}_{i,j} |\mel{V}_i||\mel{V}_{j}|\theta_j\\
+    &= -\theta_i |\mel{V}_i| \sum_{j=1}^{n} \mel{L}_{i,j}|\mel{V}_{j}| + |\mel{V}_i| \sum_{j=1}^{n} \mel{L}_{i,j} |\mel{V}_{j}|\theta_j\\
+    \intertext{We assumed a flat profile ($|\mel{V}_i|=|\mel{V}_j|=V_{op}$ for every $i,j \in \range{n}$):}
+    &= -\theta_i V_{op}^2 \sum_{j=1}^{n} \mel{L}_{i,j} + V_{op}^2 \sum_{j=1}^{n} \mel{L}_{i,j} \theta_j\\
+	&= -\theta_i V_{op}^2 \sum_{j=1}^{n} \conj{\mel{L}}_{i,j} + V_{op}^2 \sum_{j=1}^{n} \mel{L}_{i,j} \theta_j\\
+    \intertext{The rows of $\mat{L}$ add up to $0$:}
+	&= 0 + V_{op}^2 \sum_{j=1}^{n} \mel{L}_{i,j} \theta_j\\
+	&= V_{op}^2 \sum_{j=1}^{n} \mel{L}_{i,j} \theta_j\\
+	&= (\conj{\mel{L}}\mel{\theta})_i V^2_{op} \\
+	&= \conj{(\mel{K} \diag(i\mel{\eta})\mel{K}^*\mel{\theta})_i} V^2_{op} \\
+	&= -\conj{(\mel{K} i\diag(i\mel{\eta})i\mel{K}^*\mel{\theta}V_{op})_i} V_{op} \\
+	&= -\conj{(\mel{K} \mel{I})_i} V_{op}
+\end{align*}
+which is equal to $\mel{S}_i$ if and only if the approximate KCL equality holds.
+\end{proof}
 
-\end{definition}
-
-
-\begin{theorem}
+\begin{theorem}\label{thm:approxnodeflowlineq}
 Suppose that a grid structure and state satisfy the DC approximation and that the state admits a flat, normalised profile. Then the approximated node flow equation is linear and real:
 \begin{empheq}[box=\fbox]{align}
     \mat{S} &= \mat{L}\mat{\theta}.\label{eq:approxnodeflowlineq}
@@ -383,36 +410,24 @@ Suppose that a grid structure and state satisfy the DC approximation and that th
 \end{theorem}
 
 \begin{proof}
-For each node $i$, we have:
+In the proof of Theorem \ref{prop:approxnodeflow}, we derived that the approximate node flow equation holds if and only if for each node $i$, we have:
 \begin{align*}
-    \mel{S}_i &= i\sum_{j=1}^{n} \conj{\mel{L}}_{i,j} |\mel{V}_i| |\mel{V}_{j}| (1+i(\theta_i - \theta_j)) \\
-    &= i\sum_{j=1}^{n} \mel{L}_{i,j} |\mel{V}_i||\mel{V}_{j}| -  \sum_{j=1}^{n} \mel{L}_{i,j} |\mel{V}_i||\mel{V}_{j}|(\theta_i - \theta_j)\\
-    \intertext{If we assume a DC state ($\mel{S}_i \in \mathbb{R}$):}
-    &= -\sum_{j=1}^{n} \mel{L}_{i,j} |\mel{V}_i||\mel{V}_{j}|(\theta_i - \theta_j)\\
-    &= -\sum_{j=1}^{n} \mel{L}_{i,j} |\mel{V}_i||\mel{V}_{j}|\theta_i + \sum_{j=1}^{n} \mel{L}_{i,j} |\mel{V}_i||\mel{V}_{j}|\theta_j\\
-    &= -\theta_i |\mel{V}_i| \sum_{j=1}^{n} \mel{L}_{i,j}|\mel{V}_{j}| + |\mel{V}_i| \sum_{j=1}^{n} \mel{L}_{i,j} |\mel{V}_{j}|\theta_j\\
-    \intertext{If we assume a flat profile ($|\mel{V}_i|=|\mel{V}_j|=V_{op}$ for every $i,j \in \range{n}$):}
-    &= -\theta_i V_{op}^2 \sum_{j=1}^{n} \mel{L}_{i,j} + V_{op}^2 \sum_{j=1}^{n} \mel{L}_{i,j} \theta_j\\
-    \intertext{The rows of $L$ add up to $0$:}
-    &= V_{op}^2 \sum_{j=1}^{n} \mel{L}_{i,j} \theta_j\\
-    &= V_{op}^2 (\mat{L}\mat{\theta})_i\\
-    \intertext{If we assume $\mat{V}$ to be normalised (if $\phym{V}$ is measured in p.u., instead of Volts):}
-    &= (\mat{L}\mat{\theta})_i\\
-    \intertext{and we find:}
-    \mat{S} &= \mat{L}\mat{\theta}
+    \mel{S}_i = (\conj{\mel{L}}\mel{\theta})_i V^2_{op}.
 \end{align*}
+Because $\mat{L}$ is real-valued and $V_{op}=1$, we find the result.
 \end{proof}
 \towrite{Appendix: give a direct formula for $\mathbf{L}$}
 \towrite{compute $\mathbf{L}$ for the example networks}
 \towrite{give an alternative interpretation of $\mathbf{L}$ or $\mathbf{L}$: discrete laplacian}
-\towrite{discuss the kernel of $\mathbf{L}$: it should follow from graph theoretical arguments that the kernel is spanned by $(1,1,\dots,1)^*$, such that the nullity of $\mathbf{L}$ is $1$. This corresponds to the fact that phase angle is a relative quantity. (The state remains (DC-)valid when increasing the phase angle at each node by the same amount. (If $\mathbf{S}=\mathbf{L\theta}$ and $\mathbf{\theta}_0 \in \ker \mathbf{L}$, then $\mathbf{S}=\mathbf{L}(\bm{\theta}+\bm{\theta_0})$.))\\There are two paths to take after this point:\\1: Fix the phase angle of the slack bus (to $0$), which corresponds to taking the ${n-1 \times n-1}$ submatrix of $\mathbf{L}$, I think. \textbf{This is the approach of PyPSA, which might explain small differences in line flow.} \\2: Leave $\mathbf{L}$ as-is, and consider the \emph{Moore-Penrose pseudo-inverse} of $\mathbf{L}$. This is the approach of Nesti et al., which they attribute to 'distributive slack': not fixing a single slack bus.}
+\towrite{discuss the kernel of $\mathbf{L}$: it should be the space spanned by $(1,1,\dots,1)^*$, such that the nullity of $\mathbf{L}$ is $1$. This corresponds to the fact that phase angle is a relative quantity. (The state remains (DC-)valid when increasing the phase angle at each node by the same amount. (If $\mathbf{S}=\mathbf{L\theta}$ and $\mathbf{\theta}_0 \in \ker \mathbf{L}$, then $\mathbf{S}=\mathbf{L}(\bm{\theta}+\bm{\theta_0})$.))\\There are two paths to take after this point:\\1: Fix the phase angle of the slack bus (to $0$), which corresponds to taking the ${n-1 \times n-1}$ submatrix of $\mathbf{L}$, I think. \textbf{This is the approach of PyPSA, which might explain small differences in line flow.} \\2: Leave $\mathbf{L}$ as-is, and consider the \emph{Moore-Penrose pseudo-inverse} of $\mathbf{L}$. This is the approach of Nesti et al., which they attribute to 'distributive slack': not fixing a single slack bus.}
 
-\subsection{Usefulness}
-Real transmission networks do not satisfy the DC approximation and, in general, a DC-valid state is not (physically) valid. Yet, using these two approximations has one important property: the approximated node flow equation becomes \emph{linear}. This has a number of advantages:
-\begin{itemize}
-    \item Solving the Power Flow problem (\ie computing line flows induced by a power injection vector)\todo{ref} becomes trivial. As we will see in Section \ref{LPFequations}, \towrite{ugh}
-    \item A linear power flow is crucial for the study of stochastic power injections, since it can be used to transform a probability distribution (like a multivariate normal distribution) without losing its structure.\todo{be specific}
-\end{itemize}
+%\subsection{Usefulness}
+%Real transmission networks do not satisfy the DC approximation and, in general, a DC-valid state is not (physically) valid. Yet, using these two approximations has one important property: the approximated node flow equation becomes \emph{linear}. This has a number of advantages:
+%\begin{itemize}
+%    \item Solving the Power Flow problem (\ie computing line flows induced by a power injection vector) becomes trivial. As we will see in Section \ref{LPFequations}, \towrite{ugh}
+%    \item A linear power flow is crucial for the study of stochastic power injections, since it can be used to transform a probability distribution (like a multivariate normal distribution) without losing its structure.\todo{be specific}
+%\end{itemize}
+
 \subsection{Accuracy}
 The DC approximation is a useful tool for understanding the complex nature of transmission networks. Therefore, it is crucial to verify that the DC approximation is, in fact, a good approximation, when real-world networks are studied. More precisely, one should ask:
 \begin{enumerate}
@@ -421,7 +436,7 @@ The DC approximation is a useful tool for understanding the complex nature of tr
     %\item How does modifying a grid structure to satisfy the DC approximation affect the resulting power flow solution?
 \end{enumerate}
 
-The first question is answered in Proposition \ref{prop:powermismatchupperbound}, where an upper bound is derived for the power mismatch. It shows that the mismatch is bounded by the \emph{squares} of local differences in phase angles (i.e. $\theta_i - \theta_j$ for line $(i,j)$). \citet{Purchala} have shown that in the Belgian transmission network, all phase differences are below $7 \si{\degree}$, and $94\si{\percent}$ of lines have a phase difference below $2\si{\degree}$. \todo{europe}
+The first question is answered in Proposition \ref{prop:powermismatchupperbound}, where an upper bound is derived for the power mismatch. It shows that the mismatch is bounded by the \emph{squares} of local differences in phase angles (i.e. $\theta_i - \theta_j$ for line $(i,j)$). \citet{Purchala} have shown that in the Belgian transmission network, all phase differences are below $7 \si{\degree}$, and $94\si{\percent}$ of lines have a phase difference below $2\si{\degree}$.
 
 The second question \todo{SciGRID} \todo{Purchala}
 
@@ -532,6 +547,54 @@ The state is DC-valid, so we can substitute (\ref{eq:approxnodefloweq}) for $\me
 \end{align*}
 \end{proof}
 \towrite{Discuss the PDEs used for computing the PF?}
+\todo[inline]{Compare three methods for computing the PF in the two-node network:
+
+- original node flow equations
+
+- original node flow equations, but using the DC approximated Jacobian for root-finding
+
+- LPF
+
+they should be incrementally faster; the first two should find the same solution}
+\section{Nodal susceptance matrix}
+Theorem \ref{thm:approxnodeflowlineq} shows that the \emph{nodal susceptance matrix}, given by
+\[
+\mat{L} = \mat{K}\diag(i\mat{\eta})\mat{K}^*
+\]
+is not just useful for compact notation: it relates phase angles to power injection, taking the grid structure into account.
+
+However, we are more interested in the \emph{inverse} of this function, which maps a power injection to the vector of phase angles that it induces at the buses. Unfortunately, the inverse does not exist: $\mat{L}$ is an $n \times n$ matrix, but it does not have full rank. This can be seen by the fact that $\mat{K}$ has rank $n-1$, so the rank of $\mat{L}$ is at most $n-1$. We can be more precise:
+
+\begin{theorem}
+Suppose that the entries of $i\mat{\eta}$ are non-zero and real. Then the nodal susceptance matrix, $\mat{L}$, has rank $n-1$, and its kernel has a one-element basis:
+\[
+\ker \mat{L} = \linspan \left\lbrace 
+(1,1,\dots,1)^*.
+\right\rbrace
+\]
+\end{theorem}
+\begin{proof}
+We have $\rank \mat{K} = n-1$ (Theorem \ref{thm:imageLPF}), so $\rank \mat{K}^* = \rank \mat{K} = n-1$. We will prove $\rank \mat{L} = n-1$ by showing that $\ker \mat{L} = \ker \mat{K}^*$. This tells us that they have the same \emph{nullity}, and by the Rank-Nullity Theorem, the result follows.
+
+Suppose $\mat{\theta} \in \ker \mat{K}^*$. Then 
+$$
+\mat{L}\mat{\theta} = \mat{K}\diag(i\mat{\eta})\mat{K}^*\mat{\theta} = \mat{0},
+$$
+\ie $\mat{\theta} \in \ker \mat{L}$.
+
+Conversely, suppose $\mat{\theta} \in \ker \mat{L}$. Then
+\begin{align*}
+\mat{K}\diag(i\mat{\eta})\mat{K}^*\mat{\theta} &= \mat{0} \\
+\Rightarrow \quad \mat{\theta}^* \mat{K}\diag(i\mat{\eta})\mat{K}^*\mat{\theta} &= 0 \\
+\Rightarrow \quad (\mat{\theta}^* \mat{K}\diag(i\mat{\eta})\mat{K}^*\mat{\theta})^* &= 0 \\
+\Rightarrow \quad (\diag(i\mat{\eta})^{\frac{1}{2}} \mat{K}^*\mat{\theta})^* (\diag(i\mat{\eta})^{\frac{1}{2}} \mat{K}^*\mat{\theta}) &= 0 \qquad \text{($\diag(i\mat{\eta})$ is self-adjoint)}\\
+\Rightarrow \quad \norm{\diag(i\mat{\eta})^{\frac{1}{2}} \mat{K}^*\mat{\theta}} &= 0 \\
+\end{align*}
+so $\mat{K}^*\mat{\theta}$ must be zero, and thus $\mat{\theta} \in \ker \mat{K}^*$.
+
+The given basis has the right number of elements, and we can see from (\ref{eq:approxnodeflowlineq}) that $(1,1,\dots,1)^*$ is indeed an element of the kernel.
+\end{proof}
+
 \section{Linear Power Flow}\label{LPFequations}
 \towrite{Physically, power does not actually flow. (Although \emph{energy} does). A better term would be: \emph{flow power}, since a high power flow from A to B is actually a \emph{powerful flow of energy} from A to B.\\
 In the context of line overloads, we are only interested in line \emph{current}, which can be seen as proportional to the amount of power being transmitted by the line. (Again, power is not a physical quantity that can be transmitted.) In a flat, normalised profile, power flow and line current are identical. To follow general convention, we will talk about power flow instead of line current. For example, line ratings are often given in Watts, not Amperes. (Even though the amount energy dissipated by a line, $\phym{I^2R}$, depends only on line current. At a nearly constant operating voltage, however, these quantities are proportional to each other.)}
@@ -735,9 +798,7 @@ We will discuss two methods to solve this problem: the Direct and the Optimised 
 \towrite{Eigenlijk is deze methode net al verteld. Misschien is dit een goede plek voor power islands?}
 For the Direct method, we simply recompute the LPF for the perturbed network. To avoid reducing the dimension $m$, and recalculating $\mat{K}$, we set the admittance of each failed line to zero.
 
-More formally, suppose $((\mathcal{N},\mathcal{L}),\mat{K},\mat{\eta})$ is an $(n,m)$-grid structure with $\mathcal{Z} \subseteq \range{m}$ a collection of $v \in \range{m}$ lines that fail. For an injection $\mat{p} \in \mathbb{R}^n$, the line flow
-
-the line flows \emph{before} the failures of $\mathcal{Z}$ is given by:
+More formally, suppose $((\mathcal{N},\mathcal{L}),\mat{K},\mat{\eta})$ is an $(n,m)$-grid structure with $\mathcal{Z} \subseteq \range{m}$ a collection of $v \in \range{m}$ lines that fail. For an injection $\mat{p} \in \mathbb{R}^n$, the line flows \emph{before} the failures of $\mathcal{Z}$ are given by:
 \begin{align}
 \mat{f}^{\mathcal{Z}} &= \diag(i\mat{\eta})\mat{K}^*\left(\mat{K}\diag(i\mat{\eta})  \mat{K}^*\right)^+\mat{p}
 \intertext{(by definition of $\mat{F}$) and the line flows \emph{after} the failures are given by:}
@@ -762,7 +823,7 @@ Additionally, if the number of failed lines is small, the product $\mat{N}^*\mat
 Lastly, this expression only requires (pseudo-)solving the system of equations $\left(\mat{N}^*\mat{M}\mat{N}\right)\mat{\alpha}=\mat{N}^*\mat{f}$, which can be done more efficiently than computing the full pseudo-inverse. (The same optimisation can be also applied to the Direct method.)
 \end{remark}
 
-Several proofs to this theorem exist. The first proof, by \cite{Guler2007}, iterates over the failed lines, proving the result by natural induction. \citep{Guo2009} provide two additional proofs, which follow from a careful analysis of the Direct method, where they \emph{remove the columns of $\mat{K}$} that correspond to failed lines. An entirely different, fourth proof, due to \cite{Ronellenftisch2017}, uses the formalism of \emph{graph cycles}, which form a basis for $\ker \mat{K}$. Their article is truly fascinating, as it explores how flow redistributions are composed of loop flows. Additionally, they derive a more general result, where the grid perturbation is expressed as a \emph{change in line admittances $\mat{\eta}$}.\footnote{Some transmission networks deploy adjustable inductors that clamp onto transmission lines, to \emph{steer} the flow of current, making this generalisation especially relevant.} Taking the limit $\mel{\eta}_l \rightarrow 0$ then corresponds to the removal of the line.
+Several proofs to this theorem exist. The first proof, by \cite{Guler2007}, iterates over the failed lines, proving the result by natural induction. \citep{Guo2009} provide two additional proofs, which follow from a careful analysis of the Direct method, where they \emph{remove the columns of $\mat{K}$} that correspond to failed lines. An entirely different, fourth proof, due to \cite{Ronellenfitsch2017}, uses the formalism of \emph{graph cycles}, which form a basis for $\ker \mat{K}$. Their article is truly fascinating, as it explores how flow redistributions are composed of loop flows. Additionally, they derive a more general result, where the grid perturbation is expressed as a \emph{change in line admittances $\mat{\eta}$}.\footnote{Some transmission networks deploy adjustable inductors that clamp onto transmission lines, to \emph{steer} the flow of current, making this generalisation especially relevant.} Taking the limit $\mel{\eta}_l \rightarrow 0$ then corresponds to the removal of the line.
 
 Before providing this fourth proof, we will try to deduce the result from intuitive reasoning, to better understand the found expression.
 

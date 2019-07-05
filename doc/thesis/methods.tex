@@ -72,7 +72,7 @@ Clearly, the resulting dataset is an \emph{estimation}, and any results that fol
 \tocite{Maybe: PyPSA-EUR: \cite{PyPSAEUR}}
 
 \subsection{A note on larger datasets}
-Although the full ENTSO-E network can only be viewed on their official website, \cite{PyPSAEUR} were able to extract this information into a usable format. They provide the tools to construct a full dataset for European load en generation, but this process is too computationally demanding to take on in this thesis. 
+Although the full ENTSO-E network can only be viewed on their official website, \cite{PyPSAEUR} were able to extract this information into a usable format. They provide the tools to construct a full dataset for European load and generation, but this process is too computationally demanding to take on in this thesis. 
 
 In fact, the limitation of our dataset does have a number of benefits. There are obvious computational benefits, which allow us to study the network without simplification,\footnote{In larger datasets, the set of buses often needs to be clustered to solve the OPF problem.} and the network is small enough for individual lines to be studied. One additional advantage is that the distribution of installed renewable generation is consistent within Germany (see Figure~\ref{fig:solarwind}), while a European dataset would see large differences among countries (which all have different policies). Finally, Germany has the highest share of stochastic\footnote{This does not include renewable deterministic generation, notably hydroelectricity.} generation among European countries: in 2011, 41\% of solar energy and 31\% of wind energy in the European Union was generated in Germany.\footnote{Sources: \emph{European Wind Energy Association} and \emph{EurObserv’ER}}
 
