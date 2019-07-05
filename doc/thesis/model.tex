@@ -419,7 +419,6 @@ Because $\mat{L}$ is real-valued and $V_{op}=1$, we find the result.
 \towrite{Appendix: give a direct formula for $\mathbf{L}$}
 \towrite{compute $\mathbf{L}$ for the example networks}
 \towrite{give an alternative interpretation of $\mathbf{L}$ or $\mathbf{L}$: discrete laplacian}
-\towrite{discuss the kernel of $\mathbf{L}$: it should be the space spanned by $(1,1,\dots,1)^*$, such that the nullity of $\mathbf{L}$ is $1$. This corresponds to the fact that phase angle is a relative quantity. (The state remains (DC-)valid when increasing the phase angle at each node by the same amount. (If $\mathbf{S}=\mathbf{L\theta}$ and $\mathbf{\theta}_0 \in \ker \mathbf{L}$, then $\mathbf{S}=\mathbf{L}(\bm{\theta}+\bm{\theta_0})$.))\\There are two paths to take after this point:\\1: Fix the phase angle of the slack bus (to $0$), which corresponds to taking the ${n-1 \times n-1}$ submatrix of $\mathbf{L}$, I think. \textbf{This is the approach of PyPSA, which might explain small differences in line flow.} \\2: Leave $\mathbf{L}$ as-is, and consider the \emph{Moore-Penrose pseudo-inverse} of $\mathbf{L}$. This is the approach of Nesti et al., which they attribute to 'distributive slack': not fixing a single slack bus.}
 
 %\subsection{Usefulness}
 %Real transmission networks do not satisfy the DC approximation and, in general, a DC-valid state is not (physically) valid. Yet, using these two approximations has one important property: the approximated node flow equation becomes \emph{linear}. This has a number of advantages:
@@ -595,9 +594,14 @@ so $\mat{K}^*\mat{\theta}$ must be zero, and thus $\mat{\theta} \in \ker \mat{K}
 The given basis has the right number of elements, and we can see from (\ref{eq:approxnodeflowlineq}) that $(1,1,\dots,1)^*$ is indeed an element of the kernel.
 \end{proof}
 
+\towrite{discuss the kernel of $\mathbf{L}$: it should be the space spanned by $(1,1,\dots,1)^*$, such that the nullity of $\mathbf{L}$ is $1$. This corresponds to the fact that phase angle is a relative quantity. (The state remains (DC-)valid when increasing the phase angle at each node by the same amount. (If $\mathbf{S}=\mathbf{L\theta}$ and $\mathbf{\theta}_0 \in \ker \mathbf{L}$, then $\mathbf{S}=\mathbf{L}(\bm{\theta}+\bm{\theta_0})$.))\\There are two paths to take after this point:\\1: Fix the phase angle of the slack bus (to $0$), which corresponds to taking the ${n-1 \times n-1}$ submatrix of $\mathbf{L}$, I think. \textbf{This is the approach of PyPSA, which might explain small differences in line flow.} \\2: Leave $\mathbf{L}$ as-is, and consider the \emph{Moore-Penrose pseudo-inverse} of $\mathbf{L}$. This is the approach of Nesti et al., which they attribute to 'distributive slack': not fixing a single slack bus.}
+
 \section{Linear Power Flow}\label{LPFequations}
 \towrite{Physically, power does not actually flow. (Although \emph{energy} does). A better term would be: \emph{flow power}, since a high power flow from A to B is actually a \emph{powerful flow of energy} from A to B.\\
 In the context of line overloads, we are only interested in line \emph{current}, which can be seen as proportional to the amount of power being transmitted by the line. (Again, power is not a physical quantity that can be transmitted.) In a flat, normalised profile, power flow and line current are identical. To follow general convention, we will talk about power flow instead of line current. For example, line ratings are often given in Watts, not Amperes. (Even though the amount energy dissipated by a line, $\phym{I^2R}$, depends only on line current. At a nearly constant operating voltage, however, these quantities are proportional to each other.)}
+
+\towrite{Deze paragraaf is nog een beetje slordig!}
+
 DC approx, flat, normalised state and DC valid:
 
 pseudoinverse:
@@ -607,31 +611,29 @@ pseudoinverse:
 \end{align*}
 this is the moore-penrose pseudo-inverse,
 
-\towrite{My DC approximated KVL-Ohm is incorrect, it should be: $\mathbf{I} = i\diag(i\bm{\eta})\mathbf{C\theta}V_{op}$.}
-
 \begin{align*}
-    \hat{\mat{f}} = -iV_{op}\mat{I}=-iV_{op}^2i\diag(i\mat{\eta})\mat{K}^*\mat{\theta}
+    \mat{f} = -iV_{op}\mat{I}=-iV_{op}^2i\diag(i\mat{\eta})\mat{K}^*\mat{\theta}
     = \diag(i\mat{\eta})\mat{K}^*\mat{L}^+\mat{p}.
 \end{align*}
 (We assumed a normalised profile, so $V_{op}=1$.)
 
 If the line thresholds\index{line threshold} are $\mat{W}=(W_1, \dots, W_m)^* \in \mathbb{R}^m$, then we can define the \emph{normalised line flow}\index{line flow!normalised} as:
-$$\mat{f} = \diag(\mat{W})^{-1}\hat{\mat{f}}$$
+$$\hat{\mat{f}} = \diag(\mat{W})^{-1}\mat{f}$$
 and we find:
 \begin{empheq}[box=\fbox]{gather}\label{eq:LPF}
     \mat{f}=\mat{F}\mat{p} \tag{LPF}\\[3mm]
-    \text{where }\quad\mat{F}=\diag(\mat{W})^{-1}\diag(i\mat{\eta})\mat{K}^*\mat{L^+} \notag
-\end{empheq}\todo{Dit is }
+    \text{where }\quad\mat{F}=\diag(i\mat{\eta})\mat{K}^*\mat{L^+} \notag
+\end{empheq}
 
-\emph{This is a linear transformation from a power injection vector $\mat{p}$ to the normalised line flow $\mat{f}$ that induces it.}
-\todo[inline]{$\mathbf{F}$ is not the unique transformation with this property (otherwise $\mathbf{F}$ would be square and non-singular). Does $\mathbf{F}$ minimise $\norm{\mathbf{f}}$? $\mathbf{F}$}
+\emph{This is a linear transformation from a power injection vector $\mat{p}$ to the line flow $\mat{f}$ that induces it.}
+\todo[inline]{$\mathbf{F}$ is not the unique transformation with this property (otherwise $\mathbf{F}$ would be square and non-singular). Does $\mathbf{F}$ minimise $\norm{\mathbf{f}}$?}
 
 \todo{line drop: (real) power flowing out of a node is slightly more than power }
 
-\towrite{Leg het verband tussen de LPF en het hoofdstuk over grafen: de af}
+\towrite{Leg het verband tussen de LPF en het hoofdstuk over grafen: rechtsinverse bewijzen?}
 
 \section{Stochastic power injections}\label{stochasticpowerinjections}
-Using the linear transformation $\mat{F}$ that we just derived, we can compute the normalised line flow that a \emph{zero-sum} power injection $\mat{p}$ induces. This is a useful result: for example, one could check whether a generator configuration is \emph{admissible} by writing down the injection $\mat{p}$ associated to this configuration, and checking that no value of $\mat{F}\mat{p}$ is greater than $1$. (Since we \emph{normalised} the line flows, each line has unit 'threshold'.)
+Using the linear transformation $\mat{F}$ that we just derived, we can compute the normalised line flow that a \emph{zero-sum} power injection $\mat{p}$ induces. This is a useful result: for example, one could check whether a generator configuration is \emph{admissible} by writing down the injection $\mat{p}$ associated to this configuration, and checking that no value of $\diag(\mat{W})^{-1}\mat{F}\mat{p}$\todo{misschien $\hat{\mathbf{F}}$} is greater than $1$. (Since we \emph{normalised} the line flows, each line has unit 'threshold'.)
 
 \[
 \begin{pmatrix}
@@ -662,7 +664,7 @@ Using the linear transformation $\mat{F}$ that we just derived, we can compute t
 \end{pmatrix}
 \]\todo{grafiekjes zijn van $|f|$, niet $f$.}
 
-Things get even more interesting when $\mat{p}$ is a \emph{stochastic variable}. In this case, $\mat{f}$ is also a stochastic variable! In fact, given a probability distribution function for $\mat{p}$, we can use $\mat{F}$ to compute the \emph{probability distribution function of $\mat{f}$}. Using this probability distribution, we can now answer questions such as: ``What is the probability that line $i$ overloads?'' ($\PROB\left[|\mel{f}_l| \geq 1 \right]$) Or: ``What is the probability that line $i$ overloads, given that line $j$ is operating at 95\% capacity?'' ($\PROB \left[ |\mel{f}_i| \geq 1 \,\mid\, \mel{f}_j = 0.95 \right]$).
+Things get even more interesting when $\mat{p}$ is a \emph{stochastic variable}. In this case, $\hat{\mat{f}}$ is also a stochastic variable! In fact, given a probability distribution function for $\mat{p}$, we can use $\diag(\mat{W})^{-1}\mat{F}$ to compute the \emph{probability distribution function of $\hat{\mat{f}}$}. Using this probability distribution, we can now answer questions such as: ``What is the probability that line $i$ overloads?'' ($\PROB\left[|\hat{\mel{f}}_l| \geq 1 \right]$) Or: ``What is the probability that line $i$ overloads, given that line $j$ is operating at 95\% capacity?'' ($\PROB \left[ |\hat{\mel{f}}_i| \geq 1 \,\mid\, \hat{\mel{f}}_j = 0.95 \right]$).
 
 \[
 \hspace{-7mm}
@@ -693,6 +695,7 @@ Things get even more interesting when $\mat{p}$ is a \emph{stochastic variable}.
 \]\todo{grafiekjes zijn van $|f|$, niet $f$.}
 
 \subsection{Normally distributed power injection}
+\towrite{Ik moet in deze paragraaf nog het `'dakje' op $\mathbf{f}$ zetten en $\mathbf{F}$ met $\diag(\mathbf{W})^{-1}$ schalen.}
 Following \cite{Nesti2018emergentfailures}, we model $\mat{p}$ to be \emph{multivariate normally distributed}:
 \[
 \mat{p} \, \sim \, \gaussdistr(\mat{\mu}_p, \mat{\Sigma}_{\mat{p}})
@@ -785,6 +788,7 @@ When $\mel{\mu}_{\mat{f}\, l} \neq 0$, we can use the $\sign$ function to combin
 
 
 \section{Redistribution of flow}
+\towrite{(In deze paragraaf moet geen dakje op $\mathbf{f}$.)}
 In the previous section, we studied normally distributed power injections, and we can now discover which lines are likely to fail, and what power injection was the most likely cause. The next step is to study the \emph{redistribution of flow}: when overloaded lines are switched off (which happens almost instantly), the remaining lines in the network will have to take over their function, because \emph{the power injection remains unchanged after a line outage}.
 In the simplest case of two parallel lines that connect two otherwise unconnected grids (say, a geographical island connected to the mainland via two cables), the failure of one line will force the other line to carry its original current, plus the current that would normally flow through the failed line.
 
@@ -871,7 +875,7 @@ is satisfied. If the network remains connected, $\alpha$ is given by $-\mel{f}_l
 \todo{Het voorbeeld van een circulair netwerk is te simpel}
 We state, \emph{without proof}, that this is indeed the flow difference dictated by power flow physics.\footnote{If we assume the Theorem to be true, one could work backwards from (\ref{eq:lineflowsafterfailures}) to find this result.}
 
-\towrite{Power island, pseudoinverse}
+\towrite{Als het netwerk niet meer verbonden is (power island) is ons model eigenlijk niet meer toepasbaar! We gebruiken nu de pseudoinverse, maar hier moet ik nog wat harder over nadenken.}
 
 In the general case of multiple line failures, we essentially apply the above procedure to each failed line, and add the resulting differences. If we were to use this method \emph{iteratively}, by considering the failed lines in some chosen order, we run into the following issue, when more than one line is removed: when removing the second line from the network, we will find a difference flow that sets the second line current to zero. Unfortunately, this difference flow will also change the current of the first line, which is then no longer zero. If we then consider the first line again, we will also affect the second line, et cetera.
 
