@@ -154,7 +154,7 @@
 \newcommand{\FRT}[0]{\ensuremath{\text{\textup{K}}}}
 
 %% MATH OPERATORS
-\newcommand{\conj}[1]{{#1}^*}
+\newcommand{\conj}[1]{\overline{#1}}
 \newcommand{\pointwise}{\ast}
 \DeclareMathOperator{\diag}{diag}
 \DeclareMathOperator{\Arg}{Arg}
@@ -213,9 +213,12 @@
 \chapter*{Notation}
 \begin{align*}
 \mat{Y}&\text{ is a matrix or vector} \\
-\mel{Y}_{i,j}& \text{ is an element of a matrix or vecor} \\
+\mel{Y}_{i,j}& \text{ is an element of a matrix or vector} \\
 Y&\text{ is a (real or complex) number}\\
 \phym{Y}&\text{ is a physical quantity (like `admittance')}\\
+\conj{\mat{Y}}&\text{ is the \emph{element-wise complex conjugate} of $\mat{Y}$} \\
+\mat{Y}^*&\text{ is the \emph{adjoint} of $\mat{Y}$ (which is equivalent to}\\
+        &\quad \text{ the \emph{transpose} for real-valued $\mat{Y}$)} \\
 \range{n}&=\{1,\dots,n\}
 \end{align*}
 \towrite{Een geel doosje geeft aan dat een stuk tekst \emph{nog geschreven moet worden}.}

@@ -10,7 +10,7 @@ Yet, only one right inverse is \emph{physically correct}: the $\LPF$. This funct
 Using this linear map, we can transform the normal distribution of stochastic injections to a Gaussian distribution of line flows. Using the results of Chapter \ref{chap:probability}, we can estimate the overload probability of each line, resulting in a ranking of most vulnerable lines. Additionally, for each such line, we compute the most probable injection to cause the failure, and simulate the subsequent \emph{cascading failures}.
 
 \section{The model}
-The $\LPF$ is essentially the \emph{high-level model} used in the final chapters of this thesis (\ie the transmission network is modelled as a linear transformation). In this chapter, we derive a closed-form expression for this transformation from a lower-level, \emph{electrical} model.
+The $\LPF$ is essentially the \emph{high-level model} used in the final chapters of this thesis (\ie the transmission network is modelled as a linear transformation). In this chapter, we derive a closed-form expression for the $\LPF$ from a lower-level, \emph{electrical} model.
 
 \subsection{Electrical model}
 We make a distinction between the \emph{structure} and the \emph{state} of the network. The structure is a directed graph, where each line is given an \emph{admittance}. The state collects the (real and reactive) power injected at each bus, the (complex) voltage of each bus, and the (complex) current flowing through each line.
@@ -145,29 +145,31 @@ A \emph{grid state}\index{grid!state} of an $(n,m)$-grid structure is defined as
 \towrite{Uitleg van AC circuits, real and reactive power, complexe grootheden, etc mist nog. In Hoofdstuk 3 van \cite{VonMeier2006} is het erg duidelijk uitgelegd.}
 \section{State validity}
 
-Given an $(n,m)$-grid structure $((\mathcal{N},\mathcal{L}),\mat{K},\mat{\eta})$, only some states are physically possible. A state that satisfies Kirchoff's Laws and Ohm's Law will be called \emph{valid}. Since we are studying a real-world system, we are mainly interested in states that are valid, or at least close to being valid (in the sense of \emph{DC-valid}, see Section \ref{DCapproximation}).
+Given an $(n,m)$-grid structure $((\mathcal{N},\mathcal{L}),\mat{K},\mat{\eta})$, only some states are physically possible. A state that satisfies Kirchoff's Laws and Ohm's Law will be called \emph{valid}. Of course, since we are studying a real-world system, we are mainly interested in states that are valid, or at least close to being valid (in the sense of \emph{DC-valid}, see Section \ref{DCapproximation}).
 
 \subsection{Circuit representation}
 An $(n,m)$-grid structure $((\mathcal{N},\mathcal{L}),\mat{K},\mat{\eta})$ represents an electrical circuit, consisting of impedances and AC sources. A \emph{valid} grid state $(\mat{S}, \mat{V}, \mat{I})$ corresponds to a physical state of the circuit.
-Given the mathematical structure, we will construct the electric circuit in two layers, as follows:
+From the mathematical structure, we will construct the corresponding electric circuit in two layers, as follows:
 
 In the first layer, each node $i$ in $\mathcal{N}$ becomes a node in the circuit. The value of $\mel{V}_i$ is the electric potential of that node, relative to ground.
 
-A line $\mathcal{L}_k=(i,j)$ is modelled as an impedance\footnote{complex-valued resistor} (\inlineres) with admittance $\mel{\eta}_k$ between the two nodes $i$ and $j$. The value of $\mel{I}_k$ is the current flowing through the impedance from $j$ to $i$.\todo{check sign}
+A line $\mathcal{L}_k=(i,j)$ is modelled as an impedance element\footnote{complex-valued resistor} (\inlineres) with admittance $\mel{\eta}_k$ between the two nodes $i$ and $j$. The value of $\mel{I}_k$ is the current flowing through the impedance from $i$ to $j$.\todo{check sign}
 
-See Figure \ref{fig:KVLcircuit} for the first constructed layer. This is not yet the final circuit: we have not yet added generators and loads to the circuit. Also, the transmission lines have no return wire. This means there is no closed loop between two nodes, and therefore no energy can be transmitted.
+See Figure \ref{fig:KVLcircuit} for the first constructed layer. This is not the final circuit: we have not yet added generators and loads to the circuit! Also, the transmission lines have no return wire. This means that there is no closed loop between two nodes, and therefore no energy can be transmitted.
 
-
-To construct the second layer, we add a new component to each node $i \in \mathcal{N}$, which can be seen as the collection of AC sources (generators) and impedances (loads), connected in parallel between the node and ground. Since an exact configuration\footnote{This would be a circuit comprising the medium and low-voltage networks connected to the node, including every generator, fridge and phone charger that it serves. This is a common (and necessary) abstraction in power grid analysis.} of loads and generators connected to the node is not important, we will simply state that this component:
+To construct the second layer, we add a new component to each node $i \in \mathcal{N}$, which can be seen as the collection of AC sources (generators) and impedances (loads), connected in parallel between the node and ground. The exact way that loads and generators are connected to the node is not important,\footnote{This would be a circuit comprising the medium and low-voltage networks connected to the node, including every generator, fridge and phone charger that it serves. This is a common (and necessary) abstraction in power grid analysis.} so we will simply state that this component:
 \begin{itemize}
     \item sustains a potential difference (which is $\mel{V}_i$);\footnote{In physical systems, the \emph{operating voltage} $|\mel{V}_i|$ (remember that $\mat{V}$ is complex) can be controlled by power plant operators by adjusting excitation current of a generator. The \emph{phase angle} $\theta_j=\Arg(V_j)$ can be controlled by adjusting the amount of energy (steam) supplied to a generator.
 
-    Both methods are an indirect form of control and the effects are very complex in nature, since the operating voltage and phase angle of one node is inherently linked to that of all other nodes in the network. In fact, \emph{maintaining} a constant operating voltage and phase angle is a complicated task, requiring continuous adjustments to generator operation. See Section 4.3 of \cite{VonMeier2006} for a more detailed description.}
+    Both methods are an indirect form of control,
+    %and the effects are very complex in nature, since the operating voltage and phase angle of one node are inherently linked to that of 
+	which also affects    
+    all other nodes in the network. In fact, \emph{maintaining} a constant operating voltage and phase angle is a complicated task, requiring continuous adjustments to generator operation. Section 4.3 of \cite{VonMeier2006} covers this topic in more detail.}
     \item either supplies or draws a current, such that the amount of power generated or consumed by the component equals $\mel{S}_i$ (when $\mel{S}_i$ is positive or negative, respectively).
 \end{itemize}
 We will call this aggregation of generators and loads a \define{power injector} (\inlineac).
 
-Each power injector is connected to a node on one end, and to a ground terminal on the other. In electric circuit theory, a ground terminal represents a direct connection to a universal ground: the zero reference of electric potential. One could say that between two different ground terminals, there exists a zero-resistance link connecting the two.
+Each power injector is connected to a node on one end, and to a ground terminal on the other. In electric circuit theory, a ground terminal represents a direct connection to a universal ground: the `zero' reference of electric potential. One could say that between two different ground terminals, there exists a zero-impedance link connecting the two.
 We now have a simple closed circuit between any two nodes connected by a transmission line, consisting of a power injector for the first node, an impedance between the two nodes, a power injector for the second node and a ground link back to the first node.
 
 The complete, two-layer model is shown in Figure \ref{fig:KVLcircuitside}.
@@ -201,22 +203,32 @@ For each line $\mathcal{L}_k=(i,j)$, we can apply Kirchoff's Voltage Law to the 
 $$\mel{V}_i + \Delta \mel{V}_k + -\mel{V}_j = 0,$$
 where $\Delta \mel{V}_k$ is the electric potential of the line impedance. This potential relates to the line current according to Ohm's Law:
 $$\mel{I}_k = \Delta \mel{V}_k \cdot \mel{\eta}_k = (\mel{V}_j - \mel{V}_i) \cdot \mel{\eta}_k.$$
-Since the $k$th column of $\mat{K}$ (which corresponds to the line $\mathcal{L}_k=(i,j)$) has two non-zero entries: $\mel{K}_{i,k}=1$ and $\mel{K}_{j,k}=-1$, we can write:
+Since the $k$th column of $\mat{K}$ (which corresponds to the line $\mathcal{L}_k=(i,j)$) has exacly two non-zero entries: $\mel{K}_{i,k}=1$ and $\mel{K}_{j,k}=-1$, we can write:
 $$\mel{I}_k = (\mel{V}_j - \mel{V}_i) \cdot \mel{\eta}_k = -(\mel{K}^*{V})_{k}\mel{\eta}_k.$$
 This holds for every $k \in \range{m}$, and this system of equations can be written compactly as:
 $$\mat{I} = i\diag(i\mat{\eta})\mat{K}^*\mat{V}$$
-\towrite{Written in this form, we see that when $i\bm{\eta}, \mathbf{C}$ and $\mathbf{V}$ are purely real, then $\mathbf{I}$ is purely imaginary. Physically, this means that line current is always $90\si{\degree}$ out of phase with node voltage. (Or it means that current is out of phase with voltage differences? Which are voltage angle differences?)}
-\todo{Writing node voltages in a circuit already implies that KVL holds.}
-
+\towrite{Written in this form, we see that when $i\bm{\eta}, \mathbf{C}$ and $\mathbf{V}$ are purely real, then $\mathbf{I}$ is purely imaginary. Physically, this means that line current is always $90\si{\degree}$ out of phase with voltage differences. When phase angles are small, and voltage magnitude is constant, then these differences are almost purely imaginary.}
+\todo{Writing node voltages in a circuit implies that already KVL holds.}
 \subsection{Kirchoff's Current Law (KCL)}
-Using KVL and Ohm's Law, we found a relation between line current and node voltages. We can use KCL to TODO
+Using KVL and Ohm's Law, we found a relation between line current and node voltages. We can use KCL to relate the power injection to currents leaving and entering a bus.
 
-Let's apply KCL to every high-voltage node in the electric circuit, as shown in Figure \ref{fig:KVLcircuitside}. This gives us:
-$$\mat{S}+\conj{(\mat{K} \mat{I})}\pointwise \mat{V} = \mat{0}$$
-which is the sum of line currents entering the node, minus the sum of line currents leaving the node.
+We apply KCL to every high-voltage node in the electric circuit, as shown in Figure \ref{fig:KVLcircuitside}. For a bus $i \in \range{n}$, this gives us:
+\[
+\left[ \text{\textit{sum of currents leaving the node}}\right] \, - \, \left[\text{\textit{sum of currents entering the node}}\right] = 0.
+\]
+These currents are the currents of lines incident at the bus, together with the current `generated or consumed' by the power injector. Complex power is given by:
+\[
+\phym{S} = \conj{\,\phym{I}\,}\phym{V}.
+\]
+In our case, $\phym{I}$ is the current that we are looking for, flowing from the ground node to the high-voltage node at $i$, and $\phym{V}$ is the potential difference between the high-voltage node and ground, which is $\mel{V}_i$. The amount of power generated or consumed is given by the grid state: $\phym{S}=\mel{S}_i$. The current through the power injector is now given by $\conj{\mel{S}_i \mel{V}_i^{-1}}$.
 
-\towrite{Show derivation of (\ref{eq:KCLeq}) from KCL in the last illustration}
-
+The $i^{\text{th}}$ row of $\mat{K}$ corresponds to the bus $i$, and its entries are $1$ for lines leaving $i$, and $-1$ for lines entering $i$. This allows us to write the sum of currents in a compact way:
+\[
+\conj{\mel{S}_i \mel{V}_i^{-1}} + (\mel{K}\mel{I})_i = 0.
+\]
+Taking the complex conjugate, and multiplying both sides by $\mel{V}_i$ gives $\mel{S}_i + \conj{(\mel{K}\mel{I})}_i \mel{V}_i = 0$ for each $i \in \range{n}$, or in matrix form:
+$$\mat{S}+\conj{(\mat{K} \mat{I})}\pointwise \mat{V} = \mat{0}.$$
+(The symbol $\pointwise$ denotes \emph{point-wise} multiplication.)
 \subsection{Validity conditions}
 \towrite{intro}
 \begin{definition}\label{def:statevalidity}
