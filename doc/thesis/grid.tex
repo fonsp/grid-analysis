@@ -1,27 +1,26 @@
 \documentclass[main.tex]{subfiles}
  
 \begin{document}
+\towrite{Dit hoofdstuk is nog niet helemaal af!}
 %The electric grid 
 
 %The thesis that you are currently reading
 
 %Unless you are reading a handwritten copy of this thesis in your back yard, 
 
-
-\towrite{
-
-(100W = 16-candela = 200lm = 2.2Watt bij ikea)
-
-
-30\%? of energy use is transported using the grid
-
-list of synchronous grids
-
-complexity
-
-why interconnect? separate generation and load; economy of scale; security (distributed peak demand); stability; 
-
-}
+%{
+%(100W = 16-candela = 200lm = 2.2Watt bij ikea)
+%
+%
+%30\%? of energy use is transported using the grid
+%
+%list of synchronous grids
+%
+%complexity
+%
+%why interconnect? separate generation and load; economy of scale; security (distributed peak demand); stability; 
+%
+%}
 
 \emph{This chapter is based on two books: \emph{Electric Power Systems} by \cite{VonMeier2006}, which provides a clear summary of the working and operation of electric grids, and \emph{Electric Power Principles: Sources, Conversion, Distribution and Use} by \cite{Kirtley2010}, a more quantitative approach to the subject.}
 \section{Overview}
@@ -29,10 +28,7 @@ The electric grids of this world are some of the largest machines built by human
 
 On a larger scale, however, the behaviour of this machine is not always well understood, as complex behaviour arises from the interconnection of generators, transmission lines and loads.
 %The screen that you are reading this thesis on, or the printer that was used to print it, is most likely connected
-
-When the transmission network fails, the consequences can be dramatic. 
-
-Power outages can also be dangerous to human health. During the two-day blackout of Ontario and eight North-Eastern US states in 2003, almost 100 deaths were attributed to unavailable emergency services, stress, increased air pollution and the use of candles and backup generators.
+When the transmission network fails, the consequences can be dramatic. For example, filtering and supply of drinking water, telecommunication and heating all rely on a functioning power grid. The large scale of a transmission network makes it more stable, but it also increases the potential effect of its failure. The two largest blackouts (at the time of writing) occurred in north-eastern India on 30 and 31 July, 2012, affecting 400 million and 620 million people, respectively. These blackouts were due to a peak in consumption caused by extreme heat and draught.\footnote{Air-conditioning and irrigation pumps increased consumption; hydroelectric generation was limited.}
 
 \towrite{basics, scale, transmission-distribution-?, europe-US, security }
 \section{Generators}
@@ -62,14 +58,9 @@ Most modern AC generators have an automatic feedback loop to control the steam v
 
 
 \subsection{3-phase transmission}
-\towrite{
-The AC grid has 3 phases, but it is very common to model the grid as a single-line network (with a global, zero-impedance ground). Von Meier mentions material that justifies this change.}
+Depending on where you live, your wall socket will likely have \emph{two} connectors. Most modern sockets also have a third connector, the \emph{ground wire}, but this third connector does not have the purpose of carrying a current, like the other two (under normal circumstances).
 
-\towrite{}
-
-If you live in mainland Europe, North America, \todo{}, your wall socket will have \emph{two} connectors. Most modern sockets also have a third connector, the \emph{ground wire}. 
-
-This makes sense, since most electrical devices only need a \emph{potential difference} (between \emph{two} wires) to function. In the early days of transmission systems, however, this caused a problem for factories using AC motors to power their production line. When a (single-phase) AC current is used to power a motor, the amount of \emph{torque} 
+This makes sense, since most electrical devices only need a \emph{potential difference} (between \emph{two} wires) to function. In the early days of transmission systems, however, this caused a problem for factories using AC motors to power their production line. When a (single-phase) AC current is used to power a motor, the amount of \emph{torque}
 \footnote{\ie rotational force. In most systems, torque is proportional to \emph{change in rotational velocity} (change in rpm).}
 is not constant: when the potential difference is zero, which happens twice every $1/50^{\text{th}}$ of a second, no electric field is present in the armature windings, and no torque is applied to the rotor. \todo{en waarom is dat een probleem?}
 
@@ -91,66 +82,59 @@ When looking at AC transmission systems \todo{om ons heen}, you will always find
 There are a number of reasons to build transmission systems this way. One benefit of having three copies of the exact same network is that they will behave the same way, saving grid operators up to two thirds of potential headaches!
 
 \subsubsection{Single-line approximation}
-\todo{Move to next 5?}
-
+\towrite{
+The AC grid has 3 phases, but it is very common to model the grid as a single-line network (with a global, zero-impedance ground). Von Meier mentions material that justifies this change.}
 
 \subsection{Line failures}
 When a transmission line stops transmitting power, we speak of a \define{line failure}. In most cases, a line failure is not caused by a broken or molten wire, but by a disconnection at one of its ends, as a safety measure. 
-Some line failures are caused by a fault: a sudden abnormal peak in current, caused by anomalies like fallen trees or lightning strikes. A high current is detected by a \emph{circuit breakers}\index{circuit breaker}, which then automatically breaks its connection. A household fuse is an example of a circuit breaker, although modern circuit breakers use a mechanical switch (which be reset, instead of requiring a replacement fuse). In high-voltage systems, circuit breakers can be quite advanced, sometimes using pressurised gas or oil to prevent arcing inside the switch.
+Some line failures are caused by a \define{fault}, or \emph{power surge} a sudden abnormal peak in current, caused by anomalies like fallen trees or lightning strikes. A high current is detected by a \emph{circuit breakers}\index{circuit breaker}, which then automatically breaks its connection. A household fuse is an example of a circuit breaker, although modern circuit breakers use a mechanical switch. (These can be reset, instead of requiring a replacement fuse.) In high-voltage systems, circuit breakers can be quite advanced, sometimes using pressurised gas or oil to prevent arcing inside the switch.
 
-Another type of line failure, the one most relevant to this report, is an \define{overload}. All transmission lines have a \define{thermal limit}: a maximum current that the line can sustain without risking overheating, causing sagging or even melting of transmission cables. To prevent these dangerous scenarios, transmission lines automatically disconnect when the current exceeds the predetermined \define{line capacity}. \todo{or stability limit}
+Another type of line failure, the one most relevant to this thesis, is an \define{overload}. All transmission lines have a \define{thermal limit}: a maximum current that the line can sustain without risking overheating, causing sagging or even melting of transmission cables. To prevent these dangerous scenarios, transmission lines automatically disconnect when the current exceeds the predetermined \define{line threshold}. \todo{or stability limit}
 
-It is important to note that grid operators cannot control the amount of current - and therefore - power that flows through a transmission line, grid operators can only connect or disconnect the line from the grid. The impedance of a wire does not act as a \emph{bottleneck} (like a small-diameter pipe would do in an irrigation network). From Ohm's law ($\phym{ZI=V}$), one could mistakenly conclude that the amount of current passing through a transmission line is inversely proportional to its resistance. However, the electric potential ($\phym{V}$) in this equation is \emph{not} the potential between the wire and the ground (\eg $220\,\si{\kilo\volt}$), but rather the potential difference between the two ends of the wire (which is not zero!). This difference (known as \define{line drop}) is quite low, compared to the potential between one of the ends and the ground ($220\,\si{\kilo\volt}$ transmission lines usually have a $1\si{\percent}$ line drop\todo{check}). The amount of current carried by a wire is dominated by the current being 'generated' and 'used' at its ends.
+It is important to note that grid operators cannot control the amount of current - and therefore - power that flows through a transmission line: grid operators can only connect or disconnect the line from the grid. The impedance of a wire does not act as a \emph{bottleneck} (like a small-diameter pipe would do in an irrigation network). From Ohm's law ($\phym{ZI=V}$), one could mistakenly conclude that the amount of current passing through a transmission line is inversely proportional to its resistance. However, the electric potential ($\phym{V}$) in this equation is \emph{not} the potential between the wire and the ground (\eg $220\,\si{\kilo\volt}$), but rather the potential difference between the two ends of the wire (which is not zero!). This difference (known as \define{line drop}) is quite low, compared to the potential between one of the ends and the ground ($220\,\si{\kilo\volt}$ transmission lines usually have a $1\si{\percent}$ line drop). The amount of current carried by a wire is dominated by the current being 'generated' and 'used' at its ends.
 
+\towrite{dynamic rating: modern transmission lines will allow a current beyond its threshold for a short while, and will have different ratings for different weather conditions}
 
+\section{Grid security}
+Historically, failures of transmission network have had dramatic effects. The effects of such outages are even visible from space, since almost every light source depends on a functioning transmission network. 
 
-\todo{not the case for DC transmission?}
+Power outages can also be dangerous to human health. During the two-day blackout of Ontario and eight North-Eastern US states in 2003, almost 100 deaths were attributed to unavailable emergency services, stress, increased air pollution and the use of candles and backup generators.
 
-\todo{dynamic rating: modern transmission lines will allow a current beyond its threshold for a short while, and will have different ratings for different weather conditions}
+%Luckily, TODO where a power-outage would be life-threatening, or has significant economic impact, often have backup generators in place.
+%
+%In modern hospitals, medical equipment often has a built-in battery to sustain relatively short power cuts. (When unplugged by accident, for example.) Hospitals also use two sets of power lines with independent protection: one for essential equipment, and one for computers, lights, phone chargers, et cetera.
+%
+%It should come as no surprise that the transmission network requires constant monitoring to ensure that it is working properly. 
+%
+When \todo{when?} the first power grids were built, grid security was ensured by \emph{redundancy}. Transmission lines were designed to carry currents much greater than predicted. One of the criteria for building a network was \emph{N-1 contigency}: the network should remain operational after the failure of \emph{any} line. In graph theory, this is equivalent to building a 2-edge-connected graph.
 
+Nowadays, the capacity of power grids is being pushed to its limits. The main reason is that it is \emph{economically beneficial} to do so: most electricity networks have become \emph{privatised} since they were built, and are being used, and upgraded in a way that minimises costs. A second reason is an increase in renewable generation, which requires the grid to be used in a way different from its design. This has led to ``more situations in which transmission lines are loaded close to their thermal limits.'' \citep{Ronellenfitsch2017}
 
-
-\section{Power Flow Analysis}\label{sec:powerflow}
-\towrite{historic note, slack bus, distributive slack, DC approximation, optimal power flow}
-
-\section{Transmission grid operation}
-The transmission network is a crucial 
-
-The transmis
-
-In societies that 
-
-Historically, failures of transmission network have had dramatic effects. The effects of 
-such outages are even visible from space, since almost every light source indirectly depends on a functioning transmission network. 
-
-Luckily, TODO where a power-outage would be life-threatening, or has significant economic impact, often have backup generators in place.
-
-In modern hospitals, medical equipment often has a built-in battery to sustain relatively short power cuts. (When unplugged by accident, for example.) Hospitals also use two sets of power lines with independent protection: one for essential equipment, and one for computers, lights, phone chargers, et cetera.
-
-It should come as no surprise that the transmission network requires constant monitoring to ensure that it is working properly. 
-
-When the first power grids were built, grid security was ensured by \emph{redundancy}. \todo{historic note} Transmission lines were designed to carry currents much greater than predicted. One of the criteria for building a network was \emph{N-1 contigency}: the network should remain operational after the failure of \emph{any} line. In graph theory, this is equivalent to building a 2-edge-connected graph.
 \subsection{Power islanding}
 Because nodes often house both loads and generators, the disconnection of a single node, or of a subset of nodes, does not always lead to a power outage, since local power generation might be sufficient to serve the load. This situation, where a subsection of the transmission network still operates after being disconnected, is called a \emph{power island}. 
 
 Since the power island and the remaining network have been operating independently of each other, it is likely that their AC phase angles no longer line up.\footnote{This misalignment likely occurs right after the disconnection, when the total generation in the power island is substantially higher or lower than the total load. Until this mismatch has settled, the AC frequency will be higher or lower, respectively, than the target frequency (say, $50\,\si{\hertz}$).}
 Unless this phase drift is corrected for (by temporarily increasing or decreasing the AC frequency on either side), the power island cannot be reconnected, since this phase drift likely exceeds the power angle limit of a new transmission line. \todo{adsf}
 
-
+\towrite{Load shedding schemes, slack generators, frequency response, time scale (seconds)}
 %To understand how grid operators 
 
 %Normal grid operation can be 
 
 %Every hour, grid operators try to predic
+
+\section{Power Flow Analysis}\label{sec:powerflow}
+\towrite{historic note, slack bus, distributive slack, DC approximation, optimal power flow}
+
 \clearpage
-\subsection{The energy market}
+\section{The energy market}
 Modern power grids play the role of a competitive economic market. There are many possible ways to supply everyone with power, because there is more \emph{installed capacity} than there is demand. As a result, generation shares are largely determined by \emph{bidding}. Different generation technologies (gas, wind, etc.) form a \emph{stacking order}: in general, wind energy will always be cheaper than coal. Yet, it is not uncommon for renewable, cheap energy sources to be \emph{curtailed}, in favour of more expensive, possibly non-renewable energy sources. One of the reasons for grid operators to do so, is to protect vulnerable lines from overloading. 
 
 \emph{In this section, we will describe a \textbf{very simplified} version of the energy market, to illustrate how grid operators ensure \emph{grid security} while minimising costs.}
 
 Every hour, all parties involved in the generation and transmission of power come together, to decide \emph{what the configuration during the following hour will be}. For the sake of simplicity, we will assume that each power plant (renewable or non-renewable) is owned by its own company, and that the entire transmission network is owned by a single grid operator.
 
-\subsubsection*{Phase one: offering prices}
+\subsection*{Phase one: offering prices}
 First, all generators offer to supply energy during the coming hour \emph{for a certain price per kWh}. Generally, company A, which owns a wind farm, will offer their energy for a lower price than company B, which owns a coal plant. The price offered by company A is lower because a wind farm has zero \define{marginal cost} - the cost of generating an additional unit of electricity, once the turbine has been built. No fuel or labour is needed to generate power using a wind turbine, it simply needs to not be turned off.
 
 Besides marginal cost, there are two more factors that influence the offered price:
@@ -166,7 +150,7 @@ Energy from company B is generally more expensive, since it has a marginal cost 
 
 Besides offering their marginal price, generators will also state their \define{generation capacity}.\footnote{This use of the word \emph{capacity} is entirely different from the \emph{capacity} of a capacitor, used in electrical engineering.} For some generators, this will always be the same amount. For a solar park, however, this capacity varies drastically, and needs to be estimated.
 
-\subsubsection*{Phase two: grid operator}
+\subsection*{Phase two: grid operator}
 Now that all generators have offered a price, the grid operator needs to decide where to buy its energy from. Grid operators have a fairly good estimate for the load (energy demand) during the coming hour, based on the current load, historical load series, weather forecasts, sporting events, television programme schedules, and so on. Such a model is called a \define{load profile}. \todo{load profile plotje}
 
 By design, the total generation capacity is much greater than the expected load, \todo{why? winter and incident load} so running every generator at full capacity would be problematic.
@@ -205,12 +189,8 @@ More precisely, a configuration is called \define{ready to deploy} if it satisfi
 
 To determine whether a configuration is \emph{admissible}, the grid operator can simply \emph{calculate the line flows} that would be induced by that configuration, using a Power Flow (PF) algorithm, and check for any overloaded lines. Because power flow physics are quite well-understood, these results are accurate.\tocite{accuracy}\todo{geschiedenis van PF: modellen}
 
-
-
-\subsubsection*{OPF}
-
+\subsection{OPF}
 We can easily find a configuration that is both {possible} and {balanced}. First, set all generators to maximum capacity. We now have a \emph{possible} configuration. By design, the total generation of this configuration is much greater than the total load. By scaling the output of all generators with the same factor $0 \leq \lambda \leq 1$, the configuration remains \emph{possible}, and by the intermediate value theorem, a $\lambda$ exists such that the configuration is \emph{balanced}.
-
 
 When trying out different \emph{possible}, \emph{balanced} configurations randomly, we will find that almost all of them are inadmissible; the subset of admissible configurations is actually quite small, and finding \emph{any} ready-to-deploy configuration is a lot of work.
 

@@ -1,7 +1,12 @@
 \documentclass[main.tex]{subfiles}
  
 \begin{document}
-In this final chapter, we 
+\towrite{Dit hoofdstuk is nog niet helemaal af!}
+In this final chapter, we apply our theory to the SciGRID dataset. We would like to reiterate that this data is aggregated from different sources, most of which are \emph{not} physical measurements, but `educated guesses'.
+
+With this in mind, we proceed with our analysis, not necessarily with the goal of providing accurate operational advice for German grid operators, but to demonstrate that the model can be applied to real-world transmission networks. By studying a representative dataset, we can study the strengths and weaknesses of the model. Finally, we hope that this model will provide \emph{qualitative insight} into the complex behaviour of grid failures, not specific to this dataset.
+
+\towrite{Iets zeggen over \emph{hoe} (on)nauwkeurig we zijn. Bijvoorbeeld: zorgen kleine veranderingen in de dataset voor grote veranderingen in resultaten?}
 
 \section{SciGRID data}
 The SciGRID dataset needs to be translated into the language of our model. It contains more information than we need, and it is not yet in the desired format. 
@@ -40,7 +45,9 @@ Our dataset contains hourly values for load and stochastic (wind and solar) gene
 \end{figure}
 
 \section{Bus covariance}
-We discussed two alternatives to estimating the covariance matrix directly from generation series: the covariance of ARMA residuals and the covariance of difference series. 
+We discussed two alternatives to estimating the covariance matrix directly from generation series: the covariance of ARMA residuals and the covariance of difference series. All methods show very \emph{high} covariances among nodes, which we expected from our preliminary analysis. Because renewable generation data is extrapolated directly from (coarse) weather data, the generation series of nearby buses are almost identical. 
+
+The covariance of buses, calculated using the difference series, is visualised in Figure \ref{fig:buscov}. 
 \begin{figure}[ht]
     \centering
     \includegraphics[width=\textwidth]{img/bus_correlation_123_fullcov_day_and_night.pdf}

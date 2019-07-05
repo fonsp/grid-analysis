@@ -1,8 +1,8 @@
 \documentclass[main.tex]{subfiles}
 
 \begin{document}
+\towrite{Dit hoofdstuk is nog niet helemaal af!}
 The goal of the model described in this thesis can be summarised as follows:
-
 
 \textbf{Given:}
 \begin{itemize}
@@ -10,24 +10,18 @@ The goal of the model described in this thesis can be summarised as follows:
     \item Hourly \emph{load series}
     \item Hourly \emph{generation series}
 \end{itemize}
-
 \textbf{Predict:}
 \begin{itemize}
     \item \emph{`Top 10'} of lines most likely to fail
     \item For each risky line: the most likely \emph{cascading line failures}
 \end{itemize}
 
-The model, in particular the use of large deviation statistics to study cascading line failures, \todo{gebruiken we niet} was proposed by \citet{Nesti2018emergentfailures}.\nocite{Nesti2018supplemental} Following their approach, the model is applied numerically to the SciGRID dataset \citep{SciGRIDv0.2}. This dataset is an approximation of the transmission network in Germany, including grid structure, generation capacity, hourly load series and hourly renewable generation series.
+The model, in particular the use of large deviation statistics to study cascading line failures, \todo{maar dat gebruiken we niet} was proposed by \citet{Nesti2018emergentfailures}.\nocite{Nesti2018supplemental} Following their approach, the model is applied numerically to the SciGRID dataset \citep{SciGRIDv0.2}. This dataset is an approximation of the transmission network in Germany, including grid structure, generation capacity, hourly load series and hourly renewable generation series.
 
 As discussed in Section \ref{linefailurecauses}, transmission lines can fail for a number of reasons, and this model only studies one specific type of failure: \emph{short-term changes in renewable generation}.
 \todo{how common are these types of failures?}
 
-
-
-
-
-
-Line overloads are, however, the most imminent type of failure in a network, in the sense that grid operators need to continually monitor the \define{configuration} (distribution among the nodes of power generation) to ensure that no line will overload.
+Line overloads are not the most common, but the most imminent type of failure in a network, in the sense that grid operators need to continually monitor the \define{configuration} (distribution among the nodes of power generation) to ensure that no line will overload.
 This strongly constrains the capability of the transmission network. At any point in time, there could be many configurations that are environmentally (or \emph{economically}) better than the current configuration, but they might lead to a line overload.%
 \footnote{It is for this reason that the Optimal Power Flow problem is computationally difficult solve: it often takes many iterations until a generation distribution is found that does not cause any transmission line to be overloaded.}
 Turning off functioning wind turbines is known as \emph{wind curtailment}\index{curtailment!wind}, and switching off solar panels is called \emph{solar curtailment}\index{curtailment!solar}.%
@@ -62,9 +56,7 @@ For our analysis, we need the \emph{hourly} generation series (for each generato
 \end{itemize}
 We now have all the data that we need, except for the hourly generation series of \emph{non-stochastic} energy sources. To fill this gap, \cite{PyPSA} use the clever solution of running an Optimal Power Flow (OPF) simulation for each hour, to determine the cheapest generator configuration. The rationale behind this method is that grid operators \emph{use this exact method} to determine the hourly generator configuration. As long as the marginal costs of each generator are realistic, we hope to find a realistic generator configuration this way.
 
-Clearly, the resulting dataset is an \emph{estimation}, and any results that follow from it should be taken with a grain of salt. With this in mind, we proceed with our analysis, not necessarily with the goal of providing accurate operational advice for grid operators, but to demonstrate that the model can be applied to real-world transmission networks. In addition, we hope that this model will provide \emph{qualitative insight} into the complex behaviour of grid failures.
-
-\towrite{Technical description of resulting dataset}
+Clearly, the resulting dataset is an \emph{estimation}, and any results that follow from it should be taken with a grain of salt. 
 \subsection{PyPSA}
 \towrite{context: PSAT for matlab \cite{Milano2005}, references 110 and 111 of PSAT manual \cite{Milano2013PSATManual}}
 \towrite{some example graphs}
@@ -77,17 +69,24 @@ Although the full ENTSO-E network can only be viewed on their official website, 
 In fact, the limitation of our dataset does have a number of benefits. There are obvious computational benefits, which allow us to study the network without simplification,\footnote{In larger datasets, the set of buses often needs to be clustered to solve the OPF problem.} and the network is small enough for individual lines to be studied. One additional advantage is that the distribution of installed renewable generation is consistent within Germany (see Figure~\ref{fig:solarwind}), while a European dataset would see large differences among countries (which all have different policies). Finally, Germany has the highest share of stochastic\footnote{This does not include renewable deterministic generation, notably hydroelectricity.} generation among European countries: in 2011, 41\% of solar energy and 31\% of wind energy in the European Union was generated in Germany.\footnote{Sources: \emph{European Wind Energy Association} and \emph{EurObserv’ER}}
 
 \section{LPF}
-\subsection{Comparison with PyPSA results}
+As part of the OPF results calculated using \texttt{PyPSA}, we also get the \emph{line currents} for each hour. When calculating the currents using the \LPF (applied to the power injections given in the OPF results), we find results that are very similar, but not exactly the same. The largest \emph{relative} discrepancies take place on lines with the smallest thresholds. Figure \ref{fig:lineflowcorrelationpypsa} shows the current of each line at 11:00, as given by the OPF results, and calculated using the \LPF. It looks like these errors are not the result of a \textit{systematic} error in the calculation of the \LPF (the \LPF is using the same line impedances, for example), and we assume that the result given by \texttt{PyPSA} is \emph{more accurate}. More importantly: the line flows given by \texttt{PyPSA} are on the edge of the feasibility region, giving us the kind of critically loaded state that we are interested in. The result of applying the \LPF overestimates the current through some lines, beyond the feasibility limit of the OPF.
+
+This discrepancy needs to be investigated further,\footnote{By studying the source code of \texttt{PyPSA} in more detail, for example.} but for now, we will continue our analysis by adding this discrepancy as \emph{error-correction term} to the \LPF:
+\[
+\LPF_{new} : \mat{p} \mapsto \LPF_{old}(\mat{p}) \quad +\quad (\mat{f}_{\texttt{PyPSA}} - \LPF_{old}(\mat{p}_{nom})).
+\]
+where $\mat{f}_{\texttt{PyPSA}}$ is the nominal flow given in the OPF results, and $\mat{p}_{nom}$ is the injection found by the OPF.
 \begin{figure}
     \centering
     \includegraphics[width=\textwidth]{img/lineflowcorr.png}
     \caption{PLACEHOLDER: Line flow (left) and saturation (right) computed using LPF and (non-linear) PF.}
-    \label{fig:generationtech}
+    \label{fig:lineflowcorrelationpypsa}
 \end{figure}
 \section{Stochastic power injection}
 \subsection{Explorative data analysis}
+\towrite{Plotjes van windreeksen en zonnereeksen, zoals ik in februari/maart heb laten zien.}
 \subsection{ARMA model}
-
+\towrite{wat is het gebruikte arma model?}
 \subsubsection{Computing ARMA fits}\label{arimamod}
 Following \cite{Nesti2018emergentfailures}, the ARMA models were fitted to the first month of solar and wind generation series using the \texttt{arima} method in \texttt{R}. This produced the desired result for all wind series.
 
@@ -114,15 +113,25 @@ The default implementation has an estimated (single-core) runtime of 101 hours (
 
 The modified version is able to fit all generation series successfully. The use of this more computationally expensive method increases the runtime to an estimated 224 hours (9.4 days). Because of the long runtime, fits were computed in parallel on a 40-core machine\footnote{Specifications: two \textit{Intel Xeon E5 2630L v4} 10-core processors @2GHz with hyperthreading; 64GB RAM. CPU time was used as estimate for single-core runtime.}, provided by the IT department of the Radboud University.\footnote{Thank you!} This reduced the total runtime down to 7 hours. The results are publicly available at the GitHub repository.
 
+\subsection{Persistent forecast model}
+\towrite{In plaats van een ARMA model gebruiken we het model $X_t = X_{t-1}$, en we bekijken de covarianties van fouten volgens deze 'voorspelling'. De reeks van fouten is dan simpelweg de verschilrij.
+
+Voor het windmodel komt dit eigenlijk sterk overeen met het gefitte ARMA-model, ik heb hier veel plotjes over.}
+\subsection{Bus covariance matrix}
+Using each method, we find covariance matrices for solar generation and wind generation. Following \cite{Nesti2018emergentfailures}, we use these matrices to construct the two \emph{bus covariance matrices}: 
+\[
+\mat{\Sigma}_{\text{day}} = \mat{\Sigma}_{\text{wind}} + \mat{\Sigma}_{\text{solar}} \qquad \mat{\Sigma}_{\text{night}} = \mat{\Sigma}_{\text{wind}}.
+\]
 \section{Stochastic line flows}
+\towrite{Eigenlijk is er over de \emph{methode} hier niet veel te zeggen, dit is in het vorige hoofdstuk al gedaan. (Misschien hier naartoe verplaatsen? en het vorige hoofdstuk laten eindigen na de LPF-vergelijking) De resultaten staan in het volgende hoofdstuk.}
 
 \subsection{Line failures}
-
+\towrite{idem}
 
 \section{Most likely power injection}
-The most likely power injection, given the failure of a line, was computed directly using Theorem~\ref{thm:mostlikelyinjection}. This method is numerically stable, even when the failure probability is, to numerical approximation, equal to $0$. Furthermore, while the proof of Theorem~\ref{thm:mostlikelyinjection} uses (the existence of) the inverse of $\mat{\Sigma}_{\mat{p}}$, it is not required in the final expression.
+The most likely power injection, given the failure of a line, can be computed directly using Theorem~\ref{thm:mostlikelyinjection}. This method is numerically stable, even when the failure probability is, to numerical approximation, equal to $0$. Also, while the proof of Theorem~\ref{thm:mostlikelyinjection} uses (the existence of) the inverse of $\mat{\Sigma}_{\mat{p}}$, it is not required in the final expression.
 
-When examining the result of this calculation for a number of lines, we found two problems with the final result, which are more prominent when stable lines (those with negligible overload probability).
+When examining the result of this calculation for a number of lines, we found two problems with the final result, which are most prominent on stable lines (those with negligible overload probability).
 
 \subsection{Non-zero net injection}
 First, the most likely injection might not have zero sum. We can safely apply the matrix $\mat{F}$ to an injection $\mat{p}$ that does not have zero sum. Nevertheless, under our assumptions, $\mat{p}$ must have zero sum. As part of the DC approximation, we found that the power injection is the image of $\mat{L} = \mat{K}\diag(i\mat{\eta})\mat{K}^*$, applied to the vector of phase angles, $\mat{\theta}$ (Equation \ref{eq:approxnodeflowlineq}). From Theorem~\ref{thm:imageLPF} it then follows that the power injection should have zero sum.
@@ -142,6 +151,8 @@ The second problem with the most likely injection is that it might not be realis
 
 \towrite{In Nesti is duurzame opbrengst een som van stochasten, en dus kan de maximale capaciteit wel worden overschreden (de capaciteit is dan 'een schatting van een gemiddelde bovengrens' oid). We kunnen dus beter berekenen met hoeveel procent we de capaciteiten moeten rekken daarvoor. Verder is de data slechts een schatting van capaciteit.}
 
-
 \section{Cascading line failures}\label{sec:cascades}
+\towrite{precies wat je denkt: herdistributie bereken, lijnen weghalen, etc}
+
+\towrite{misschien een beknopte samenvatting van het model aan het einde/begin van dit hoofdstuk?}
 \end{document}
