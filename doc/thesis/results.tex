@@ -104,9 +104,7 @@ To assess the effect of estimating bus covariances, we compare three possible bu
 
 It is well known that local changes to the grid structure have long-range effects. For example, \cite{Witthaut2013} showed that \emph{adding} a new line to a heavily congested, but stable network can cause the failure of another line, possibly far away from the added line.\footnote{The counter-intuitive fact that adding a line, or increasing the impedance of existing lines, can make a network \emph{more} congested, is known as \define{Braess' Paradox}. Similarly, some line failures can be \emph{prevented} by switching off other lines in the network. See Figure~\ref{fig:braess} for a minimal example.} This is reflected in our model by the fact that line currents have non-zero covariance, even when bus injections are independently distributed. (In this case, $\mat{\Sigma}_{\mat{f}} = \mat{F}\mat{I}\mat{F}^* = \mat{F}\mat{F}^*$, which is generally not a diagonal matrix.) Figure~\ref{fig:linecov1} and Figure~\ref{fig:linecov2} show the covariances of all lines, relative to a chosen line. We see that covariance is generally high for lines that are close, but there are some clear exceptions. There seems to be a general trend that lines are highly (positively or negatively) correlated when they are close, and \emph{oriented in the same direction} (\eg East-West) as the chosen line.
 
-
-
-\begin{figure}
+\begin{figure}[ht]
 \centering
 \includegraphics[width=\textwidth]{img/braesstekening.png}
 \caption{\label{fig:braess} PLACEHOLDER: An example of Braess' Paradox. A network transporting $5$ units of power from left to right; all lines have the same admittance, and threshold $3$. On the left, one line (lower right) is overloaded. When this line fails, all power will travel through the upper branch, causing it to overload as well, leaving the network disconnected. If instead, the \emph{lower left} line is switched off, the flow of power will be more evenly distributed, and no line will overload. Of course, this example also illustrates how adding a line could lead to overloads.}
@@ -224,7 +222,10 @@ Regarding the subsequent cascades of these two lines, it seems like our model fa
 \end{table}
 
 \section{Previous work}
-This thesis was inspired by \cite{Nesti2018emergentfailures}, and we have verified their results. Our results are in overall agreement, with some minor differences. \todo{minder beknopt}
+This thesis was inspired by \cite{Nesti2018emergentfailures}, 
+
+
+and we have verified their results. Our results are in overall agreement, with some minor differences. \todo{minder beknopt}
 
 Verschillen:
 
@@ -242,6 +243,16 @@ Kritiek op nesti:
 - geeft cascades niet van top 10
 
 - ze nemen een contingency factor van 0.7 bij de OPF (arbitrair) maar voor de analyse van cascades niet. (toch?)
+
+
+Of course, this has the same shortcoming as the model used by \cite{Nesti2018emergentfailures} (it ), but it 
+
+Although these ARMA models are fairly involved, they do not actually provide an accurate forecast.\footnote{\cite{Nesti2018emergentfailures} also express this fact in their article, and note that it is only the forecast \emph{error} that is relevant in our analysis.} Using ARMA models seems unnecessarily complicated
+
+This is especially true for solar generation series: an ARMA model cannot capture the characteristic shape that we see in Figure~\ref{fig:genseries270jan}. 
+
+
+
 \\[4cm]
 \emph{Bedankt voor het lezen!}
 \clearpage

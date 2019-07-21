@@ -78,9 +78,15 @@
 \titleformat{\chapter}[display]{\center}
 {%\titlerule\vspace{1.4em}
 \Large\it\chaptername{ }\numberstring{chapter}}
-{1\baselineskip}
-{\huge\bfseries}
-%[\vspace{1em}\titlerule]
+%{1\baselineskip}
+{0pt}
+{\Huge}
+[]
+
+\titlespacing*{\chapter}
+    {0pt}% left
+    {1cm}% before
+    {0pt}% after
 
 %\renewcommand{\mat}[1]{\ensuremath{\mathbf{#1}}}
 %\newcommand{\matSigma}{\Sigma}
@@ -105,7 +111,7 @@
 \def\thesissupervisorsecond{Don}
 \def\thesissecondreaderfirst{prof. dr. Eric}
 \def\thesissecondreadersecond{Cator}
-\def\thesisdate{June 2019}
+\def\thesisdate{July 2019}
 
 %% FOR PDF METADATA
 \title{\thesistitle}
@@ -209,6 +215,52 @@
 %\begin{multicols}{2}
 \input{titlepage.tex}
 
+\chapter*{Abstract}
+
+
+As global demand for electric power is increasing, transmission networks are being pushed to their limits. Sudden fluctuations in generation and load change the current 
+
+By studying the effect of fluctuating renewables, we can better estimate which transmission lines are vulnerable to these emergent failures. The theory discussed in this thesis can be used to 
+
+
+
+The aim of this bachelor thesis is to introduce the reader to the fascinating mathematics that are used to model the effect of \emph{fluctuating renewables}. 
+
+To demonstrate both the usefulness and the limitations of our model, we show how this theory was used by \cite{Nesti2018emergentfailures} to 
+
+
+Emergent failures can be prevented 
+
+
+
+The transmission network is 
+
+At the end of Part I, we extend our model to \emph{correlated, normally distributed generation}. 
+
+In Part II, we demonstrate how the theory developed in Part I can be used to 
+
+These procedures are applied to the SciGRID network: a digital representation of the German high-voltage transmission network (489 buses, 695 lines). We use the work of \cite{PyPSA} and  to estimate hourly load and generation series during the year 2011 for each bus. 
+
+Following \cite{Nesti2018emergentfailures}, we estimate the covariances in (renewable) generation between buses, and we use linearised power flow physics to find a \emph{multivariate Gaussian distribution of line flows}. This allows us to identify lines with the highest probability of overloading.
+
+Additionally, for each vulnerable line we can compute the \emph{most likely fluctuation} that would cause its emergent failure. 
+When a transmission line fails, power flow is instantly redistributed among other lines in the network, which might cause them to also overload.
+By estimating the most likely fluctuation, we can simulate these \emph{cascading failures} more realistically, to assess the damage that an emergent failure would cause.
+
+
+
+The model that we 
+
+
+To 
+
+In Part I, we cover the mathematical theory (graph theory and probability theory) 
+
+
+
+
+This bachelor thesis was written as a 
+
 
 \chapter*{Notation}
 \begin{align*}
@@ -232,31 +284,65 @@ Y&\text{ is a (real or complex) number}\\
 \part{Theory of Electric Power Networks}\label{part:theory}
 
 \chapter{Graph theory}\label{chap:graphtheory}
+\begin{circuitikz}[scale=\textwidth/15cm]\ctikzset{bipoles/length=7mm}\draw[] (0,0) to[R] (15,0);\end{circuitikz}
+\vspace{1em}
 \subfile{graph}
 
 \chapter*{Circuit Theory}\label{chap:circuittheory}
+\begin{circuitikz}[scale=\textwidth/15cm]\ctikzset{bipoles/length=7mm}\draw[] (0,0) to (15,0);\end{circuitikz}
+\vspace{1em}
 \subfile{circuit}
 
 \chapter{Probability Theory}\label{chap:probtheory}
+\begin{circuitikz}[scale=\textwidth/15cm]\ctikzset{bipoles/length=7mm}\draw[] (0,0) to[C] (15,0);\end{circuitikz}
+\vspace{1em}
 \subfile{probability}
 
 \chapter{The Electric Grid}\label{chap:grid}
+\begin{circuitikz}[scale=\textwidth/15cm]\ctikzset{bipoles/length=7mm}\draw[] (0,0) to[sV] (15,0);\end{circuitikz}
+\vspace{1em}
 \subfile{grid}
 
 \chapter{Modelling Transmission Networks}\label{chap:model}
+\begin{circuitikz}[scale=\textwidth/15cm]\ctikzset{bipoles/length=7mm}\draw[] (0,0) to[cute inductor] (15,0);\end{circuitikz}
+\vspace{1em}
 \subfile{model}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \part{Predicting failures in Germany's grid}\label{part:sim}
 
 \chapter{Methods}\label{chap:methods}
+%\begin{circuitikz}[scale=\textwidth/15cm]\ctikzset{bipoles/length=7mm}
+%\draw[] (7.5,0) node[npn, rotate=90] (thenpn) {};
+%\draw[] (0,0) to (thenpn.C);
+%\draw[] (thenpn.E) to (15,0);
+%\end{circuitikz}
+\begin{circuitikz}[scale=\textwidth/15cm]\ctikzset{bipoles/length=7mm}
+\ctikzset{bipoles/cuteswitch/thickness=0.5}
+\draw[] (0,0) to[cute open switch] (15,0);
+\vspace{1em}
+\end{circuitikz}
+
 \subfile{methods}
 
 \chapter{Results}\label{chap:results}
+\begin{circuitikz}[scale=\textwidth/15cm]\ctikzset{bipoles/length=7mm}\draw[] (0,0) to[fuse] (15,0);\end{circuitikz}
 \subfile{results}
 
-%\appendix
-%\chapter{eerste}
+\appendix
+\chapter{Software}
+\emph{This thesis would not have been possible without the (mostly open source) projects listed in this section. }
+\begin{itemize}
+\item 
+\end{itemize}
+
+Contributions:
+\begin{itemize}
+\item Together with Fabian Hofmann and the original authors, I have modified PyPSA's plotting method to allow for a custom geographical projection. (Transverse Mercator with centre )
+\item A minimal version of this document . The title page is based on the work of Tom Salet.
+\item 
+\end{itemize}
+
 %\section{hmmm}
 %adf
 %%\chapter{Aoasdf}

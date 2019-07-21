@@ -105,6 +105,13 @@ class SciGRID_network():
         self.locations = pd.DataFrame(self.network.buses.loc[self.new_nodes][["x", "y"]])
         self.locations.index = range(self.n)
 
+        def line_centre_lon_lat(l):
+            l_line = self.new_lines[l]
+            lxy0 = (self.locations.x[l_line[0]], self.locations.y[l_line[0]])
+            lxy1 = (self.locations.x[l_line[1]], self.locations.y[l_line[1]])
+            return ((lxy0[0] + lxy1[0]) * .5, (lxy0[1] + lxy1[1]) * .5)
+
+        self.line_centres_lon_lat = list(map(line_centre_lon_lat, range(self.m)))
         # %% Renewable generation series
 
         self.T = len(self.network.generators_t.p_max_pu)
@@ -392,7 +399,7 @@ class SciGRID_network():
             if bus_name in self.new_nodes:
                 val = x[self.node_index(bus_name)]
                 bus_sizes[i] = np.abs(val) / 10
-                bus_colors[i] = '#6fd08c' if val > 0 else '#7b9ea8'
+                bus_colors[i] = '#6fd08c' if val > 0 else ('#7b9ea8' if val < 0 else "#00000000")
         return bus_sizes, bus_colors
 
     def line_array_to_plot(self, color=None, width=None):
@@ -408,3 +415,8 @@ class SciGRID_network():
             line_colors[old_i] = color[i]
             line_widths[old_i] = width[i]
         return line_colors, line_widths
+
+    def line_centre_distance_km(self, l, m):
+        lxy = self.line_centre_lon_lat[l]
+        mxy = self.line_centre_lon_lat[m]
+        return np.sqrt(np.square(self.lon2km(lxy[0] - mxy[0])) + np.square(self.lat2km(lxy[1] - mxy[1])))

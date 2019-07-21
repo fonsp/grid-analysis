@@ -62,30 +62,42 @@ Depending on where you live, your wall socket will likely have \emph{two} connec
 
 This makes sense, since most electrical devices only need a \emph{potential difference} (between \emph{two} wires) to function. In the early days of transmission systems, however, this caused a problem for factories using AC motors to power their production line. When a (single-phase) AC current is used to power a motor, the amount of \emph{torque}
 \footnote{\ie rotational force. In most systems, torque is proportional to \emph{change in rotational velocity} (change in rpm).}
-is not constant: when the potential difference is zero, which happens twice every $1/50^{\text{th}}$ of a second, no electric field is present in the armature windings, and no torque is applied to the rotor. \todo{en waarom is dat een probleem?}
+is not constant: when the potential difference is zero, which happens twice every $1/50^{\text{th}}$ of a second, no electric field is present in the armature windings, and no torque is applied to the rotor.
 
-To solve this problem, both the AC generator and AC motor are equipped with \emph{three} identical sets of armature windings, each oriented $120 \si{\degree}$ relative to the others. One end of each winding is connected to the common ground, and the remaining three connection points form the \emph{three-phase connection} between generator and motor. 
+To solve this problem, both the AC generator and AC motor are equipped with \emph{three} identical sets of armature windings, each oriented $120 \si{\degree}$ relative to the others. One end of each winding is connected to the common ground, and the remaining three connection points form the \emph{three-phase connection} between generator and motor.\footnote{This method of connecting three coils (or more generally, impedances) to three-phase AC is called the \emph{Wye configuration}. Another method is to connect the impedances between each pair of two phases, with no common ground connection. This method, called the \emph{Delta} configuration, is described in more detail in \cite{VonMeier2006}.}
 
 As the generator rotor is moving, there will always be one armature winding which is close \footnote{within $30 \si{\degree}$} to being perpendicular to the rotor windings, and will therefore have a relatively high induced current. 
 
-In fact, when writing down the three currents in exact form (three sinusoids with the same frequency and magnitude, with phases $0\si{\degree}$, $120\si{\degree}$ and $240\si{\degree}$), we find that \emph{the sum of their squares}, \ie the total amount of transmitted power, \emph{is constant}! Although the amount of power transmitted on just one of the phases (square of the sinusoid current) is not constant, the combination of the three is. 
+In fact, when writing down the three currents in exact form (three sinusoids with the same frequency and magnitude, with phases $0\si{\degree}$, $120\si{\degree}$ and $240\si{\degree}$), we find that \emph{the sum of their squares}, \ie the total amount of transmitted power, \emph{is constant}! Although the amount of power transmitted on just one of the phases (square of the sinusoid current) is not constant, the combination of the three is. This means that the torque of a motor, which is the sum of torques applied by each armature winding, is constant.
 
-This means that the torque of a motor, which is the sum of torques applied by each armature winding, is constant.
+\begin{figure}[ht]
+\begin{subfigure}{\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{img/3phaseshalf.pdf}
+    \caption{Phases distributed along half a cycle.}\label{fig:threephasehalfcycle}
+\end{subfigure}
+\begin{subfigure}{\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{img/3phasesfull.pdf}
+    \caption{Phases distributed along a full cycle.}\label{fig:threephasefullcycle}
+\end{subfigure}
+    \caption{Simulation of line current and transmitted power for one-phase, two-phase and three-phase transmission. The circuit consists of one, two or three identical resistors ($1 \, \si{\ohm}$), connected using the Wye configuration. Line voltage is chosen to produce a fixed amount of power ($1 \, \si{\watt}$). }
+\end{figure}
 
-\todo{What we just described is a \emph{Wye} connection}
+Figure \ref{fig:threephasehalfcycle} shows one cycle of single-phase, two-phase and three-phase current, and the total amount of power transmitted by the phases. Here we see that the total amount of power is constant when more than one phase is used. So why not use two phases, instead of three?
 
+Because electricity needs to flow in a \emph{closed circuit}, each phase needs \emph{two wires} to transmit its power; this second wire is called the \emph{return} wire. When we have more than one phase, their circuits are distinct, and we can combine their return wires into a single return wire for all phases.\footnote{using the Wye configuration described previously} This means that one-phase, two-phase and three-phase transmission requires two, three and four wires, respectively: one additional wire is the common return wire.
 
-\towrite{Nu weten we ook wat het verschil is tussen ground en de linkerdraad!}
+This return current is generally greater than each of the individual phase currents (see Figure \ref{fig:threephasehalfcycle}). However, when three-phase transmission is used with relative phase angles $0\si{\degree}$, $120\si{\degree}$ and $240\si{\degree}$, the return current is zero. This means that the return wire can be thinner (\ie cheaper), or it can be omitted completely.\footnote{In high-voltage transmission lines, one can often see a fourth (or seventh, or tenth), thinner wire: this is the return wire. This wire accounts for small imbalances in the load connected to each phase, which cause a non-zero return current. In some (older) medium-voltage lines, there is no return wire. In this case, the Delta configuration is often used: loads are connected to two of the three phases.} It is for these two reasons (constant power and no return current) that three-phase AC is used almost everywhere. 
 
-When looking at AC transmission systems \todo{om ons heen}, you will always find three identical copies of the same component. For example, high-voltage AC transmission lines always have three, six or nine wires, which are identical in material, thickness and length. 
-
-There are a number of reasons to build transmission systems this way. One benefit of having three copies of the exact same network is that they will behave the same way, saving grid operators up to two thirds of potential headaches!
+When looking at AC transmission systems, you will often find three identical copies of the same component. For example, high-voltage AC transmission lines always have three, six or nine wires, which are identical in material, thickness and length. 
 
 \subsubsection{Single-line approximation}
-\towrite{
-The AC grid has 3 phases, but it is very common to model the grid as a single-line network (with a global, zero-impedance ground). Von Meier mentions material that justifies this change.}
+There are a number of reasons to build transmission systems this way. One benefit of having three copies of the exact same network is that they will behave the same way, saving grid operators up to two thirds of potential headaches!
 
-\subsection{Line failures}
+As a result, it is very common to model the grid as a single-line network (with a global, zero-impedance ground). Because of the homogeneity of the transmission system, there are only some special cases where considering the three phases separately is necessary. See \cite{Kirtley2010} for a more detailed account.
+
+\subsection{Line failures}\label{sec:linefailures}
 When a transmission line stops transmitting power, we speak of a \define{line failure}. In most cases, a line failure is not caused by a broken or molten wire, but by a disconnection at one of its ends, as a safety measure. 
 Some line failures are caused by a \define{fault}, or \emph{power surge} a sudden abnormal peak in current, caused by anomalies like fallen trees or lightning strikes. A high current is detected by a \emph{circuit breakers}\index{circuit breaker}, which then automatically breaks its connection. A household fuse is an example of a circuit breaker, although modern circuit breakers use a mechanical switch. (These can be reset, instead of requiring a replacement fuse.) In high-voltage systems, circuit breakers can be quite advanced, sometimes using pressurised gas or oil to prevent arcing inside the switch.
 
@@ -126,7 +138,6 @@ Unless this phase drift is corrected for (by temporarily increasing or decreasin
 \section{Power Flow Analysis}\label{sec:powerflow}
 \towrite{historic note, slack bus, distributive slack, DC approximation, optimal power flow}
 
-\clearpage
 \section{The energy market}
 Modern power grids play the role of a competitive economic market. There are many possible ways to supply everyone with power, because there is more \emph{installed capacity} than there is demand. As a result, generation shares are largely determined by \emph{bidding}. Different generation technologies (gas, wind, etc.) form a \emph{stacking order}: in general, wind energy will always be cheaper than coal. Yet, it is not uncommon for renewable, cheap energy sources to be \emph{curtailed}, in favour of more expensive, possibly non-renewable energy sources. One of the reasons for grid operators to do so, is to protect vulnerable lines from overloading. 
 
@@ -189,7 +200,7 @@ More precisely, a configuration is called \define{ready to deploy} if it satisfi
 
 To determine whether a configuration is \emph{admissible}, the grid operator can simply \emph{calculate the line flows} that would be induced by that configuration, using a Power Flow (PF) algorithm, and check for any overloaded lines. Because power flow physics are quite well-understood, these results are accurate.\tocite{accuracy}\todo{geschiedenis van PF: modellen}
 
-\subsection{OPF}
+\subsection{Optimum Power Flow}
 We can easily find a configuration that is both {possible} and {balanced}. First, set all generators to maximum capacity. We now have a \emph{possible} configuration. By design, the total generation of this configuration is much greater than the total load. By scaling the output of all generators with the same factor $0 \leq \lambda \leq 1$, the configuration remains \emph{possible}, and by the intermediate value theorem, a $\lambda$ exists such that the configuration is \emph{balanced}.
 
 When trying out different \emph{possible}, \emph{balanced} configurations randomly, we will find that almost all of them are inadmissible; the subset of admissible configurations is actually quite small, and finding \emph{any} ready-to-deploy configuration is a lot of work.

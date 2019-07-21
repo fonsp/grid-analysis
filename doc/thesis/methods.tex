@@ -1,8 +1,7 @@
 \documentclass[main.tex]{subfiles}
 
 \begin{document}
-\towrite{Dit hoofdstuk is nog niet helemaal af!}
-The goal of the model described in this thesis can be summarised as follows:
+In the remaining chapters of this thesis, we apply the theory developed in Part I to a real-world problem, to demonstrate its usefulness and its limitations. The goal of the model described in this thesis can be summarised as follows:
 
 \textbf{Given:}
 \begin{itemize}
@@ -16,9 +15,9 @@ The goal of the model described in this thesis can be summarised as follows:
     \item For each risky line: the most likely \emph{cascading line failures}
 \end{itemize}
 
-The model, in particular the use of large deviation statistics to study cascading line failures, \todo{maar dat gebruiken we niet} was proposed by \citet{Nesti2018emergentfailures}.\nocite{Nesti2018supplemental} Following their approach, the model is applied numerically to the SciGRID dataset \citep{SciGRIDv0.2}. This dataset is an approximation of the transmission network in Germany, including grid structure, generation capacity, hourly load series and hourly renewable generation series.
+The model, in particular the use of a bus covariance matrix to study cascading line failures, was proposed by \citet{Nesti2018emergentfailures}.\nocite{Nesti2018supplemental} Following their approach, the model is applied numerically to the SciGRID dataset \citep{SciGRIDv0.2}. This dataset is an approximation of the transmission network in Germany, including grid structure, generation capacity, hourly load series and hourly renewable generation series.
 
-As discussed in Section \ref{linefailurecauses}, transmission lines can fail for a number of reasons, and this model only studies one specific type of failure: \emph{short-term changes in renewable generation}.
+As discussed in Section \ref{sec:linefailures}, transmission lines can fail for a number of reasons, and this model only studies one specific type of failure: \emph{short-term changes in renewable generation}.
 \todo{how common are these types of failures?}
 
 Line overloads are not the most common, but the most imminent type of failure in a network, in the sense that grid operators need to continually monitor the \define{configuration} (distribution among the nodes of power generation) to ensure that no line will overload.
@@ -68,12 +67,30 @@ Although the full ENTSO-E network can only be viewed on their official website, 
 
 In fact, the limitation of our dataset does have a number of benefits. There are obvious computational benefits, which allow us to study the network without simplification,\footnote{In larger datasets, the set of buses often needs to be clustered to solve the OPF problem.} and the network is small enough for individual lines to be studied. One additional advantage is that the distribution of installed renewable generation is consistent within Germany (see Figure~\ref{fig:solarwind}), while a European dataset would see large differences among countries (which all have different policies). Finally, Germany has the highest share of stochastic\footnote{This does not include renewable deterministic generation, notably hydroelectricity.} generation among European countries: in 2011, 41\% of solar energy and 31\% of wind energy in the European Union was generated in Germany.\footnote{Sources: \emph{European Wind Energy Association} and \emph{EurObserv’ER}}
 
-\section{LPF}
-As part of the OPF results calculated using \texttt{PyPSA}, we also get the \emph{line currents} for each hour. When calculating the currents using the \LPF (applied to the power injections given in the OPF results), we find results that are very similar, but not exactly the same. The largest \emph{relative} discrepancies take place on lines with the smallest thresholds. Figure \ref{fig:lineflowcorrelationpypsa} shows the current of each line at 11:00, as given by the OPF results, and calculated using the \LPF. It looks like these errors are not the result of a \textit{systematic} error in the calculation of the \LPF (the \LPF is using the same line impedances, for example), and we assume that the result given by \texttt{PyPSA} is \emph{more accurate}. More importantly: the line flows given by \texttt{PyPSA} are on the edge of the feasibility region, giving us the kind of critically loaded state that we are interested in. The result of applying the \LPF overestimates the current through some lines, beyond the feasibility limit of the OPF.
+\subsection{Exploratory data analysis}
+We are interested in the fluctuations of renewable generation, and how these fluctuations are correlated among different buses. Let us first take a look at the generation series provided by our dataset. For each bus, we know the amount of installed capacity for solar and for wind (expressed in $\si{\mega\watt}$), and we have hourly values for the \emph{saturation} of these generator types (\ie what percentage of installed capacity is actually being generated at that time). 
 
-This discrepancy needs to be investigated further,\footnote{By studying the source code of \texttt{PyPSA} in more detail, for example.} but for now, we will continue our analysis by adding this discrepancy as \emph{error-correction term} to the \LPF:
+For bus \emph{`Emden-Borßum'},\footnote{This is the $228^{\text{th}}$ bus, and has name \emph{`270'} in the SciGRID dataset.} which is one of the five buses with an offshore wind park, the hourly generation capacity of wind offshore, wind onshore and solar during the first two weeks of January is given in Figure~\ref{fig:genseries270jan}. Generation series for other buses look very similar (although most buses do not house offshore wind generation).
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=\textwidth]{img/genseries270jan.pdf}
+    \caption{Renewable generation capacity at bus \emph{`Emden-Borßum'} during the first two weeks of January. A dashed line is drawn through all midday (12:00) values for later reference.}\label{fig:genseries270jan}
+\end{figure}
+
+We can see a clear correlation between offshore and onshore wind generation. This should come as no surprise, since the offshore wind park and the onshore wind turbines are in close proximity (both are close to \emph{`Emden-Borßum'}), and are therefore exposed to similar weather. We also notice that the offshore generation is often \emph{saturated}: the saturation is capped at $100\si{\percent}$. When examining this phenomenon for all five offshore generators, we find that, on average, offshore generation was saturated ($\geq 95 \si{\percent}$) during $34\si{\percent}$ (SD $8\si{\percent}$) of measured hours. Saturation is rare for onshore wind generation ($2.4\si{\percent}$, SD $1.6\si{\percent}$) and solar generation ($< 0.5\si{\percent}$ for all buses). This saturation might be an artefact of the used dataset.
+
+In the solar generation series, one can clearly identify the daylight hours, which span about 8 hours in January.\footnote{In Germany. For comparison: a day is 16 hours long in July.} We see some sunny days (day 3, for example), overcast days (day 5), and cloudy days (the last two days). The low efficiency on cloudy days might be a little extreme, but the generation series look to be realistic in general. The solar and wind series also agree with historical weather data.
+
+\towrite{Geographical correlation}
+
+
+\section{LPF}
+As part of the OPF results calculated using \texttt{PyPSA}, we also get the \emph{line currents} for each hour. When calculating the currents using the LPF (applied to the power injections given in the OPF results), we find results that are very similar, but not exactly the same. The largest \emph{relative} discrepancies take place on lines with the smallest thresholds. Figure \ref{fig:lineflowcorrelationpypsa} shows the current of each line at 11:00, as given by the OPF results, and calculated using the LPF. It looks like these errors are not the result of a \textit{systematic} error in the calculation of the LPF (the LPF is using the same line impedances, for example), and we assume that the result given by \texttt{PyPSA} is \emph{more accurate}. More importantly: the line flows given by \texttt{PyPSA} are on the edge of the feasibility region, giving us the kind of critically loaded state that we are interested in. The result of applying the LPF overestimates the current through some lines, beyond the feasibility limit of the OPF.
+
+This discrepancy needs to be investigated further,\footnote{By studying the source code of \texttt{PyPSA} in more detail, for example.} but for now, we will continue our analysis by adding this discrepancy as \emph{error-correction term} to the LPF:
 \[
-\LPF_{new} : \mat{p} \mapsto \LPF_{old}(\mat{p}) \quad +\quad (\mat{f}_{\texttt{PyPSA}} - \LPF_{old}(\mat{p}_{nom})).
+\LPF_{new} : \quad\mat{p} \quad\mapsto\quad \LPF_{old}(\mat{p}) \quad +\quad (\mat{f}_{\texttt{PyPSA}} - \LPF_{old}(\mat{p}_{nom})).
 \]
 where $\mat{f}_{\texttt{PyPSA}}$ is the nominal flow given in the OPF results, and $\mat{p}_{nom}$ is the injection found by the OPF.
 \begin{figure}
@@ -82,15 +99,38 @@ where $\mat{f}_{\texttt{PyPSA}}$ is the nominal flow given in the OPF results, a
     \caption{PLACEHOLDER: Line flow (left) and saturation (right) computed using LPF and (non-linear) PF.}
     \label{fig:lineflowcorrelationpypsa}
 \end{figure}
-\section{Stochastic power injection}
-\subsection{Explorative data analysis}
-\towrite{Plotjes van windreeksen en zonnereeksen, zoals ik in februari/maart heb laten zien.}
-\subsection{ARMA model}
-\towrite{wat is het gebruikte arma model?}
-\subsubsection{Computing ARMA fits}\label{arimamod}
-Following \cite{Nesti2018emergentfailures}, the ARMA models were fitted to the first month of solar and wind generation series using the \texttt{arima} method in \texttt{R}. This produced the desired result for all wind series.
 
-Unfortunately, the \texttt{arima} method failed to fit an ARMA model for 104 of the 489 buses, reflecting the hypothesis that these series are poorly modelled by an ARMA series. To recreate the results of \cite{Nesti2018emergentfailures}, it is crucial that a model can be fitted for \emph{every} bus. Therefore, a modified method is required.
+
+
+\section{Stochastic power injection}
+We model the power injection as a \emph{stochastic variable}. In particular, we will assume that the power injection is (multivariate) normally distributed, and we can use historical generation series to estimate this distribution. 
+
+
+
+More generally, assuming the power injection captures the \emph{general uncertainty} of the exact amount of power injected during the 
+
+Besides its useful mathematical properties, the normal distribution is a natural choice for modelling the `noise' of injected power, as each bus is the \emph{accumulation of all generators and loads} connected to the bus. When their individual contributions are \emph{random} (but not necessarily normally distributed), their combined effect will resemble a normal distribution by the Central Limit Theorem. 
+
+Of course, the Central Limit Theorem can only be applied to individual contributions that are \emph{independently} distributed, which is not the case when studying renewable generation. For example, the amount of solar power generated at a bus is the sum of power generated by all individual solar panels in the region, but their fluctuations are \emph{highly correlated}; not independent.
+
+\subsection{Generation forecast}
+Grid operators use \emph{forecasting models} to predict the amount of stochastic power generated in the near future to guide their decisions. Advanced models use precise weather forecasts, and extrapolate the expected amount of stochastic generation. A cruder method is to simply look at past generation values of a single bus to predict future generation. We will discuss two models that use this latter method: the \emph{ARMA model} and the \emph{persistent forecast model}.
+
+No forecast can be completely accurate: the real power injection will differ from the predicted injection by some error. This is where the \emph{stochastic} part of our model becomes useful: \textbf{we model this error to be normally distributed}. As covariance matrix, \cite{Nesti2018emergentfailures} propose \emph{computing the error values for historical generation series}, and using their covariances as covariance matrix for the normally distributed (future) errors.
+
+This way, the normal distribution captures only correlations in forecast errors, and not correlations in the generation series themselves. This is desirable, because line overloads do not necessarily occur because of large or small amounts of stochastic generation: as long as this amount is known \emph{ahead of time}, the grid operator will adjust the generator configuration to maintain a feasible state. Rather, line overloads may occur when there is a large, sudden fluctuation in stochastic generation that was not predicted by the grid operator (\ie a large forecast error.)
+
+While we do not know what forecast models are used by the grid operators in Germany, they are certainly beyond the scope of this thesis. So instead of using realistic forecast models, we use a \emph{placeholder model}. \cite{Nesti2018emergentfailures} use two ARMA models for this purpose (one for wind, one for solar). An attempt to recreate their results is described in Section \ref{sec:armamodel}. 
+
+Because of the possibly unnecessary complexity of these ARMA models, we introduce a simpler model: the \emph{persistent forecast model}, which predicts the future generation to be equal to the present generation. Although this model does not necessarily provide an accurate forecast, it is sufficient for the purpose of a placeholder model.
+
+\subsection{ARMA model}\label{sec:armamodel}
+\towrite{TODO}
+
+\subsubsection{Computing ARMA fits}\label{arimamod}
+Following \cite{Nesti2018emergentfailures}, the ARMA models were fitted to the first month of solar and wind generation series using the \texttt{arima} method in \texttt{R}. This produced a result for all wind series.
+
+Unfortunately, for the solar series, the \texttt{arima} method failed to fit an ARMA model for 104 of the 489 buses, reflecting the hypothesis that these series are poorly modelled by an ARMA series. To recreate the results of \cite{Nesti2018emergentfailures}, it is crucial that a model can be fitted for \emph{every} bus. Therefore, a modified method is required.
 
 By the default, the \texttt{arima} method operates in two steps. First, a so-called Conditional-Sum-of-Squares (CSS) method is used as initial guess for the ARMA coefficients. Then, the coefficient \emph{likelihood} function is maximised with the Nelder-Mead optimisation method, using the CSS result as initial value.
 
