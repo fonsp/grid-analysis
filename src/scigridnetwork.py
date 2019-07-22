@@ -291,6 +291,8 @@ class SciGRID_network():
         if linearity_correction:
             base_flow += self.line_flow_nonlinear.loc[time] - self.line_flow_linear.loc[time]
 
+        failed_lines |= {l for l in range(self.m) if base_flow[l] >= self.line_threshold[l]}
+
         for _i in range(iter_lim):
             fl_list = list(failed_lines)
             new_flow = base_flow + self.line_outage_flow_difference(fl_list, base_flow)

@@ -140,10 +140,12 @@ To study the decay of covariance, we collect the geographical separation and cov
 \caption{\label{fig:linecovdecay} For $10^5$ random pairs of lines, the covariance and distance (between line centres) is shown, for three possible bus covariance matrices. The averages (over $25 \, \si{\kilo\metre}$) show that correlated buses increase long-range correlations in line flows. Covariances are normalised using average line variance.}
 \end{figure}
 
- \todo{Maar als je normaliseert op variantie?}
-Outage
+\todo{Maar als je normaliseert op variantie?}
 \towrite{Compare three bus covariance }
+By doing so, we find an important result. When we model bus injections to be uncorrelated (first two graphs in Figure~\ref{fig:linecovdecay}), we find \emph{some} correlation in line flows, which are due to power flow physics.\footnote{As an example, consider the $n$-loop network. Here, two neighbouring lines are highly correlated, since they always transmit roughly the same amount of power. (The difference is the amount of power injected at their common node.)} On average, these correlations decrease as the distance between two lines increases, as shown by the red line.\footnote{We might expect this decay to be \emph{exponential} (based on the work of \cite{Jung2016}, for example), but this is not the case.} 
+On the other hand, when we include \emph{covariances among bus injections} in our model (last graph in Figure~\ref{fig:linecovdecay}), we find a \emph{relative increase in long-distance correlations of line flows}, compared to the uncorrelated case. This is one of the main results of \cite{Nesti2018emergentfailures}, which they demonstrate only on the $n$-loop network. Figure~\ref{fig:linecovdecay} shows that the result also holds for the SciGRID network.
 
+Curiously, in the range $25\,\si{\kilo\meter}$ - $150\,\si{\kilo\meter}$, the average correlation of line flows \emph{increases} with higher line distances. The reason for this phenomenon is unclear, but one could investigate this further by examining line pairs of these short distances individually.
 
 \begin{figure}
     \centering
@@ -161,7 +163,18 @@ Outage
 
 
 \section{Most vulnerable lines}
-Using the nominal injection at 1 January, 11:00, we compute the failure probability of each line. The 20 most vulnerable lines are given in Table~\ref{tab:top20}, and their positions are given in Figure~\ref{fig:nomflow_stdev_overload}. We identify the same vulnerable lines as \cite{Nesti2018supplemental}, but the ranking is different. This can be attributed to two differences in approach. First, we have combined parallel lines,\footnote{all 20 most vulnerable lines were not part of a parallel combination} which changes the vulnerability order significantly. It is unclear why this changes the result. For comparison, the ranking that we get \emph{without} combining parallels is given in Table~\ref{tab:top20old}, which is more similar that of \cite{Nesti2018supplemental}. The second major difference is the use of a different covariance matrix, although it is reassuring to see that the same lines are identified.\todo{Check hun cov}
+Using the nominal injection at 1 January, 11:00, we compute the failure probability of each line. The 30 most vulnerable lines are given in Table~\ref{tab:results} (first two columns) and their positions are given in Figure~\ref{fig:nomflow_stdev_overload}. In the SciGRID dataset, lines are not numbered randomly. Rather, we find that two consecutive line numbers often correspond to two lines that are in close proximity. In the case of lines 651 and 652, for example, the two lines are connected in \emph{series}. As a consequence of power flow physics, their line flows highly correlated.
+
+We identify the same vulnerable lines as \cite{Nesti2018supplemental}, but the ranking is different. This can be attributed to two differences in approach. First, we have combined parallel lines,\footnote{all 30 most vulnerable lines were not part of a parallel combination} which changes the vulnerability order significantly. It is unclear why this changes the result. For comparison, the ranking that we get \emph{without} combining parallels is given in Table~\ref{tab:top20old}, which is more similar that of \cite{Nesti2018supplemental}. The second major difference is the use of a different covariance matrix, although it is reassuring to see that the same lines are identified.
+
+\subsection{Properties of vulnerable lines}
+As can clearly be seen in Table~\ref{tab:results}, most lines that are vulnerable to emergent failures are nominally being used at 70\% percent of their capacity. (This is exactly the \emph{contingency factor} used in the LOPF calculation.) This is explained by the low standard deviations of line flows. In fact, when we scale the covariance matrix uniformly by a factor close to zero, this effect is exaggerated.\footnote{This is a \emph{large deviations} result of the normal distribution: if we have $X \, \sim \, \gaussdistr(0, \sigma^2)$, then the marginal distribution of $X \, \mid \, X \geq 1$ becomes increasingly concentrated around $1$ as $\sigma$ tends towards zero. See \eg \cite{Touchette2011}.}
+
+The 10 most vulnerable lines are not significantly long or short. They average $43\,\si{\kilo\meter}$ (SD $30 \,\si{\kilo\meter}$), compared to $36\,\si{\kilo\meter}$ (SD $35 \,\si{\kilo\meter}$) for \emph{all} lines in the network. From Figure~\ref{fig:nomflow_stdev_overload} we can make the interesting observation that vulnerable lines are generally oriented radially towards the \emph{Ruhr}, a density populated area in western Germany.
+
+Vulnerable lines have significantly lower thresholds. On average, the 10 most vulnerable lines can transmit $554 \, \si{\mega\watt}$ (SD $219 \, \si{\mega\watt}$), while the grid-wide average is $1385 \, \si{\mega\watt}$ (SD $1052 \, \si{\mega\watt}$). Indeed, a change in injection has an \emph{absolute} effect on line flows; lines with low thresholds that are operating at the contingency limit (70\%) need only a small amount of additional power to overload.
+
+There is a difference in line \emph{impedance}: $3.9 + 18.9i \, \si{\ohm}$ (SD $3.3 + 12.5i \, \si{\ohm}$) compared to the average of all lines, $2.0 + 12.0i \, \si{\ohm}$ (SD $2.6 + 13.6i \, \si{\ohm}$). This higher reactance means that vulnerable lines have higher \emph{susceptance}, making them more sensitive to changes in node voltages. Grid operators have some control over these values, and lowering the line reactance might make these lines less vulnerable. To study these questions further, we need to also take \emph{reactive power} into account, which we omitted in the DC approximation.
 
 \begin{figure}
     \centering
@@ -171,18 +184,15 @@ Using the nominal injection at 1 January, 11:00, we compute the failure probabil
 \end{figure}
 
 \subsection{Cascades}
-In addition to the failure probability, we compute the most likely injection to cause that failure, and simulate the resulting cascade. The number of lines that either failed jointly with the initial failure, or failed during the subsequent cascade, is also given in Table \ref{tab:top20}. This extends the result of \cite{Nesti2018supplemental}, which only provides the failure probability.
-
-\towrite{We find that among the 20 most vulnerable lines (at 11:00),
-
-geef percentage dat oke blijft}
+In addition to the failure probability, we compute the most likely injection to cause that failure, and simulate the resulting cascade. The number of lines that either failed jointly with the initial failure, or failed during the subsequent cascade, is also given in Table \ref{tab:results}. This extends the result of \cite{Nesti2018supplemental}, which only provides the failure probability. We find that among the 10 most vulnerable lines (at 11:00),
+only the failures of lines 298, 25 and 645 result in a power island. We will discuss these lines in more detail in Section~\ref{sec:evolution}, but for now, we note that these failures quickly result a power island. (For 298 and 645, this happens the first stage.) At this point, our model becomes unreliable (see Section~\ref{sec:discussioncasc}).
 
 \subsubsection{Using the most likely injection}
 \towrite{hoe zijn de resultaten anders wanneer we niet de mli nemen?}
 
 
-\subsection{Evolution of line vulnerabilities}
-Of course, the method above can be applied to any nominal injection, not just the injection at 1 January, 11:00. By applying the method to every hour of the first day, we find 24 different rankings, one of which is given in Table~\ref{tab:top20}. This allows us to not only identify lines that are vulnerable at a given point in time, but to find lines that are a \emph{consistent vulnerability}, based on the general use of the transmission network.
+\subsection{Evolution of line vulnerabilities}\label{sec:evolution}
+Of course, the method above can be applied to any nominal injection, not just the injection at 1 January, 11:00. By applying the method to every hour of the first day, we find 24 different rankings, one of which is given in Table~\ref{tab:results}. This allows us to not only identify lines that are vulnerable at a given point in time, but to find lines that are a \emph{consistent vulnerability}, based on the general use of the transmission network.
 
 Instead of providing 23 additional tables, we have summarised the results of a full day in Figure~\ref{fig:evolution_vulnerabilities}. Here, we see that some lines (like 337) are only vulnerable at one point during the day, while others (298 and 54) have a consistently high overload probability. There is a clear distinction between daytime and night-time, since the time of day determines which covariance matrix is used in the calculation. In fact, this highlights how a change in covariance influences results: some lines are only vulnerable because of the covariances brought upon by solar generation, while others are relatively unaffected.
 
@@ -221,11 +231,24 @@ Regarding the subsequent cascades of these two lines, it seems like our model fa
 \label{tab:top20old}
 \end{table}
 
-\section{Previous work}
+\begin{table}
+\vspace{-1.5cm}
+\centerline{
+\input{tables/results.tex}
+}
+\vspace{1cm}
+\caption{The 30 most vulnerable lines at 1 January, 11:00. For each line, we have the absolute overload probability and the mean and standard deviation of line saturation. For the most likely injection, the total change (fluctuation) in injection is given, and the number of buses for which renewable generation would need to be extended for the most likely injection to be possible. \protect\newline
+The number of failed lines in each cascade phase is shown. Phases in parentheses correspond to a disconnected network. (The first number is greater than $1$ when there are \emph{joint failures}.) The final column states whether the last cascade stage is disconnected (\ie a power island occurred).
+}
+\label{tab:results}
+\end{table}
+
+\section{Discussion}
+\subsection{Previous work}
+\towrite{
 This thesis was inspired by \cite{Nesti2018emergentfailures}, 
 
-
-and we have verified their results. Our results are in overall agreement, with some minor differences. \todo{minder beknopt}
+and we have verified their results. Our results are in overall agreement, with some minor differences. todo{minder beknopt}
 
 Verschillen:
 
@@ -235,7 +258,6 @@ Verschillen:
 
 - cascades gegeven van top 10
 
-
 Kritiek op nesti:
 
 - ARMA modellen, logisch? nodig? goede modellen?
@@ -244,16 +266,26 @@ Kritiek op nesti:
 
 - ze nemen een contingency factor van 0.7 bij de OPF (arbitrair) maar voor de analyse van cascades niet. (toch?)
 
-
 Of course, this has the same shortcoming as the model used by \cite{Nesti2018emergentfailures} (it ), but it 
 
-Although these ARMA models are fairly involved, they do not actually provide an accurate forecast.\footnote{\cite{Nesti2018emergentfailures} also express this fact in their article, and note that it is only the forecast \emph{error} that is relevant in our analysis.} Using ARMA models seems unnecessarily complicated
+Although these ARMA models are fairly involved, they do not actually provide an accurate forecast.TODOfootnote{\cite{Nesti2018emergentfailures} also express this fact in their article, and note that it is only the forecast \emph{error} that is relevant in our analysis.} Using ARMA models seems unnecessarily complicated
 
-This is especially true for solar generation series: an ARMA model cannot capture the characteristic shape that we see in Figure~\ref{fig:genseries270jan}. 
+This is especially true for solar generation series: an ARMA model cannot capture the characteristic shape that we see in Figure~\ref{fig:genseries270jan}. }
 
+\subsection{Cascading failures}\label{sec:discussioncasc}
+The Optimised method computes redistributed flows efficiently, and its derivation (Section \ref{sec:optimisedmethod}) provides us with a more intuitive understanding of flow redistribution. Examining results for individual lines (\eg see Interactive Figure \ref{ifig:cascades}) shows realistic results. Yet, as we the analyses of lines 25 and 298 demonstrate, the method is likely erroneous when the network becomes \emph{disconnected} after the line removal(s), \ie when a power island occurs.
 
+In fact, in its original form \citep{Ronellenfitsch2017}, the optimised method is only defined when the network remains connected.
+While this is a limitation of the Optimised method, it is, more generally, a limitation of using DC approximated power flow. In this approximation, we assume the network to be in a \emph{state of equilibrium}: generation matches load exactly. 
 
-\\[4cm]
-\emph{Bedankt voor het lezen!}
+In our case, the use of a stochastic injection means that we generally do not have a zero-sum injection, contracting the assumption. This contradiction is usually justified using the concept of (distributive) slack
+
+Yet, when studying cascading failures, we are looking at a time frame much shorter than the time it takes to reach equilibrium. 
+This shorter time scale generally requires an analysis of an entirely different nature: this is the study of \emph{transient stability}, which is far beyond the scope of this thesis. 
+
+Overall, a better understanding of the physics that underlie line failures is required to study cascading failures, especially in cases where power islanding occurs. 
+
+\towrite{Nesti: direct method}
+
 \clearpage
 \end{document}

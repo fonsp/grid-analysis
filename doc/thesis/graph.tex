@@ -5,15 +5,15 @@
 %We conclude this chapter by deducing a
 
 %\section{Graph}
-The power grid forms an interconnected \emph{network} of transmission lines, which makes Graph Theory a logical choice for modelling it.
-In fact, most electrical systems are modelled using graphs. In Circuit Theory, \emph{nodes} represent electrically equivalent points in a circuit, and individual components (resistors, voltage sources) can be seen as the lines of the network.\footnote{This simplification is only true for components with 2 terminals. A transistor has 3 terminals, for example.}
+The power grid forms an interconnected \emph{network} of transmission lines, which makes graph theory a logical choice for modelling it.
+In fact, most electrical systems are modelled using graphs. In circuit theory, \emph{lines} represent individual electrical components (resistors, voltage sources) and \emph{nodes} represent the conductive material between them.\footnote{This simplification is only true for components with 2 terminals. A transistor has 3 terminals, for example.}
 %More formally, circuit components can be defined as restrictions (boundary conditions) on the \emph{phase space} of the circuit. 
 %When we want to create an electric connection between two points, the most obvious way to so is using a \emph{wire}. This has the nice property that 
 We will study the electrical properties of the transmission network in Chapter~\ref{chap:model}, but for now, we will simply accept that the transmission network consists of \emph{nodes} and \emph{lines}, and that the lines can transfer power between nodes in a straightforward (linear) way. Physically, the power flows are determined by the amount of power injected at each node, which in turn is determined by the devices that we connect to the transmission network. In this chapter, we will study the \emph{converse}:
 \[
 \text{\textit{What does the flow of power tell us about the power injection at the nodes?}}
 \]
-To do so, we will build upon the tools of Linear Algebra and Graph Theory, as covered in most elementary textbooks on these subjects.
+To do so, we will build upon the tools of linear algebra and graph theory, as covered in most elementary textbooks on these subjects.
 \towrite{We use, without proof:
 
 undirected graph, subgraph, path, loop, euler path, connected, k-edge-connectivity, tree, minimum spanning tree
@@ -26,8 +26,8 @@ thm: removing a leaf from a tree results in a new tree
 
 thm: eulerian path in a tree is unique}
 \section{Directed graph}
-When studying the flow of current in a network, it is useful to fix a direction for each line, relative to which the flow can be expressed.
-Semantically, a \emph{positive} flow along an edge will mean a flow in the same direction as the edge, while a \emph{negative} flow describes a 'positive' flow in the opposite direction.\todo{When flow is complex-valued, there is no pos/neg.} The choice of line direction could be seen as arbitrary. \todo{wikipedia calls this a `Gain Graph`}
+When studying the flow of current in a network, it is necessary to fix a direction for each line, relative to which the flow along that line can be expressed. We do so using a \emph{digraph}, where lines are not defined as two-element sets (like they are in a classical \emph{graph}), but as \emph{ordered pairs}.
+
 \begin{definition}
 A \emph{directed graph}\index{graph!directed} is a pair $(\mathcal{N},\mathcal{L})$ such that the set of \emph{nodes} $\mathcal{N}$ is finite, and the set of \emph{lines} $\mathcal{L}\subseteq \mathcal{N} \times \mathcal{N}$ satisfies:
 \begin{itemize}
@@ -36,21 +36,21 @@ A \emph{directed graph}\index{graph!directed} is a pair $(\mathcal{N},\mathcal{L
 \end{itemize}
 \end{definition}
 
+A classical graph can be converted to a \emph{digraph} by (arbitrarily) choosing a direction for each line. Some authors prefer to use a classical graph, combined with an \emph{incidence function}: a function that maps an unordered pair of nodes $\{i,j\}$ to an ordered pair, $(i,j)$ or $(j,i)$.\footnote{\cite{Slepian1968} takes this one step further by \emph{only} considering the incidence function: the set of lines can be retrieved as the \emph{domain} of the incidence function, and the set of nodes is the \emph{union} of the set of lines.}
+
 \section{Flow}
 For the remainder of this section, assume that $G=(\mathcal{N},\mathcal{L})$ is a directed graph, where the nodes are labelled $\mathcal{N}=\{1,2,\dots,n\}=\range{n}$ for some $n \in \mathbb{N}$.
-
 The $m = \# \mathcal{L}$ lines of the network are labelled $\mathcal{L}=\{\mathcal{L}_1,\mathcal{L}_2,\dots,\mathcal{L}_m\}$.
 
-Suppose $\mathbb{K}$ is a field.
+We also fix a field $\mathbb{K}$, which we will use to define \emph{injections} and \emph{flows} on $G$. When studying \emph{real power flows}, we will take $\mathbb{K}=\mathbb{R}$.
 
-\begin{definition}
-An \define{injection} is an element of $\mathbb{K}^n$.
-\end{definition}
-\begin{definition}
-A \define{flow} is an element of $\mathbb{K}^m$.
+\begin{definition}\label{def:injectionandflow}
+An \define{injection on $G$} is an element of $\mathbb{K}^n$; a \define{flow on $G$} is an element of $\mathbb{K}^m$.
 \end{definition}
 
-\todo{semantics}
+One should look at an injection $\mat{p} \in \mathbb{K}^n$ as the vector that encodes how much power is being put into the network at each node. When $\mel{p}_i$ is negative, this means that power is being \emph{consumed} at node $i$. Similarly, a flow $\mat{f} \in \mathbb{K}^m$ represents the amount of power transmitted along each line. For a line $\mathcal{L}_k=(i,j) \in \mathcal{L}$, $\mel{f}_k$ expressed the amount of power being transmitted along the line, from node $i$ to node $j$.
+
+Of course, the notions \emph{positive} and \emph{negative} only exist when $\mathbb{K}$ is a totally ordered set. Otherwise, we simply have to be satisfied with the meaning provided by Definition~ \ref{def:inducedinjection}.
 
 \towrite{When $\mathbb{K}=\mathbb{F}_2$, a flow can be seen as a subset of the collection of lines $\mathcal{L}$}
 
@@ -72,7 +72,19 @@ Suppose $G$ has no isolated nodes. We define the \define{Flow Response Transform
 that maps a flow $\mat{f} \in \mathbb{K}^m$ to the unique injection $\mat{p} \in \mathbb{K}^n$ that it induces.
 \end{definition}
 
-From (\ref{eq:inducedflow}), it follows that $\FRT$ is a linear map. In fact, when written in matrix form, we find a familiar result: $\mat{K}$ is the vertex-edge incidence matrix of $G$! \todo{hier definieren?}
+From (\ref{eq:inducedflow}), it follows that $\FRT$ is a linear map, which means that we can write $\FRT$ as a matrix: $\mat{K}$. We can find an explicit expression for the entries $\mel{K}_{i,k}$, noting that its \emph{rows} are determined by (\ref{eq:inducedflow}), and that there are no `double' lines in the digraph.
+
+\begin{align*}
+    \mel{K}_{i,k} =
+    \begin{cases}
+         1 & \text{if } \mathcal{L}_k=(i,j) \text{ for some } j \in \range{n}, \\
+        -1 & \text{if } \mathcal{L}_k=(j,i) \text{ for some } j \in \range{n}, \\
+         0 & \text{otherwise}.
+    \end{cases}
+\end{align*}
+
+This matrix can be seen as the familiar \emph{incidence matrix} of a classical graph, adapted to digraphs. For this reason, $\mat{K}$ is often called the \emph{vertex-edge incidence matrix of $G$}.
+The ordered set of lines is uniquely defined by the vertex-edge incidence matrix. \todo{Examples are given in TODO.}
 
 The fact that $\FRT$ is a linear map raises an interesting question: how can the image and kernel of $\FRT$ be interpreted in the context of digraph flows?
 The reader is invited to revisit Example \todo{examples} to visualise these sets.

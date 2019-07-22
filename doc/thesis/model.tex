@@ -1,9 +1,9 @@
 \documentclass[main.tex]{subfiles}
 
 \begin{document}
-In this Chapter we will derive the \emph{Linear Power Flow} (LPF) transformation: a linear map from the vector of power injections at the buses to the vector of currents flowing through the lines of the network.
+In this chapter we will derive the \emph{Linear Power Flow} (LPF) transformation: a linear map from the vector of power injections at the buses to the vector of currents flowing through the lines of the network.
 
-It is a \emph{right inverse} of $\FRT$, which means that applying $\LPF$ to a power injection gives a flow that would induce that injection. There are many possible candidates for a right inverse. One way to construct one is to fix a minimum spanning tree. When we set line currents outside of the tree to zero, all line currents inside the tree are uniquely determined.
+It is a \emph{right inverse} of $\FRT$, which means that applying $\LPF$ to a power injection gives a flow that would induce that injection. There are many possible candidates for a right inverse. For example, one way to construct one is to fix a minimum spanning tree; when we set line currents outside of the tree to zero, all line currents inside the tree are uniquely determined.
 
 Yet, only one right inverse is \emph{physically correct}: the $\LPF$. This function can be derived explicitly by constructing an electric circuit that represents the whole transmission network and everything connected to it, and applying Ohm's Law and Kirchoff's Laws to relate line currents to power injections. We linearise the resulting \emph{node flow equations} to find the LPF matrix (page \pageref{eq:LPF}).
 
@@ -26,28 +26,17 @@ One example of a change in grid structure is a \emph{line failure}, which can be
 Most transmission networks are designed in such a way that no single (or double) line failure can cause power islanding or a blackout, by increasing the \emph{edge-connectivity} of the graph.
 
 In the case of a \emph{line overload}, however, a line failure is caused by an exceptionally high power flow, as a result of high supply or demand.\footnote{These high power injections are not necessarily located at the two endpoints of an overloaded line; it could also be a grid-wide pattern of power injections, all adding up to a high power flow on that line. We will study the \emph{most likely power injection} in Chapter \ref{mostlikelypowerinjection}.}
-The failure of an overloaded line will cause a redistribution of power flow, since the power flowing through the failed line now needs to 'find another path' between the nodes. In a highly stressed network, this redistribution can cause a second failure, which can then cause a third failure, and so on, eventually causing a blackout. We will study these \define{cascading failures} in Section \ref{sec:cascades}. \todo{We \emph{model} the line protection mechanism as deterministic: overload causes instantanious failure.}
+The failure of an overloaded line will cause a redistribution of power flow, since the power flowing through the failed line now needs to 'find another path' between the nodes. In a highly stressed network, this redistribution can cause a second failure, which can then cause a third failure, and so on, which can eventually cause a blackout. We will study these \define{cascading failures} in Section \ref{sec:flowredistribution}.
 
 \section{Grid structure}
 A transmission grid is modelled as a directed graph $(\mathcal{N},\mathcal{L})$.\todo{Require the graph to be connected? How about power islands?} As vertices we take the \emph{nodes} of the network, which are those points where transmission lines connect to a generator, load, or to each other. Nodes are electrically distinct, in the sense that there is some non-zero impedance between them, allowing them to sustain a potential difference. In a network of $n$ nodes, they are represented by the natural numbers $1,\dots,n$, \ie $\mathcal{N}=\range{n}$.
 
-A pair of two distinct nodes $(i,j)$ is contained in our set of lines $\mathcal{L}$ if there is a transmission line connecting the nodes. The choice of line orientation can be arbitrary, but we fix the orientation to $i<j$, \ie $(j,i) \notin \mathcal{L}$. This transmission line has non-zero impedance. (Otherwise $i$ and $j$ would be the same node.) In a network of $m$ lines, lines are labelled $\mathcal{L}_1, \dots, \mathcal{L}_m$. 
+A pair of two distinct nodes $(i,j)$ is contained in our set of lines $\mathcal{L}$ if there is a transmission line connecting the nodes. The choice of line orientation can be arbitrary, as long as we have $(i,j) \in \mathcal{L} \Rightarrow (j,i) \notin \mathcal{L}$ for all lines $(i,j) \in \mathcal{L}$. This transmission line has non-zero impedance. (Otherwise $i$ and $j$ would be the same node.) In a network of $m$ lines, lines are labelled $\mathcal{L}_1, \dots, \mathcal{L}_m$. 
 
-In literature on the subject, \todo{and in this thesis, oopsie} buses\footnote{`bus' is short for `busbar': the latin `omnibus' in conjunction with `bar': some high-voltage cables are connected by welding them to a heavy metal bar.} are also called \emph{vertices} or \emph{nodes}, and lines can be called \emph{edges}, \emph{wires}, \emph{cables} or \emph{circuits}.
+In literature on the subject, buses\footnote{`bus' is short for `busbar': the latin `omnibus' in conjunction with `bar': some high-voltage cables are connected by welding them to a heavy metal bar.} are also called \emph{vertices} or \emph{nodes}, and lines can be called \emph{edges}, \emph{wires}, \emph{cables} or \emph{circuits}.
 
-Given a directed graph with $n$ buses and $m$ lines, we define the vertex-edge incidence matrix $\mat{K} \in \mathbb{R}^{n \times m}$ as:
-\begin{align*}
-    \mel{K}_{i,k} =
-    \begin{cases}
-         1 & \text{if } \mathcal{L}_k=(i,j) \text{ for some } j \in \range{n}, \\
-        -1 & \text{if } \mathcal{L}_k=(j,i) \text{ for some } j \in \range{n}, \\
-         0 & \text{otherwise}.
-    \end{cases}
-\end{align*}
-The ordered set of lines is uniquely defined by the vertex-edge incidence matrix.
 \towrite{transmormer normalisation}
-We model transmission lines as time-invariant impedances, which are assumed to be constant under any electric potential and current, allowing us to apply Ohm's Law. Instead of the impedance $\phym{Z}$ of a line, we use its \define{admittance} $\phym{Y=1/Z} \in \mathbb{C}$,
-\footnote{Written in Cartesian form, $\phym{Y=G}+i\phym{B}$, where $\phym{G}$ is the conductance, and $\phym{B}$ the susceptance of a line. Both have unit siemens (S), or mho (the reverse of 'ohm'), defined as $1 \,\si{\siemens}=1\,\si{\ohm}^{-1}$. }
+We model transmission lines as time-invariant impedances, which are assumed to be constant under any electric potential and current, allowing us to apply Ohm's Law. Instead of the impedance $\phym{Z}$ of a line, we use its \define{admittance} $\phym{Y=1/Z} \in \mathbb{C}$,\footnote{Written in Cartesian form, $\phym{Y=G}+i\phym{B}$, where $\phym{G}$ is the conductance, and $\phym{B}$ the susceptance of a line. Both have unit siemens (S), or mho (the reverse of 'ohm'), defined as $1 \,\si{\siemens}=1\,\si{\ohm}^{-1}$. }
  and Ohm's Law becomes:
 \begin{align*}
     \mathsf{I=VY}
@@ -138,7 +127,7 @@ The \emph{state} of the network describes how the transmission network is being 
 A \emph{grid state}\index{grid!state} of an $(n,m)$-grid structure is defined as a tuple $(\mat{S}, \mat{V}, \mat{I})$, where
 \begin{itemize}
     \item $\mat{S} \in \mathbb{C}^n$ is the \emph{complex power injection vector};
-    \item $\mat{V} \in \mathbb{C}^n$ is the \emph{bus voltage vector};\todo{U instead of V? Not common in lit}
+    \item $\mat{V} \in \mathbb{C}^n$ is the \emph{bus voltage vector};
     \item $\mat{I} \in \mathbb{C}^m$ is the \emph{line current vector}. (Currents are directed along digraph edges.)
 \end{itemize}
 \end{definition}
@@ -153,7 +142,7 @@ From the mathematical structure, we will construct the corresponding electric ci
 
 In the first layer, each node $i$ in $\mathcal{N}$ becomes a node in the circuit. The value of $\mel{V}_i$ is the electric potential of that node, relative to ground.
 
-A line $\mathcal{L}_k=(i,j)$ is modelled as an impedance element\footnote{complex-valued resistor} (\inlineres) with admittance $\mel{\eta}_k$ between the two nodes $i$ and $j$. The value of $\mel{I}_k$ is the current flowing through the impedance from $i$ to $j$.\todo{check sign}
+A line $\mathcal{L}_k=(i,j)$ is modelled as an impedance element\footnote{complex-valued resistor} (\inlineres) with admittance $\mel{\eta}_k$ between the two nodes $i$ and $j$. The value of $\mel{I}_k$ is the current flowing through the impedance from $i$ to $j$.
 
 See Figure \ref{fig:KVLcircuit} for the first constructed layer. This is not the final circuit: we have not yet added generators and loads to the circuit! Also, the transmission lines have no return wire. This means that there is no closed loop between two nodes, and therefore no energy can be transmitted.
 
@@ -555,6 +544,7 @@ The state is DC-valid, so we can substitute (\ref{eq:approxnodefloweq}) for $\me
 - LPF
 
 they should be incrementally faster; the first two should find the same solution}
+
 \section{Nodal susceptance matrix}
 Theorem \ref{thm:approxnodeflowlineq} shows that the \emph{nodal susceptance matrix}, given by
 \[
@@ -565,7 +555,7 @@ is not just useful for compact notation: it relates phase angles to power inject
 However, we are more interested in the \emph{inverse} of this function, which maps a power injection to the vector of phase angles that it induces at the buses. Unfortunately, the inverse does not exist: $\mat{L}$ is an $n \times n$ matrix, but it does not have full rank. This can be seen by the fact that $\mat{K}$ has rank $n-1$, so the rank of $\mat{L}$ is at most $n-1$. We can be more precise:
 
 \begin{theorem}
-Suppose that the entries of $i\mat{\eta}$ are non-zero and real. Then the nodal susceptance matrix, $\mat{L}$, has rank $n-1$, and its kernel has a one-element basis:
+Suppose that the entries of $i\mat{\eta}$ are non-zero.\footnote{An impedance element never has \emph{zero admittance}: this would be equivalent to having no element at all.} Then the nodal susceptance matrix, $\mat{L}$, has rank $n-1$, and its kernel has a one-element basis:
 \[
 \ker \mat{L} = \linspan \left\lbrace 
 (1,1,\dots,1)^*.
@@ -583,18 +573,19 @@ $$
 
 Conversely, suppose $\mat{\theta} \in \ker \mat{L}$. Then
 \begin{align*}
-\mat{K}\diag(i\mat{\eta})\mat{K}^*\mat{\theta} &= \mat{0} \\
+\mat{L}\mat{\theta} &= 0 \\
+\Rightarrow \quad \mat{K}\diag(i\mat{\eta})\mat{K}^*\mat{\theta} &= \mat{0} \\
 \Rightarrow \quad \mat{\theta}^* \mat{K}\diag(i\mat{\eta})\mat{K}^*\mat{\theta} &= 0 \\
 \Rightarrow \quad (\mat{\theta}^* \mat{K}\diag(i\mat{\eta})\mat{K}^*\mat{\theta})^* &= 0 \\
 \Rightarrow \quad (\diag(i\mat{\eta})^{\frac{1}{2}} \mat{K}^*\mat{\theta})^* (\diag(i\mat{\eta})^{\frac{1}{2}} \mat{K}^*\mat{\theta}) &= 0 \qquad \text{($\diag(i\mat{\eta})$ is self-adjoint)}\\
-\Rightarrow \quad \norm{\diag(i\mat{\eta})^{\frac{1}{2}} \mat{K}^*\mat{\theta}} &= 0 \\
+\Rightarrow \quad \norm{\diag(i\mat{\eta})^{\frac{1}{2}} \mat{K}^*\mat{\theta}} &= 0.
 \end{align*}
-so $\mat{K}^*\mat{\theta}$ must be zero, and thus $\mat{\theta} \in \ker \mat{K}^*$.
+All entries of $i\mat{\eta}$ are non-zero, so $\mat{K}^*\mat{\theta}$ must be zero. It follows that $\mat{\theta} \in \ker \mat{K}^*$.
 
 The given basis has the right number of elements, and we can see from (\ref{eq:approxnodeflowlineq}) that $(1,1,\dots,1)^*$ is indeed an element of the kernel.
 \end{proof}
 
-\towrite{discuss the kernel of $\mathbf{L}$: it should be the space spanned by $(1,1,\dots,1)^*$, such that the nullity of $\mathbf{L}$ is $1$. This corresponds to the fact that phase angle is a relative quantity. (The state remains (DC-)valid when increasing the phase angle at each node by the same amount. (If $\mathbf{S}=\mathbf{L\theta}$ and $\mathbf{\theta}_0 \in \ker \mathbf{L}$, then $\mathbf{S}=\mathbf{L}(\bm{\theta}+\bm{\theta_0})$.))\\There are two paths to take after this point:\\1: Fix the phase angle of the slack bus (to $0$), which corresponds to taking the ${n-1 \times n-1}$ submatrix of $\mathbf{L}$, I think. \textbf{This is the approach of PyPSA, which might explain small differences in line flow.} \\2: Leave $\mathbf{L}$ as-is, and consider the \emph{Moore-Penrose pseudo-inverse} of $\mathbf{L}$. This is the approach of Nesti et al., which they attribute to 'distributive slack': not fixing a single slack bus.}
+\towrite{This corresponds to the fact that phase angle is a relative quantity. (The state remains (DC-)valid when increasing the phase angle at each node by the same amount. (If $\mathbf{S}=\mathbf{L\theta}$ and $\mathbf{\theta}_0 \in \ker \mathbf{L}$, then $\mathbf{S}=\mathbf{L}(\bm{\theta}+\bm{\theta_0})$.))\\There are two paths to take after this point:\\1: Fix the phase angle of the slack bus (to $0$), which corresponds to taking the ${n-1 \times n-1}$ submatrix of $\mathbf{L}$, I think. \textbf{This is the approach of PyPSA, which might explain small differences in line flow.} \\2: Leave $\mathbf{L}$ as-is, and consider the \emph{Moore-Penrose pseudo-inverse} of $\mathbf{L}$. This is the approach of Nesti et al., which they attribute to 'distributive slack': not fixing a single slack bus.}
 
 \section{Linear Power Flow}\label{LPFequations}
 \towrite{Physically, power does not actually flow. (Although \emph{energy} does). A better term would be: \emph{flow power}, since a high power flow from A to B is actually a \emph{powerful flow of energy} from A to B.\\
@@ -787,7 +778,7 @@ When $\mel{\mu}_{\mat{f}\, l} \neq 0$, we can use the $\sign$ function to combin
 \towrite{Large dev: in het limiet $\epsilon \rightarrow 0$ valt de verwachtingswaarde van $\mathbf{p}$, gegeven emergent failure $l$, samen met de zojuist gegeven mode.}
 
 
-\section{Redistribution of flow}
+\section{Redistribution of flow}\label{sec:flowredistribution}
 \towrite{(In deze paragraaf moet geen dakje op $\mathbf{f}$.)}
 In the previous section, we studied normally distributed power injections, and we can now discover which lines are likely to fail, and what power injection was the most likely cause. The next step is to study the \emph{redistribution of flow}: when overloaded lines are switched off (which happens almost instantly), the remaining lines in the network will have to take over their function, because \emph{the power injection remains unchanged after a line outage}.
 In the simplest case of two parallel lines that connect two otherwise unconnected grids (say, a geographical island connected to the mainland via two cables), the failure of one line will force the other line to carry its original current, plus the current that would normally flow through the failed line.
@@ -845,7 +836,7 @@ Let us first consider the case of a single failure: $\mathcal{Z}=\left\{l\right\
 
 Although this does satisfy the condition at $l$, it is in general not the flow that will be \emph{induced} in the perturbed network, which is uniquely determined by power flow physics. There are many linear combinations of unit loop flows that satisfy the condition at $l$, one of which is the correct one.
 
-Suppose that the network is unused ($\mat{p}=\mat{0}$), and we \emph{force} a current of $1$ through line $l$, and fix all other line currents to $0$. This line flow vector is given by $\mat{e}_l$. The result of this flow will be a power injection which remains zero everywhere, except at the two nodes that $\mathcal{L}_l = (i,j)$ connects. This power injection is given by $\mat{K}\mat{e}_l$.
+Suppose that the network is unused ($\mat{p}=\mat{0}$). We now \emph{force} a current of $1$ through line $l$ and we fix all other line currents to $0$. This line flow vector is given by $\mat{e}_l$. The result of this flow will be a power injection which remains zero everywhere, except at the two nodes that $\mathcal{L}_l = (i,j)$ connects. This power injection is given by $\mat{K}\mat{e}_l$.
 
 On the other hand, if we were to apply the injection $\mat{K}\mat{e}_l$ to the network, allowing current to flow naturally, we would find the vector of line currents $\mat{F}\mat{K}\mat{e}_l$, which in general does not equal $\mat{e}_l$! Of course, the natural line flow in $l$ will still be relatively large, but some power will be transmitted along different routes. For example, in a circular network of four buses and four lines of equal admittance, with $l=1$, we find\footnote{The series combination of lines 2, 3 and 4 has a third of the admittance of line 1, so their current must equal a third of the current through line 1.}
 \begin{align*}

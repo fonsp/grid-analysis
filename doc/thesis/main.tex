@@ -88,6 +88,16 @@
     {1cm}% before
     {0pt}% after
 
+\titleformat{\part}[display]
+{\centering\normalfont\huge}
+{\partname{ }\thepart}
+{0pt}
+{\vspace{1em}\Huge}
+[]
+
+\titlespacing*{\part}{0pt}{8cm}{0pt}
+
+
 %\renewcommand{\mat}[1]{\ensuremath{\mathbf{#1}}}
 %\newcommand{\matSigma}{\Sigma}
 %\end{comment}
@@ -211,27 +221,27 @@
 
 
 \begin{document}
+\pagenumbering{roman}
 
 %\begin{multicols}{2}
 \input{titlepage.tex}
 
 \chapter*{Abstract}
+\vspace{1cm}
+Limiting global warming requires a rapid transition towards renewable generation of electric energy, creating new challenges for the security of supply. As global demand for electric power is increasing, transmission networks are being pushed to their limits. 
+Sudden fluctuations in generation and load change the current through lines of the high-voltage transmission network, which might cause them to overload. In some cases, the failure of one line results in a cascade of other failures, eventually causing a blackout.
 
+In this thesis, we will try to better understand the effect of fluctuations in solar and wind generation on the robustness of electric power transmission. To do so, we develop the mathematical theory used to model the transmission of stochastic generation.
 
-As global demand for electric power is increasing, transmission networks are being pushed to their limits. Sudden fluctuations in generation and load change the current 
+Additionally, we show how this theory was used in a recent study \citep{Nesti2018emergentfailures} to identify the most vulnerable lines in the German transmission network using historical weather data for 2011, demonstrating both the usefulness and the limitations of our theory of fluctuating renewables.
+
+\towrite{
 
 By studying the effect of fluctuating renewables, we can better estimate which transmission lines are vulnerable to these emergent failures. The theory discussed in this thesis can be used to 
 
-
-
 The aim of this bachelor thesis is to introduce the reader to the fascinating mathematics that are used to model the effect of \emph{fluctuating renewables}. 
 
-To demonstrate both the usefulness and the limitations of our model, we show how this theory was used by \cite{Nesti2018emergentfailures} to 
-
-
 Emergent failures can be prevented 
-
-
 
 The transmission network is 
 
@@ -247,20 +257,13 @@ Additionally, for each vulnerable line we can compute the \emph{most likely fluc
 When a transmission line fails, power flow is instantly redistributed among other lines in the network, which might cause them to also overload.
 By estimating the most likely fluctuation, we can simulate these \emph{cascading failures} more realistically, to assess the damage that an emergent failure would cause.
 
-
-
 The model that we 
-
 
 To 
 
 In Part I, we cover the mathematical theory (graph theory and probability theory) 
 
-
-
-
-This bachelor thesis was written as a 
-
+This bachelor thesis was written as a }
 
 \chapter*{Notation}
 \begin{align*}
@@ -271,7 +274,9 @@ Y&\text{ is a (real or complex) number}\\
 \conj{\mat{Y}}&\text{ is the \emph{element-wise complex conjugate} of $\mat{Y}$} \\
 \mat{Y}^*&\text{ is the \emph{adjoint} of $\mat{Y}$ (which is equivalent to}\\
         &\quad \text{ the \emph{transpose} for real-valued $\mat{Y}$)} \\
-\range{n}&=\{1,\dots,n\}
+\range{n}&=\{1,\dots,n\} \\
+\text{\textthing}&\text{\emph{ end of example}} \\
+\text{\leafNE}&\text{\emph{ end of proof}}
 \end{align*}
 \towrite{Een geel doosje geeft aan dat een stuk tekst \emph{nog geschreven moet worden}.}
 \todo{Een oranje doosje is meer \emph{voor mezelf}, dingen waar ik later nog naar moet kijken.}
@@ -280,8 +285,12 @@ Y&\text{ is a (real or complex) number}\\
 \setcounter{tocdepth}{1}
 \tableofcontents
 
+\clearpage
+\pagenumbering{arabic}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \part{Theory of Electric Power Networks}\label{part:theory}
+
 
 \chapter{Graph theory}\label{chap:graphtheory}
 \begin{circuitikz}[scale=\textwidth/15cm]\ctikzset{bipoles/length=7mm}\draw[] (0,0) to[R] (15,0);\end{circuitikz}
