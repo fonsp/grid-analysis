@@ -50,6 +50,9 @@
 \usepackage{upgreek}
 \usepackage{dsfont}
 
+\usepackage{newfloat}
+\DeclareFloatingEnvironment[name={Interactive Figure}]{ifigure}
+
 % Font choice
 
 \usepackage{comment}
@@ -86,7 +89,7 @@
 \titlespacing*{\chapter}
     {0pt}% left
     {1cm}% before
-    {0pt}% after
+    {2em}% after
 
 \titleformat{\part}[display]
 {\centering\normalfont\huge}
@@ -226,14 +229,14 @@
 %\begin{multicols}{2}
 \input{titlepage.tex}
 
-\chapter*{Abstract}
+\chapter*{Summary}
 \vspace{1cm}
-Limiting global warming requires a rapid transition towards renewable generation of electric energy, creating new challenges for the security of supply. As global demand for electric power is increasing, transmission networks are being pushed to their limits. 
-Sudden fluctuations in generation and load change the current through lines of the high-voltage transmission network, which might cause them to overload. In some cases, the failure of one line results in a cascade of other failures, eventually causing a blackout.
+Limiting global warming requires a rapid transition towards renewable generation of electric energy. For this purpose, global energy demand becomes increasingly dependent on solar and wind energy. Unlike conventional energy sources, these stochastic sources inject a fluctuating amount of power into the electric grid. Large-scale fluctuations change the electric current through high-voltage lines of the transmission network, possibly evoking a line overload. Moreover, the failure of one line can result in a cascade of other failures, eventually causing a blackout. 
 
-In this thesis, we will try to better understand the effect of fluctuations in solar and wind generation on the robustness of electric power transmission. To do so, we develop the mathematical theory used to model the transmission of stochastic generation.
+In this thesis, we will study the effect of fluctuating renewables on the robustness of electric power transmission. To this end, we develop a mathematical framework that models the transmission of stochastic generation and predicts the line failure probability. The model accounts for correlated fluctuations among different network buses, which arise from correlated weather. The model extends the classical DC approximation to the stochastic case and uses algebraic graph theory to study the flow redistribution after multiple line outages.
 
-Additionally, we show how this theory was used in a recent study \citep{Nesti2018emergentfailures} to identify the most vulnerable lines in the German transmission network using historical weather data for 2011, demonstrating both the usefulness and the limitations of our theory of fluctuating renewables.
+Inspired by a recent study \citep{Nesti2018emergentfailures}, we demonstrate the applicability of this theory by identifying the most vulnerable lines in the German transmission network, and simulating the resulting cascades. This case study illustrates the usefulness and limitations of our model to predict line failures caused by fluctuating renewables. Using such methods in practice helps us to evaluate the risks of stochastic generation more precisely, allowing for higher shares of renewable generation to be installed.
+
 
 \towrite{
 
@@ -293,26 +296,31 @@ Y&\text{ is a (real or complex) number}\\
 
 
 \chapter{Graph theory}\label{chap:graphtheory}
+\vspace{-2em}
 \begin{circuitikz}[scale=\textwidth/15cm]\ctikzset{bipoles/length=7mm}\draw[] (0,0) to[R] (15,0);\end{circuitikz}
-\vspace{1em}
+\vspace{.5em}
 \subfile{graph}
 
-\chapter*{Circuit Theory}\label{chap:circuittheory}
-\begin{circuitikz}[scale=\textwidth/15cm]\ctikzset{bipoles/length=7mm}\draw[] (0,0) to (15,0);\end{circuitikz}
-\vspace{1em}
-\subfile{circuit}
-
+%\chapter*{Circuit Theory}\label{chap:circuittheory}
+%\vspace{-2em}
+%\begin{circuitikz}[scale=\textwidth/15cm]\ctikzset{bipoles/length=7mm}\draw[] (0,0) to (15,0);\end{circuitikz}
+%\vspace{1em}
+%\subfile{circuit}
+%
 \chapter{Probability Theory}\label{chap:probtheory}
+\vspace{-2em}
 \begin{circuitikz}[scale=\textwidth/15cm]\ctikzset{bipoles/length=7mm}\draw[] (0,0) to[C] (15,0);\end{circuitikz}
 \vspace{1em}
 \subfile{probability}
 
 \chapter{The Electric Grid}\label{chap:grid}
+\vspace{-2em}
 \begin{circuitikz}[scale=\textwidth/15cm]\ctikzset{bipoles/length=7mm}\draw[] (0,0) to[sV] (15,0);\end{circuitikz}
 \vspace{1em}
 \subfile{grid}
 
 \chapter{Modelling Transmission Networks}\label{chap:model}
+\vspace{-2em}
 \begin{circuitikz}[scale=\textwidth/15cm]\ctikzset{bipoles/length=7mm}\draw[] (0,0) to[cute inductor] (15,0);\end{circuitikz}
 \vspace{1em}
 \subfile{model}
@@ -321,6 +329,7 @@ Y&\text{ is a (real or complex) number}\\
 \part{Predicting failures in Germany's grid}\label{part:sim}
 
 \chapter{Methods}\label{chap:methods}
+\vspace{-2em}
 %\begin{circuitikz}[scale=\textwidth/15cm]\ctikzset{bipoles/length=7mm}
 %\draw[] (7.5,0) node[npn, rotate=90] (thenpn) {};
 %\draw[] (0,0) to (thenpn.C);
@@ -329,38 +338,57 @@ Y&\text{ is a (real or complex) number}\\
 \begin{circuitikz}[scale=\textwidth/15cm]\ctikzset{bipoles/length=7mm}
 \ctikzset{bipoles/cuteswitch/thickness=0.5}
 \draw[] (0,0) to[cute open switch] (15,0);
-\vspace{1em}
 \end{circuitikz}
+\vspace{1em}
 
 \subfile{methods}
 
 \chapter{Results}\label{chap:results}
+\vspace{-2em}
 \begin{circuitikz}[scale=\textwidth/15cm]\ctikzset{bipoles/length=7mm}\draw[] (0,0) to[fuse] (15,0);\end{circuitikz}
+\vspace{1em}
 \subfile{results}
 
 \appendix
-\chapter{Software}
-\emph{This thesis would not have been possible without the (mostly open source) projects listed in this section. }
-\begin{itemize}
-\item 
-\end{itemize}
+\chapter*{From the author}
+Thank you for reading my thesis! I hope that I have been able to express my enthusiasm and fascination for the subject. It has been a wonderful experience to work on this thesis, and I am especially proud to have worked on a problem that is the subject of current research.
 
-Contributions:
-\begin{itemize}
-\item Together with Fabian Hofmann and the original authors, I have modified PyPSA's plotting method to allow for a custom geographical projection. (Transverse Mercator with centre )
-\item A minimal version of this document . The title page is based on the work of Tom Salet.
-\item 
-\end{itemize}
+I would like to thank my supervisors, Henk and Eric, for taking the time to guide me through this process, for communicating their knowledge and for supporting my unusual choice of subject.
 
-%\section{hmmm}
-%adf
-%%\chapter{Aoasdf}
-%asdf
-%\chapter{verder}
-%\section{tweede}
-%%\chapter{Aoasdf}
-%asdf
+I have been fortunate enough to speak with Tommasso Nesti and Bert Zwart, who, together with Alessandro Zocca, authored the article that this thesis was inspired by. Their comments helped me to better understand the context and interpretation of their model. 
+I also wish to thank Uli Zeitler for discussing the physical properties of AC transmission lines and Klaas Landsman for helping me find the right thesis subject.
+\\[2em]
+I am very grateful to my family and friends for the wonderful four years in {Nijmegen}. I would like to thank my friend Merlijn Kersten for his enthusiasm and advice during the past few months, and I thank my brother Thijs van der Plas for giving me a pair of shoulders to stand on.
+\\[3em]
+\begin{flushright}
+\emph{-fons}
+\end{flushright}
 
-\bibliography{librarynew}
+%\chapter*{Software}
+%\vspace{1em}
+%\emph{This thesis would not have been possible without the (mostly open source) projects listed in this section. }
+%\begin{itemize}
+%\item 
+%\end{itemize}
+
+%Contributions:
+%\begin{itemize}
+%\item Together with Fabian Hofmann and the original authors, I have modified PyPSA's plotting method to allow for a custom geographical projection. (Transverse Mercator with centre )
+%\item A minimal version of this document . The title page is based on the work of Tom Salet.
+%\item 
+%\end{itemize}
+%
+
+\bibliography{library}
+\vspace{8em}
+{The code used to generate this document (\LaTeX) and the embedded figures (\texttt{Python 3.7} with \texttt{numpy} and \texttt{matplotlib}) is available\footnote{open source, under the MIT Licence} at the \emph{GitHub repository}:}\\[1em]
+\hphantom{asdfsdzz}\href{https://github.com/fonsp/grid-analysis}{\texttt{github.com/fonsp/grid-analysis}}\\[2em]
+
+{The Interactive Figure contains its own source code (\texttt{JS} with \texttt{D3.js}):}\\[1em]
+\hphantom{asdfsdzz}\href{https://fonsp.com/grid}{\texttt{fonsp.com/grid}}\\[2em]
+
+{If you have any comments, I would love to hear from you!}\\[1em]
+\hphantom{asdfsdzz}\href{mailto:fonsvdplas@gmail.com}{\texttt{fonsvdplas@gmail.com}}\\[2em]
+
 %\printindex
 \end{document}

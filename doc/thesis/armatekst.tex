@@ -1,0 +1,85 @@
+An attempt to recreate their results is described in Section \ref{sec:armamodel}. 
+
+
+
+\subsubsection{Computing ARMA fits}\label{arimamod}
+Following \cite{Nesti2018emergentfailures}, the ARMA models were fitted to the first month of solar and wind generation series using the \texttt{arima} method in \texttt{R}. This produced a result for all wind series.
+
+Unfortunately, for the solar series, the \texttt{arima} method failed to fit an ARMA model for 104 of the 489 buses, reflecting the hypothesis that these series are poorly modelled by an ARMA series. To recreate the results of \cite{Nesti2018emergentfailures}, it is crucial that a model can be fitted for \emph{every} bus. Therefore, a modified method is required.
+
+By the default, the \texttt{arima} method operates in two steps. First, a so-called Conditional-Sum-of-Squares (CSS) method is used as initial guess for the ARMA coefficients. Then, the coefficient \emph{likelihood} function is maximised with the Nelder-Mead optimisation method, using the CSS result as initial value.
+
+In our case, the CSS method often finds initial values that are \emph{non-stationary}.\todo{define?} A possible reason is that solar generation is exactly zero during nighttime, which lasts for up to 16 consecutive hours.\footnote{In reality, solar generation is never \emph{exactly} zero, even after sunset, because solar panels also receive ambient light. This is not included in the (artificial) dataset.
+%Ambient light includes sunlight scattered by the atmosphere (\eg 3 hours of twilight in January), artificial light
+%TODO
+}
+To resolve this issue, we use an optimisation method that works well without specifying an initial value: it should find the \emph{global} maximum independently. The Simulated Annealing (SANN) algorithm included in \texttt{R} is such a method, and was chosen for this analysis.
+
+With SANN as optimisation method, \texttt{arima} was able to fit solar models for 484 out of 489 buses. For the remaining 5 buses, a second technique is applied: to accommodate for the long periods of zero generation, a small amount of uniform noise is superimposed on the generation series. Initially, the noise magnitude is set to 1\% of the solar capacity of the bus. This percentage is increased iteratively, until the modified method is able to fit a solar model. In fact, 1\% noise proved sufficient for the remaining 5 buses in January, and no more than 2\% noise was needed for any bus in the remaining months.
+
+The modified method described in this section was used to fit solar and wind models to each bus of the network, for each month of 2011. Table \ref{tab:arimafitstats} lists the number of buses that can be analysed using the default and modified methods, showing the poor performance of the default for solar series, especially during the months of summer.
+\tocite{Belisle 1992, zie \texttt{optim} docs}
+
+\citet{Nesti2018emergentfailures} do not mention such problems (nor techniques to solve them). Because the same dataset, processing, programming language and method was used in this analysis, it is likely that they have also encountered and solved these problems, possibly in the same manner.
+\towrite{discuss other possible techniques: warm start, intercept}
+
+\subsubsection{Runtime}
+The default implementation has an estimated (single-core) runtime of 101 hours (4.2 days) when all 12 months are analysed, although only 78\% of fits are successful using this method.
+
+The modified version is able to fit all generation series successfully. The use of this more computationally expensive method increases the runtime to an estimated 224 hours (9.4 days). Because of the long runtime, fits were computed in parallel on a 40-core machine\footnote{Specifications: two \textit{Intel Xeon E5 2630L v4} 10-core processors @2GHz with hyperthreading; 64GB RAM. CPU time was used as estimate for single-core runtime.}, provided by the IT department of the Radboud University.\footnote{Thank you!} This reduced the total runtime down to 7 hours. The results are publicly available at the GitHub repository.
+
+
+
+
+
+
+
+
+
+\begin{table}[]
+    \centering
+    \begin{tabular}{c|ccrr|ccrr}
+\toprule
+\multicolumn{1}{c}{} & \multicolumn{4}{c}{\textsc{Solar}} & \multicolumn{4}{c}{\textsc{Wind}} \\
+\midrule
+\multicolumn{1}{c}{} & 
+\multicolumn{1}{c}{\textit{default}} & \multicolumn{1}{c}{\textit{modified}} & 
+\multicolumn{1}{c}{1\%} & \multicolumn{1}{c}{2\%} & 
+\multicolumn{1}{c}{\textit{default}} & \multicolumn{1}{c}{\textit{modified}} & 
+\multicolumn{1}{c}{1\%} & \multicolumn{1}{c}{2\%} \\
+\midrule
+Jan & \texttt{385} & \texttt{\textbf{484}} & \texttt{\textbf{5}} & \texttt{\textbf{0}} & \texttt{\textbf{488}} & \texttt{488} & \texttt{\textbf{0}} & \texttt{\textbf{0}} \\
+Feb & \texttt{364} & \texttt{\textbf{485}} & \texttt{\textbf{4}} & \texttt{\textbf{0}} & \texttt{\textbf{487}} & \texttt{487} & \texttt{\textbf{0}} & \texttt{\textbf{1}} \\
+Mar & \texttt{334} & \texttt{\textbf{475}} & \texttt{\textbf{14}} & \texttt{\textbf{0}} & \texttt{\textbf{487}} & \texttt{487} & \texttt{\textbf{1}} & \texttt{\textbf{0}} \\
+Apr & \texttt{211} & \texttt{\textbf{477}} & \texttt{\textbf{11}} & \texttt{\textbf{1}} & \texttt{\textbf{488}} & \texttt{488} & \texttt{\textbf{0}} & \texttt{\textbf{0}} \\
+May & \texttt{189} & \texttt{\textbf{473}} & \texttt{\textbf{16}} & \texttt{\textbf{0}} & \texttt{\textbf{467}} & \texttt{467} & \texttt{\textbf{21}} & \texttt{\textbf{0}} \\
+Jun & \texttt{255} & \texttt{\textbf{481}} & \texttt{\textbf{8}} & \texttt{\textbf{0}} & \texttt{\textbf{480}} & \texttt{480} & \texttt{\textbf{8}} & \texttt{\textbf{0}} \\
+Jul & \texttt{292} & \texttt{\textbf{485}} & \texttt{\textbf{4}} & \texttt{\textbf{0}} & \texttt{\textbf{488}} & \texttt{488} & \texttt{\textbf{0}} & \texttt{\textbf{0}} \\
+Aug & \texttt{179} & \texttt{\textbf{478}} & \texttt{\textbf{10}} & \texttt{\textbf{1}} & \texttt{\textbf{488}} & \texttt{488} & \texttt{\textbf{0}} & \texttt{\textbf{0}} \\
+Sep & \texttt{259} & \texttt{\textbf{472}} & \texttt{\textbf{16}} & \texttt{\textbf{1}} & \texttt{\textbf{487}} & \texttt{487} & \texttt{\textbf{1}} & \texttt{\textbf{0}} \\
+Oct & \texttt{263} & \texttt{\textbf{480}} & \texttt{\textbf{9}} & \texttt{\textbf{0}} & \texttt{\textbf{488}} & \texttt{488} & \texttt{\textbf{0}} & \texttt{\textbf{0}} \\
+Nov & \texttt{290} & \texttt{\textbf{472}} & \texttt{\textbf{17}} & \texttt{\textbf{0}} & \texttt{\textbf{486}} & \texttt{486} & \texttt{\textbf{2}} & \texttt{\textbf{0}} \\
+Dec & \texttt{317} & \texttt{\textbf{482}} & \texttt{\textbf{7}} & \texttt{\textbf{0}} & \texttt{\textbf{486}} & \texttt{486} & \texttt{\textbf{2}} & \texttt{\textbf{0}} \\
+\bottomrule
+    \end{tabular}%TODO: modified wind bold?
+    \caption{Number of buses (out of 489 solar, 488 wind) for which the ARMA model could be fitted using either the \emph{default} implementation of \texttt{arima} in \texttt{R}, or the \emph{modified} version (described in \ref{arimamod}).
+    \newline
+    When even the modified method yielded no results, uniform noise was added to the series before fitting. Noise magnitude was set to 1\% of generation capacity, or 2\% when needed.
+    \newline
+    Figures in \textbf{bold} indicate which results are used.
+    %All nodes now have usable results.
+    }
+    \label{tab:arimafitstats}
+\end{table}
+
+
+
+
+
+
+
+
+
+
+
+

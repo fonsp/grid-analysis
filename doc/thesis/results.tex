@@ -1,8 +1,7 @@
 \documentclass[main.tex]{subfiles}
  
 \begin{document}
-\towrite{Dit hoofdstuk is nog niet helemaal af!}
-In this final chapter, we apply our theory to the SciGRID dataset. We would like to reiterate that this data is aggregated from different sources, most of which are \emph{not} physical measurements, but `educated guesses'.
+In this final chapter, we discuss the results of applying our theory to the SciGRID dataset. We would like to reiterate that this data is aggregated from different sources, most of which are \emph{not} physical measurements, but `educated guesses'.
 
 With this in mind, we proceed with our analysis, not necessarily with the goal of providing accurate operational advice for German grid operators, but to demonstrate that the model can be applied to real-world transmission networks. By studying a representative dataset, we can study the strengths and weaknesses of the model. Finally, we hope that this model will provide \emph{qualitative insight} into the complex behaviour of grid failures, not specific to this dataset.
 
@@ -45,7 +44,7 @@ Our dataset contains hourly values for load and stochastic (wind and solar) gene
 \end{figure}
 
 \section{Bus covariance}
-We discussed two alternatives to estimating the covariance matrix directly from generation series: the covariance of ARMA residuals and the covariance of difference series. All methods show very \emph{high} covariances among nodes, which we expected from our preliminary analysis. Because renewable generation data is extrapolated directly from (coarse) weather data, the generation series of nearby buses are almost identical. 
+As discussed in Section~\ref{sec:persistentforecast}, we estimate the bus covariance matrix from historical errors in our forecast. We find \emph{high} covariances among nodes, which we expected from our preliminary analysis. Because renewable generation data is extrapolated directly from (coarse) weather data, the generation series of nearby buses are almost identical. 
 
 The covariance of buses, calculated using the difference series, is visualised in Figure \ref{fig:buscov}. 
 \begin{figure}[ht]
@@ -55,45 +54,7 @@ The covariance of buses, calculated using the difference series, is visualised i
     \label{fig:buscov}Covariance of all buses, relative to the circled bus. Normalised using installed renewable capacity.}
 \end{figure}
 
-
-\begin{table}[]
-    \centering
-    \begin{tabular}{c|ccrr|ccrr}
-\toprule
-\multicolumn{1}{c}{} & \multicolumn{4}{c}{\textsc{Solar}} & \multicolumn{4}{c}{\textsc{Wind}} \\
-\midrule
-\multicolumn{1}{c}{} & 
-\multicolumn{1}{c}{\textit{default}} & \multicolumn{1}{c}{\textit{modified}} & 
-\multicolumn{1}{c}{1\%} & \multicolumn{1}{c}{2\%} & 
-\multicolumn{1}{c}{\textit{default}} & \multicolumn{1}{c}{\textit{modified}} & 
-\multicolumn{1}{c}{1\%} & \multicolumn{1}{c}{2\%} \\
-\midrule
-Jan & \texttt{385} & \texttt{\textbf{484}} & \texttt{\textbf{5}} & \texttt{\textbf{0}} & \texttt{\textbf{488}} & \texttt{488} & \texttt{\textbf{0}} & \texttt{\textbf{0}} \\
-Feb & \texttt{364} & \texttt{\textbf{485}} & \texttt{\textbf{4}} & \texttt{\textbf{0}} & \texttt{\textbf{487}} & \texttt{487} & \texttt{\textbf{0}} & \texttt{\textbf{1}} \\
-Mar & \texttt{334} & \texttt{\textbf{475}} & \texttt{\textbf{14}} & \texttt{\textbf{0}} & \texttt{\textbf{487}} & \texttt{487} & \texttt{\textbf{1}} & \texttt{\textbf{0}} \\
-Apr & \texttt{211} & \texttt{\textbf{477}} & \texttt{\textbf{11}} & \texttt{\textbf{1}} & \texttt{\textbf{488}} & \texttt{488} & \texttt{\textbf{0}} & \texttt{\textbf{0}} \\
-May & \texttt{189} & \texttt{\textbf{473}} & \texttt{\textbf{16}} & \texttt{\textbf{0}} & \texttt{\textbf{467}} & \texttt{467} & \texttt{\textbf{21}} & \texttt{\textbf{0}} \\
-Jun & \texttt{255} & \texttt{\textbf{481}} & \texttt{\textbf{8}} & \texttt{\textbf{0}} & \texttt{\textbf{480}} & \texttt{480} & \texttt{\textbf{8}} & \texttt{\textbf{0}} \\
-Jul & \texttt{292} & \texttt{\textbf{485}} & \texttt{\textbf{4}} & \texttt{\textbf{0}} & \texttt{\textbf{488}} & \texttt{488} & \texttt{\textbf{0}} & \texttt{\textbf{0}} \\
-Aug & \texttt{179} & \texttt{\textbf{478}} & \texttt{\textbf{10}} & \texttt{\textbf{1}} & \texttt{\textbf{488}} & \texttt{488} & \texttt{\textbf{0}} & \texttt{\textbf{0}} \\
-Sep & \texttt{259} & \texttt{\textbf{472}} & \texttt{\textbf{16}} & \texttt{\textbf{1}} & \texttt{\textbf{487}} & \texttt{487} & \texttt{\textbf{1}} & \texttt{\textbf{0}} \\
-Oct & \texttt{263} & \texttt{\textbf{480}} & \texttt{\textbf{9}} & \texttt{\textbf{0}} & \texttt{\textbf{488}} & \texttt{488} & \texttt{\textbf{0}} & \texttt{\textbf{0}} \\
-Nov & \texttt{290} & \texttt{\textbf{472}} & \texttt{\textbf{17}} & \texttt{\textbf{0}} & \texttt{\textbf{486}} & \texttt{486} & \texttt{\textbf{2}} & \texttt{\textbf{0}} \\
-Dec & \texttt{317} & \texttt{\textbf{482}} & \texttt{\textbf{7}} & \texttt{\textbf{0}} & \texttt{\textbf{486}} & \texttt{486} & \texttt{\textbf{2}} & \texttt{\textbf{0}} \\
-\bottomrule
-    \end{tabular}%TODO: modified wind bold?
-    \caption{Number of buses (out of 489 solar, 488 wind) for which the ARMA model could be fitted using either the \emph{default} implementation of \texttt{arima} in \texttt{R}, or the \emph{modified} version (described in \ref{arimamod}).
-    \newline
-    When even the modified method yielded no results, uniform noise was added to the series before fitting. Noise magnitude was set to 1\% of generation capacity, or 2\% when needed.
-    \newline
-    Figures in \textbf{bold} indicate which results are used.
-    %All nodes now have usable results.
-    }
-    \label{tab:arimafitstats}
-\end{table}
-
 \section{Line covariance}
-
 By incorporating bus covariances in our model (which result from correlated weather), we hope to find new structure in the line covariances. 
 To assess the effect of estimating bus covariances, we compare three possible bus covariance matrices:
 \begin{enumerate}
@@ -114,12 +75,12 @@ It is well known that local changes to the grid structure have long-range effect
 \begin{subfigure}{\textwidth}
     \centering
     \includegraphics[width=\textwidth]{img/flow_correlation_387_iid_and_justvar_and_fullcov.pdf}
-    \caption{}\label{fig:linecov1}
+    \caption{Covariances relative to line 387.}\label{fig:linecov1}
 \end{subfigure}
 \begin{subfigure}{\textwidth}
     \centering
     \includegraphics[width=\textwidth]{img/flow_correlation_651_iid_and_justvar_and_fullcov.pdf}
-    \caption{}\label{fig:linecov2}
+    \caption{Covariances relative to line 651.}\label{fig:linecov2}
 \end{subfigure}
     \caption{Covariance of all lines, relative to the enlarged line. Normalised using installed renewable capacity. Signs (red or green) can be chosen arbitrarily. Absolute covariance is therefore proportional to color \emph{saturation}.}
 \end{figure}
@@ -143,7 +104,7 @@ To study the decay of covariance, we collect the geographical separation and cov
 \todo{Maar als je normaliseert op variantie?}
 \towrite{Compare three bus covariance }
 By doing so, we find an important result. When we model bus injections to be uncorrelated (first two graphs in Figure~\ref{fig:linecovdecay}), we find \emph{some} correlation in line flows, which are due to power flow physics.\footnote{As an example, consider the $n$-loop network. Here, two neighbouring lines are highly correlated, since they always transmit roughly the same amount of power. (The difference is the amount of power injected at their common node.)} On average, these correlations decrease as the distance between two lines increases, as shown by the red line.\footnote{We might expect this decay to be \emph{exponential} (based on the work of \cite{Jung2016}, for example), but this is not the case.} 
-On the other hand, when we include \emph{covariances among bus injections} in our model (last graph in Figure~\ref{fig:linecovdecay}), we find a \emph{relative increase in long-distance correlations of line flows}, compared to the uncorrelated case. This is one of the main results of \cite{Nesti2018emergentfailures}, which they demonstrate only on the $n$-loop network. Figure~\ref{fig:linecovdecay} shows that the result also holds for the SciGRID network.
+On the other hand, when we include \emph{covariances among bus injections} in our model (last graph in Figure~\ref{fig:linecovdecay}), we find a \emph{relative increase in long-distance correlations of line flows}, compared to the uncorrelated case. This is one of the main results of \cite{Nesti2018emergentfailures}, which they demonstrate only on the $n$-loop network. Figure~\ref{fig:linecovdecay} validates that the result also holds for the SciGRID network.
 
 Curiously, in the range $25\,\si{\kilo\meter}$ - $150\,\si{\kilo\meter}$, the average correlation of line flows \emph{increases} with higher line distances. The reason for this phenomenon is unclear, but one could investigate this further by examining line pairs of these short distances individually.
 
@@ -156,8 +117,8 @@ Curiously, in the range $25\,\si{\kilo\meter}$ - $150\,\si{\kilo\meter}$, the av
 
 \begin{figure}
     \centering
-    \includegraphics[width=\textwidth]{img/solarwind.png}
-    \caption{PLACEHOLDER: Solar, wind onshore, wind offshore generation at ?? in Germany.}
+    \includegraphics[width=\textwidth]{img/installed_stochastic_capacity.pdf}
+    \caption{Installed stochastic capacity per source: wind onshore, wind offshore, solar.}
     \label{fig:solarwind}
 \end{figure}
 
@@ -183,9 +144,74 @@ There is a difference in line \emph{impedance}: $3.9 + 18.9i \, \si{\ohm}$ (SD $
     \label{fig:nomflow_stdev_overload}
 \end{figure}
 
+\section{Most likely injection}
+In addition to the failure probability, we compute the most likely injection to cause that failure using Theorem~\ref{thm:mostlikelyinjection}. The reader is invited to examine these injections themselves using Interactive~Figure~\ref{ifig:master}. The most likely fluctuation of three lines is given in Figure~\ref{fig:MLfluctuation1}. As expected, we find that vulnerable lines (most likely) fail due to small fluctuations in the injection, while robust lines only fail because of extreme, highly unrealistic fluctuations. 
+
+\begin{figure}[ht]
+\begin{subfigure}{\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{img/ML_fluctuation_with_bus_cov.pdf}
+    \caption{Taking bus covariances into account.}\label{fig:MLfluctuation1}
+\end{subfigure}
+\begin{subfigure}{\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{img/ML_fluctuation_without_bus_cov.pdf}
+    \caption{Using only bus variances, with no covariance.}\label{fig:MLfluctuation2}
+\end{subfigure}
+    \caption{The most likely fluctuation given the failure of lines 251 (1.60\% overload probability), 651 (9.56\%) and 102 ($< 10^{-15}$). By including bus covariances (top), we find the most likely fluctuation to be more spread out. Zero-sum correction (distributive slack) is not applied.}\label{fig:MLfluctuation}
+\end{figure}
+
+\subsection{Geographic distribution of fluctuations}
+In general, the most likely fluctuation is not concentrated at the two endpoints of the line, but rather, it consist of small, grid-wide fluctuations. This is due to high bus covariances, but also due to power flow physics. To examine the contribution of bus covariances, we also compute the most likely injection using only the diagonal of bus variances, see Figure~\ref{fig:MLfluctuation2}. For these three lines, we find that the fluctuations are indeed more evenly distributed when bus covariances are taken in account. 
+
+To study this hypothesis more objectively, we need a measure of how `spread out' the fluctuation is. One possibility is to use the \emph{standard deviation} of the 489 entries of a fluctuation: when a fluctuation is more evenly distributed (geographically), we expect the standard deviation of individual fluctuations to be lower. When computing these values for the 50 most vulnerable lines, we find no significant result: the average of the 50 standard deviations in fluctuations is $22.0\,\si{MW}$ (SD $6.5\,\si{MW}$) for correlated buses and $22.6\,\si{MW}$ (SD $9.5\,\si{MW}$) for uncorrelated buses. Taking a lower number of lines does not improve the result. Curiously, when \emph{all} lines are considered (including the 584 lines with negligible overload probability\footnote{\ie less than $10^{-15}$, the numerical margin of error in our case}), the average standard deviation is actually \emph{higher} with correlated buses: $1245\,\si{MW}$ (SD $9244\,\si{MW}$) versus $418\,\si{MW}$ (SD $1036\,\si{MW}$) for uncorrelated buses. However, because we are mainly interested in the most vulnerable lines, we will leave this anomaly for what it is. Regarding the first 50 lines, it seems like a different approach is needed, and we are unable to confirm our hypothesis.
+
+\subsection{Bus extensions}
+Since we did not incorporate the \emph{installed stochastic capacity} in our model, it is possible that the predicted most likely injection dictates that some buses are generating more stochastic power than what is installed. To evaluate this problem, we retrieve the total amount of installed stochastic capacity for each bus from our dataset (taking the sum of solar and wind). For a given point in time, the generation values then tell us how much a bus can fluctuate upwards (more generation) and downwards. 
+
+Given a most likely injection, we can compute whether the fluctuation at each bus is within the possible bounds, and if not, by how much the bounds must be extended for the most likely injection to be possible. In Table~\ref{tab:results}, the number of buses that needs to be extended is given, along with the total amount of extended capacity. For simplicity, we make no distinction between an extension upwards or downwards. An extension upwards means that more solar panels or wind turbines would be needed for the injection to be possible.\footnote{This implies an inaccuracy in our dataset.} An extension downwards is harder to justify, but one could say that it means that the amount of stochastic generation \emph{before} the fluctuation must have been higher, replacing non-stochastic generation at that node.
+
+For the most vulnerable lines, we find that the \emph{number} of extended buses can be quite high, but the total amount of addition capacity is low, in general. For reference, buses in the network have an average installed capacity of $76\,\si{\mega\watt}$ (solar); $82\,\si{\mega\watt}$ (wind). 
+
+\towrite{twee problemen: geen distr. slack meegenomen, geen onderscheid meer tussen zon en wind}
+
+\towrite{het geeft vooral een mankement van het model aan: de grenzen zouden meegenomen moeten worden in de most likely injection}
+
 \subsection{Cascades}
-In addition to the failure probability, we compute the most likely injection to cause that failure, and simulate the resulting cascade. The number of lines that either failed jointly with the initial failure, or failed during the subsequent cascade, is also given in Table \ref{tab:results}. This extends the result of \cite{Nesti2018supplemental}, which only provides the failure probability. We find that among the 10 most vulnerable lines (at 11:00),
+Using the most likely injection, we simulate the resulting cascade. The results for all lines are given in Interactive~Figure~\ref{ifig:master}. The number of lines that either failed jointly with the initial failure, or failed during the subsequent cascade, is also given in Table~\ref{tab:results}. This extends the result of \cite{Nesti2018supplemental}, which only provides the failure probability. We find that among the 10 most vulnerable lines (at 11:00),
 only the failures of lines 298, 25 and 645 result in a power island. We will discuss these lines in more detail in Section~\ref{sec:evolution}, but for now, we note that these failures quickly result a power island. (For 298 and 645, this happens the first stage.) At this point, our model becomes unreliable (see Section~\ref{sec:discussioncasc}).
+
+\begin{figure}[ht]
+\renewcommand\figurename{Interactive Figure}
+\begin{subfigure}{\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{img/master_with_cov_251.pdf}
+    \caption{Assumed failure of line 251.}\label{ifig:master251}
+\end{subfigure}
+%
+\begin{subfigure}{\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{img/master_with_cov_197.pdf}
+    \caption{Assumed failure of line 197.}\label{ifig:master197}
+\end{subfigure}
+%
+    \caption{Simulated cascade stages after one assumed emergent failure. Node sizes represent the most likely injection. Long cascade sequences are truncated.
+\vspace{.5em}
+\newline
+\emph{This figure is \textbf{interactive}: to view animated cascade simulations for all lines of the network, visit \href{https://fonsp.com/grid}{\texttt{fonsp.com/grid}}.}
+}\label{ifig:master}
+\end{figure}
+\begin{figure}[ht]
+\renewcommand\figurename{Interactive Figure}
+\ContinuedFloat
+\begin{subfigure}{\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{img/master_with_cov_182.pdf}
+    \caption{Assumed failure of line 182.}\label{ifig:master182}
+\end{subfigure}
+%
+    \caption{(continued).}\label{ifig:master}
+\end{figure}
 
 \subsubsection{Using the most likely injection}
 \towrite{hoe zijn de resultaten anders wanneer we niet de mli nemen?}
@@ -221,7 +247,7 @@ Regarding the subsequent cascades of these two lines, it seems like our model fa
 \end{figure}
 
 
-\section{Lines vulnerable to cascades}
+\subsection{Lines vulnerable to cascades}
 \towrite{}
 
 
@@ -238,54 +264,74 @@ Regarding the subsequent cascades of these two lines, it seems like our model fa
 }
 \vspace{1cm}
 \caption{The 30 most vulnerable lines at 1 January, 11:00. For each line, we have the absolute overload probability and the mean and standard deviation of line saturation. For the most likely injection, the total change (fluctuation) in injection is given, and the number of buses for which renewable generation would need to be extended for the most likely injection to be possible. \protect\newline
-The number of failed lines in each cascade phase is shown. Phases in parentheses correspond to a disconnected network. (The first number is greater than $1$ when there are \emph{joint failures}.) The final column states whether the last cascade stage is disconnected (\ie a power island occurred).
+The number of failed lines in each cascade stage is shown. Stages in parentheses correspond to a disconnected network. (The first number is greater than $1$ when there are \emph{joint failures}.) The final column states whether the last cascade stage is disconnected (\ie whether a power island emerged).
 }
 \label{tab:results}
 \end{table}
 
 \section{Discussion}
-\subsection{Previous work}
-\towrite{
-This thesis was inspired by \cite{Nesti2018emergentfailures}, 
-
-and we have verified their results. Our results are in overall agreement, with some minor differences. todo{minder beknopt}
-
-Verschillen:
-
-- lijnen samengevoegd
-
-- geen arma maar diff
-
-- cascades gegeven van top 10
-
-Kritiek op nesti:
-
-- ARMA modellen, logisch? nodig? goede modellen?
-
-- geeft cascades niet van top 10
-
-- ze nemen een contingency factor van 0.7 bij de OPF (arbitrair) maar voor de analyse van cascades niet. (toch?)
-
-Of course, this has the same shortcoming as the model used by \cite{Nesti2018emergentfailures} (it ), but it 
-
-Although these ARMA models are fairly involved, they do not actually provide an accurate forecast.TODOfootnote{\cite{Nesti2018emergentfailures} also express this fact in their article, and note that it is only the forecast \emph{error} that is relevant in our analysis.} Using ARMA models seems unnecessarily complicated
-
-This is especially true for solar generation series: an ARMA model cannot capture the characteristic shape that we see in Figure~\ref{fig:genseries270jan}. }
-
 \subsection{Cascading failures}\label{sec:discussioncasc}
-The Optimised method computes redistributed flows efficiently, and its derivation (Section \ref{sec:optimisedmethod}) provides us with a more intuitive understanding of flow redistribution. Examining results for individual lines (\eg see Interactive Figure \ref{ifig:cascades}) shows realistic results. Yet, as we the analyses of lines 25 and 298 demonstrate, the method is likely erroneous when the network becomes \emph{disconnected} after the line removal(s), \ie when a power island occurs.
+Following \cite{Nesti2018emergentfailures}, we compute the lines most vulnerable to emergent failures, and we give the absolute overload probability (first two columns of Table~\ref{tab:results}). We extend their result by also stating the (most likely) total fluctuation and the sequence of cascades. Additionally, we asses the final stage of the cascade (\ie the \emph{severity} of the emergent failure) using the final number of failed lines, and we determine whether a power island emerged in the process.
+
+This allows us to make the important observation that most vulnerable lines do not result in a severe cascade of failures. This means that the network will remain operational after the emergent failure, and once the nefarious fluctuation has passed, the failed line can be operational again. For some vulnerable lines, our model does predict a significant amount of cascaded failures. However, when looking at these cases individually, we find that they are all lines that branch out of the network, quickly resulting in a power island. After the power island occurred, the simulated cascades are likely erroneous. We suspect that the emergent failure of these lines will indeed cause a power island to form, but that the remainder of the network will remain operational.
+
+\subsection{Power islands}\label{sec:discussionpowerislands}
+The Optimised method computes redistributed flows efficiently, and its derivation (Section \ref{sec:optimisedmethod}) provides us with a more intuitive understanding of flow redistribution. Examining results for individual lines (\eg see Interactive Figure \ref{ifig:master}) shows realistic results. Yet, as we the analyses of lines 25 and 298 demonstrate, the method is likely erroneous when the network becomes \emph{disconnected} after the line removal(s), \ie when a power island occurs.
 
 In fact, in its original form \citep{Ronellenfitsch2017}, the optimised method is only defined when the network remains connected.
 While this is a limitation of the Optimised method, it is, more generally, a limitation of using DC approximated power flow. In this approximation, we assume the network to be in a \emph{state of equilibrium}: generation matches load exactly. 
 
-In our case, the use of a stochastic injection means that we generally do not have a zero-sum injection, contracting the assumption. This contradiction is usually justified using the concept of (distributive) slack
+In our case, the use of a stochastic injection means that we generally do not have a zero-sum injection, contracting the assumption. This contradiction is usually justified using the concept of (distributive) slack: an overall increase or decrease in generation will occur (to compensate for the non-zero net injection), without changing the line flows.
 
 Yet, when studying cascading failures, we are looking at a time frame much shorter than the time it takes to reach equilibrium. 
 This shorter time scale generally requires an analysis of an entirely different nature: this is the study of \emph{transient stability}, which is far beyond the scope of this thesis. 
 
 Overall, a better understanding of the physics that underlie line failures is required to study cascading failures, especially in cases where power islanding occurs. 
 
-\towrite{Nesti: direct method}
+\subsection{Previous work \citep{Nesti2018emergentfailures}}\label{sec:discussionnesti}
+This thesis was inspired by the model and case study of \cite{Nesti2018emergentfailures}. While many of the future research topics proposed by this article remain open, we have been able to independently verify their results. While our model is based on the original, there are some fundamental differences between the two. Therefore, the differences in our results provide valuable insight into the accuracy of either model. 
+
+There are two important modifications that we chose to make to the original model. First of all, our model does not use ARMA forecasting, but a much simpler \emph{persistent forecast} as placeholder. For wind generation series, the resulting covariance matrices turn out to be very similar. We cannot comment on the similarity in solar covariances, as we were unable to reproduce these results.
+
+A second difference is the use of a different method for computing the redistributed flow, which is based on \cite{Ronellenfitsch2017}. There is no clear practical benefit to using the Optimised method, except for computational cost. Still, our use of this method has led to the insight that a DC approximated model is not well-suited for disconnected networks, when a large power imbalance exists among connected islands. Although these problems can be justified using the notion of \emph{distributive slack} TODO
+
+This Optimised method requires the network to be a \emph{digraph}, which does not allow for parallel lines to exist. For this reason, we have combined parallel lines in our network, taking their physical properties into account. Strangely, this increases the discrepancy between the line flows computed by the LPF, and those given by the OPF algorithm. This effect could be investigated further by studying smaller test networks.
+
+
+\subsubsection{Evaluation of results}
+We performed a careful analysis of the results that follow from the SciGRID application, identifying new problems in the model of \cite{Nesti2018emergentfailures}. For example, we find that for almost all lines, the most likely power injection requires an extension of stochastic capacity at multiple buses. For some lines, this extension is relatively small, and it does not invalidate the result. For other lines, a significant extension is needed. We suspect that the required extensions will be much greater when analysing a point in time when renewable generation is already high. A better understanding of the origin of our dataset is needed to evaluate the significance of this problem.
+
+This problem could be addressed \emph{within the framework of our model} by imposing additional conditions on the most likely injection. In its current form, the problem of finding the most likely injection is an optimisation problem with \emph{linear boundary conditions} (as given in the proof of Theorem~\ref{thm:mostlikelyinjection}). Because the boundary conditions can be written as a \emph{half-plane in $\mathbb{R}^n$}, we were able to derive a closed form solution. We could include the upper and lower limits of stochastic generation as addition linear conditions, which will likely make a closed-form solution unobtainable. Instead, non-linear optimisation methods could be used to find the most likely injection, given these additional conditions.\footnote{In fact, if we use this more general method to find the most likely injection, we could enforce the power injection to have zero sum by imposing one additional linear condition: $\sigma (\mat{p}) = 0$. Although this would solve the problem of having a most likely injection with non-zero sum, there is no physical argument for this imposing this condition.} See \cite{Chertkov2011} for a study using this approach.
+
+\subsection{Future}
+There are many aspects of this analysis that could should be studied in more detail, some of which are mentioned throughout this chapter. Regarding our case study, the first shortcoming that could be addressed is the fact that we have only thoroughly looked at the data of January 1$^{st}$. Like \cite{Nesti2018emergentfailures}, most of our results are computed for the nominal injection at 11:00. Additionally, we have computed our main result for the remaining 23 hours of the day, which includes hours where the \emph{night} covariance matrix is used (see Figure~\ref{fig:evolution_vulnerabilities}). 
+While we can directly compute results for the remaining days of January and the remaining months of 2011, we have not yet analysed these results.
+
+While our dataset provides an interesting case study, it does have some limitations. First of all, the dataset does not consist of physical measurements: it is constructed by combining various data sources, most of which are in turn the obtained from modelling. Because of the various steps needed to construct a full dataset, it is hard to quantify the inaccuracy of our results. 
+
+Crucially, our dataset does not allow us to \emph{verify our results}, since it is \emph{too coarse} to contain fluctuations, and it provides no historical data on line failures. High-resolution stochastic generation datasets do exist, possibly for all nodes of a realistic transmission network. However, to the best of our knowledge, no dataset exist that contains continuous measurements of line currents and overloads. 
+
+Many smaller datasets exists that can be analysed using our methods. Most notably, the \emph{IEEE test networks} can be extended with fictional stochastic generation, as demonstrated by \cite{Nesti2018emergentfailures} and \cite{Chertkov2011}. These smaller networks would allow us to more easily inspect the behaviour of individual lines in the network. Another way to construct a smaller network could be to take a \emph{subsection} of the SciGRID network.
+
+\towrite{
+
+Verschillen:
+- economie
+
+
+Kritiek op nesti:
+
+- ze nemen een contingency factor van 0.7 bij de OPF (arbitrair) maar voor de analyse van cascades niet. (toch?)
+
+- non-zero injection problem
+
+
+Of course, this has the same shortcoming as the model used by \cite{Nesti2018emergentfailures} (it ), but it 
+
+Although these ARMA models are fairly involved, they do not actually provide an accurate forecast.TODOfootnote{\cite{Nesti2018emergentfailures} also express this fact in their article, and note that it is only the forecast \emph{error} that is relevant in our analysis.} Using ARMA models seems unnecessarily complicated
+}
+
+
 
 \clearpage
 \end{document}

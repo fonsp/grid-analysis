@@ -1,7 +1,6 @@
 \documentclass[main.tex]{subfiles}
  
 \begin{document}
-\towrite{Dit hoofdstuk is nog niet helemaal af!}
 %The electric grid 
 
 %The thesis that you are currently reading
@@ -28,20 +27,16 @@ The electric grids of this world are some of the largest machines built by human
 
 On a larger scale, however, the behaviour of this machine is not always well understood, as complex behaviour arises from the interconnection of generators, transmission lines and loads.
 %The screen that you are reading this thesis on, or the printer that was used to print it, is most likely connected
-When the transmission network fails, the consequences can be dramatic. For example, filtering and supply of drinking water, telecommunication and heating all rely on a functioning power grid. The large scale of a transmission network makes it more stable, but it also increases the potential effect of its failure. The two largest blackouts (at the time of writing) occurred in north-eastern India on 30 and 31 July, 2012, affecting 400 million and 620 million people, respectively. These blackouts were due to a peak in consumption caused by extreme heat and draught.\footnote{Air-conditioning and irrigation pumps increased consumption; hydroelectric generation was limited.}
-
-\towrite{basics, scale, transmission-distribution-?, europe-US, security }
+When the transmission network fails, the consequences can be dramatic. For example, filtering and supply of drinking water, telecommunication and heating all rely on a functioning power grid. The large scale of a transmission network makes it more stable, but it also increases the potential effect of its failure. The two largest blackouts (at the time of writing) occurred in north-eastern India on 30 and 31 July, 2012, affecting 400 million and 620 million people, respectively. These blackouts were due to a peak in consumption caused by extreme heat and drought.\footnote{Air-conditioning and irrigation pumps increased consumption; hydroelectric generation was limited.}
 \section{Generators}
 Almost all sources of electric power in the electric grid use an \define{AC generator}\index{generator} to convert (rotational) kinetic energy to electric energy.\footnote{A notable exception is the photovoltaic cell (PV cell) used in solar panels. PV cells produce a direct current, which is converted to AC power at nominal voltage using an \define{inverter}. Solar inverters are often complicated systems, capable of using battery storage, synchronising with the AC grid and varying PV operating voltage to maximise PV efficiency.} 
 At a hydroelectric plant, the weight of water applies direct torque to the water pumps, mechanically connected to the generator shaft.\footnote{Some hydroelectric plants are \emph{reversible}: their generators can be used as electric motors, pumping water back up into a reservoir. This is a form of large-scale \define{energy storage}, which can increase the usability of intermittent renewable energy sources.}
 At most other types of plants (including coal-fired and nuclear plants), generators are powered by steam pressure. 
 
 The term \define{AC generator} denotes a specific device that uses \emph{electromagnetic induction} to convert rotational kinetic energy into AC power. Somewhat confusingly, we use the term \define{generator} to denote \emph{any} energy source connected to the grid, where we consider a power plant (which might house multiple AC generators) as a single generator. Solar parks and lithium batteries are generators, but they do not use an AC generator. They use an AC inverter, which \emph{mimics}, to some extent, the behaviour of a classical AC generator.
-
-\towrite{coils, 3 phase}
  
 \section{Loads}\label{sec:loads}
-\towrite{load profiling, load series, fridge duty cycle example, reactive load, power factor}
+%\towrite{load profiling, load series, fridge duty cycle example, reactive load, power factor}
 Unlike other utilities like gas and water, the transfer of electrical energy is \emph{instantaneous}.\footnote{Within the limits of special relativity, of course. That is, while the drift speed electrons is nowhere near the speed of light, the actual \emph{signal} propagates at about two thirds the speed of light, depending on the type of cable.} Of course, energy storage does exist,\footnote{Most commonly as \emph{reversible} hydro-electric generators; other examples include hydrogen storage (electrolysis of water produces hydrogen and oxygen, which can be stored and combusted at a later time) and lithium storage (very large phone batteries) (some electric vehicles can also return energy back to grid!)} but this energy is not stored as `high-voltage AC energy', but as \emph{potential} (mechanical or chemical) energy. Potential energy needs to be converted before it can be transmitted, which is not instantaneous. When switching on your lights, there will be an \emph{instant} increase in demand, which must be generated somewhere (otherwise it would violate the Law of Conservation of Energy). Of course, via the electric grid, your light bulb is connected to generators, which then start converting an additional $10 \, \si{\watt}$ to power the light bulb. But how do the generators know when to increase their output, if you never called them to say that you are turning on your lights? 
 
 The answer is called \define{electric inertia}. A classic AC generator (in a hydroelectric plant, for example) contains a heavy rotor, which is spinning at (a rational fraction of) the grid frequency. Because of its weight, a lot of energy is stored in the spinning of the rotor. When the total load on an AC network is increased, there is no instantaneous increase in burning of fuel, flowing of water, or otherwise. Instead, this increase in power demand will `take' its energy from the \emph{inertial energy} of all rotational AC generators in the grid, \emph{slowing down} their rotation. As a result, the AC frequency of the entire grid starts slowing down. When grid operators notice a drop in AC frequency (we are talking about differences on the order of $0.001\,\si{\hertz}$ here), they can increase the amount of fuel being burned, open water valves or lift control rods from between radioactive cores to increase the amount of energy converted by the AC generator. This will start to increase the AC frequency again, until it settles at the predetermined utility frequency ($60\,\si{\hertz}$ in North America and Northern South America; $50\,\si{\hertz}$ in the rest of the world, with some exceptions).
@@ -51,13 +46,9 @@ Most modern AC generators have an automatic feedback loop to control the steam v
 
 
 \section{Transmission}
-\towrite{Should cover: lines, transformers, circuit breakers, grid security}
-\subsection{DC transmission}
-%At the end of the 19th century, the first lines of the American electric grid were being built by Thomas Edison and Nicolas Tesla
-%The use of alternating current might seem strange, or overly complex, since most modern-day electric appliances use DC power (requiring AC-DC
+The voltage of AC power can be shifted up and down using transformers. We typically use higher voltages for long-range transmission, since high-voltage AC is much more efficient (less power is lost in heating the transmission lines). This is why high-voltage lines can afford to have relatively thin wires, given the amount of power that they transmit. The network of high-voltage lines (which operate at voltages on the order of $100 \, \si{\kilo\volt}$) is called the \emph{transmission network}. Transmission lines usually run interrupted for long distances (on the order of kilometres) between two \emph{substations}. At these endpoints, transformers connect the high-voltage transmission lines to medium-voltage (on the order of $10 \, \si{\kilo\volt}$) \emph{distribution lines}, which eventually make it to all generators and consumers in the area that the substation serves.
 
-
-\subsection{3-phase transmission}
+\subsection{Three-phase transmission}\label{sec:threephase}
 Depending on where you live, your wall socket will likely have \emph{two} connectors. Most modern sockets also have a third connector, the \emph{ground wire}, but this third connector does not have the purpose of carrying a current, like the other two (under normal circumstances).
 
 This makes sense, since most electrical devices only need a \emph{potential difference} (between \emph{two} wires) to function. In the early days of transmission systems, however, this caused a problem for factories using AC motors to power their production line. When a (single-phase) AC current is used to power a motor, the amount of \emph{torque}
@@ -99,15 +90,15 @@ As a result, it is very common to model the grid as a single-line network (with 
 
 \subsection{Line failures}\label{sec:linefailures}
 When a transmission line stops transmitting power, we speak of a \define{line failure}. In most cases, a line failure is not caused by a broken or molten wire, but by a disconnection at one of its ends, as a safety measure. 
-Some line failures are caused by a \define{fault}, or \emph{power surge} a sudden abnormal peak in current, caused by anomalies like fallen trees or lightning strikes. A high current is detected by a \emph{circuit breakers}\index{circuit breaker}, which then automatically breaks its connection. A household fuse is an example of a circuit breaker, although modern circuit breakers use a mechanical switch. (These can be reset, instead of requiring a replacement fuse.) In high-voltage systems, circuit breakers can be quite advanced, sometimes using pressurised gas or oil to prevent arcing inside the switch.
+Some line failures are caused by a \define{fault}, or \emph{power surge} a sudden abnormal peak in current, caused by anomalies like fallen trees or lightning strikes. A high current is detected by \emph{circuit breakers}\index{circuit breaker}, which then automatically breaks its connection. A household fuse is an example of a circuit breaker, although modern circuit breakers use a mechanical switch. (These can be reset, instead of requiring a replacement fuse.) In high-voltage systems, circuit breakers can be quite advanced, sometimes using pressurised gas or oil to prevent arcing inside the switch.
 
-Another type of line failure, the one most relevant to this thesis, is an \define{overload}. All transmission lines have a \define{thermal limit}: a maximum current that the line can sustain without risking overheating, causing sagging or even melting of transmission cables. To prevent these dangerous scenarios, transmission lines automatically disconnect when the current exceeds the predetermined \define{line threshold}. \todo{or stability limit}
+Another type of line failure, the one most relevant to this thesis, is an \define{overload}. All transmission lines have a \define{thermal limit}: a maximum current that the line can sustain without risking overheating, causing sagging or even melting of transmission cables. To prevent these dangerous scenarios, transmission lines automatically disconnect when the current exceeds the predetermined \define{line threshold}.\footnote{The line limit of very long transmission is determined by the \emph{stability limit}, not the thermal limit. Using these lines beyond their stability limit causes the \emph{stable equilibrium} between the generators at its endpoints to be lost. See \cite{VonMeier2006}.}
 
 It is important to note that grid operators cannot control the amount of current - and therefore - power that flows through a transmission line: grid operators can only connect or disconnect the line from the grid. The impedance of a wire does not act as a \emph{bottleneck} (like a small-diameter pipe would do in an irrigation network). From Ohm's law ($\phym{ZI=V}$), one could mistakenly conclude that the amount of current passing through a transmission line is inversely proportional to its resistance. However, the electric potential ($\phym{V}$) in this equation is \emph{not} the potential between the wire and the ground (\eg $220\,\si{\kilo\volt}$), but rather the potential difference between the two ends of the wire (which is not zero!). This difference (known as \define{line drop}) is quite low, compared to the potential between one of the ends and the ground ($220\,\si{\kilo\volt}$ transmission lines usually have a $1\si{\percent}$ line drop). The amount of current carried by a wire is dominated by the current being 'generated' and 'used' at its ends.
+%
+%\towrite{dynamic rating: modern transmission lines will allow a current beyond its threshold for a short while, and will have different ratings for different weather conditions}
 
-\towrite{dynamic rating: modern transmission lines will allow a current beyond its threshold for a short while, and will have different ratings for different weather conditions}
-
-\section{Grid security}
+\section{Grid security}\label{sec:powerflow}
 Historically, failures of transmission network have had dramatic effects. The effects of such outages are even visible from space, since almost every light source depends on a functioning transmission network. 
 
 Power outages can also be dangerous to human health. During the two-day blackout of Ontario and eight North-Eastern US states in 2003, almost 100 deaths were attributed to unavailable emergency services, stress, increased air pollution and the use of candles and backup generators.
@@ -118,27 +109,23 @@ Power outages can also be dangerous to human health. During the two-day blackout
 %
 %It should come as no surprise that the transmission network requires constant monitoring to ensure that it is working properly. 
 %
-When \todo{when?} the first power grids were built, grid security was ensured by \emph{redundancy}. Transmission lines were designed to carry currents much greater than predicted. One of the criteria for building a network was \emph{N-1 contigency}: the network should remain operational after the failure of \emph{any} line. In graph theory, this is equivalent to building a 2-edge-connected graph.
+When the first power grids were built, grid security was ensured by \emph{redundancy}. Transmission lines were designed to carry currents much greater than predicted. One of the criteria for building a network was \emph{N-1 redundancy}: the network should remain operational after the failure of \emph{any} line. In graph theory, this is equivalent to building a 2-edge-connected graph.
 
-Nowadays, the capacity of power grids is being pushed to its limits. The main reason is that it is \emph{economically beneficial} to do so: most electricity networks have become \emph{privatised} since they were built, and are being used, and upgraded in a way that minimises costs. A second reason is an increase in renewable generation, which requires the grid to be used in a way different from its design. This has led to ``more situations in which transmission lines are loaded close to their thermal limits.'' \citep{Ronellenfitsch2017}
+Nowadays, the capacity of power grids is being pushed to its limits. The main reason is that it is \emph{economically beneficial} to do so: most electricity networks have become \emph{privatised} since they were built, and are being used and upgraded in a way that minimises costs. A second reason is an increase in renewable generation, which requires the grid to be used in a way different from its design. This has led to ``more situations in which transmission lines are loaded close to their thermal limits.'' \citep{Ronellenfitsch2017}
+
+There are many mechanisms in place that ensure grid security. For example, a grid operator has a \emph{load shedding scheme}: a predefined order of loads that will be cut off from the network when needed. The most important tool to maintain grid security is \emph{load profiling} (\ie predicting future load), combined with control over generation: the grid operator gets the final say in deciding which generators will be used at what time. We will discuss this decision-making process in Section \ref{sec:energymarket}.
+
+Given the net amount of power injected at each node of the transmission network, the current that will flow through each line is determined by physics. We use a \emph{Power Flow} (PF) algorithm to calculate these currents, which we can use to check whether no line current exceeds its threshold. We will study the Power Flow equations in Chapter \ref{chap:model}.
 
 \subsection{Power islanding}
 Because nodes often house both loads and generators, the disconnection of a single node, or of a subset of nodes, does not always lead to a power outage, since local power generation might be sufficient to serve the load. This situation, where a subsection of the transmission network still operates after being disconnected, is called a \emph{power island}. 
 
 Since the power island and the remaining network have been operating independently of each other, it is likely that their AC phase angles no longer line up.\footnote{This misalignment likely occurs right after the disconnection, when the total generation in the power island is substantially higher or lower than the total load. Until this mismatch has settled, the AC frequency will be higher or lower, respectively, than the target frequency (say, $50\,\si{\hertz}$).}
-Unless this phase drift is corrected for (by temporarily increasing or decreasing the AC frequency on either side), the power island cannot be reconnected, since this phase drift likely exceeds the power angle limit of a new transmission line. \todo{adsf}
+Unless this phase drift is corrected for (by temporarily increasing or decreasing the AC frequency on either side), the power island cannot be reconnected, since this phase drift likely exceeds the power angle limit of a new transmission line. 
+%
+%\towrite{historic note, slack bus, distributive slack, DC approximation, optimal power flow}
 
-\towrite{Load shedding schemes, slack generators, frequency response, time scale (seconds)}
-%To understand how grid operators 
-
-%Normal grid operation can be 
-
-%Every hour, grid operators try to predic
-
-\section{Power Flow Analysis}\label{sec:powerflow}
-\towrite{historic note, slack bus, distributive slack, DC approximation, optimal power flow}
-
-\section{The energy market}
+\section{The energy market}\label{sec:energymarket}
 Modern power grids play the role of a competitive economic market. There are many possible ways to supply everyone with power, because there is more \emph{installed capacity} than there is demand. As a result, generation shares are largely determined by \emph{bidding}. Different generation technologies (gas, wind, etc.) form a \emph{stacking order}: in general, wind energy will always be cheaper than coal. Yet, it is not uncommon for renewable, cheap energy sources to be \emph{curtailed}, in favour of more expensive, possibly non-renewable energy sources. One of the reasons for grid operators to do so, is to protect vulnerable lines from overloading. 
 
 \emph{In this section, we will describe a \textbf{very simplified} version of the energy market, to illustrate how grid operators ensure \emph{grid security} while minimising costs.}
@@ -157,15 +144,16 @@ In general, one can assume that the price offered for renewable energy is close 
 
 Energy from company B is generally more expensive, since it has a marginal cost (price of coal, labour wages, and so on), on top of paying back the investment.\footnote{In some cases, coal plants offer their electricity for a lower, or even negative, price, to avoid power off the plant. With the exception of open-cycle gas turbines, turning on non-renewable energy plants is expensive, and might take several hours. It might be cheaper for company B to offer their energy for free for one hour than to turn off the plant.}
 
-\towrite{Misschien is dit een goede plek om de \emph{environmental cost} van elk type generator te geven}
-
 Besides offering their marginal price, generators will also state their \define{generation capacity}.\footnote{This use of the word \emph{capacity} is entirely different from the \emph{capacity} of a capacitor, used in electrical engineering.} For some generators, this will always be the same amount. For a solar park, however, this capacity varies drastically, and needs to be estimated.
 
-\subsection*{Phase two: grid operator}
-Now that all generators have offered a price, the grid operator needs to decide where to buy its energy from. Grid operators have a fairly good estimate for the load (energy demand) during the coming hour, based on the current load, historical load series, weather forecasts, sporting events, television programme schedules, and so on. Such a model is called a \define{load profile}. \todo{load profile plotje}
+\subsubsection*{Marginal emissions}
+The \emph{environmental cost} of a generator is mostly dependent on its energy source. In the context of global warming, we are interested in the amount of \emph{radiative forcing caused by greenhouse gases} that are emitted to generate energy, which is usually expressed as \emph{equivalent kilograms of CO$_2$}. Just like the financial cost, we usually speak of the \emph{marginal} emission of a certain generator: $\si{\kilo\gram}\text{CO}_2\text{eq} / \si{\kilo\watt\hour}$. See \cite{IPCCWG3AR5} for a summary of marginal emissions of each energy source.
 
-By design, the total generation capacity is much greater than the expected load, \todo{why? winter and incident load} so running every generator at full capacity would be problematic.
-As a grid operator, we need to tell each generator at what percentage of their capacity they should operate. \todo{stats: het percentage van totale capaciteit dat wordt gebruikt ligt tussen ?\% en ?\%.}
+\subsection*{Phase two: grid operator}
+Now that all generators have offered a price, the grid operator needs to decide where to buy its energy from. Grid operators have a fairly good estimate for the load (energy demand) during the coming hour, based on the current load, historical load series, weather forecasts, sporting events, television programme schedules, and so on. Such a model is called a \define{load profile}.
+
+By design, the total generation capacity is much greater than the expected load,\footnote{to account for so-called \emph{incident load}: the maximum amount of expected load. This amount is only likely to occur after a short blackout, when all consumer devices turn on simultaneously, and start cooling fridges and heating houses.} so running every generator at full capacity would be problematic.
+As a grid operator, we need to tell each generator at what percentage of their capacity they should operate.
 
 A complete set of generator instructions, called a \define{configuration}, might look something like Table \ref{tab:sampleconfiguration}. Note that generators could be told to operate at 0\% of their capacity, which is equivalent to powering off the generator completely.
 
@@ -189,7 +177,7 @@ A complete set of generator instructions, called a \define{configuration}, might
 \end{table}
 
 
-Some configurations are more expensive than others, and some will result in more greenhouse gas emissions than others. Perhaps surprisingly, most configurations are not even \emph{admissible}: using them would cause some transmission lines to be overloaded, which could even result in a blackout.\todo{admissible is niet ja of nee} 
+Some configurations are more expensive than others, and some will result in more greenhouse gas emissions than others. Perhaps surprisingly, most configurations are not even \emph{admissible}: using them would cause some transmission lines to be overloaded, which could even result in a blackout.
 
 More precisely, a configuration is called \define{ready to deploy} if it satisfies the following three conditions:
 \begin{itemize}[labelwidth =\widthof{\emph{admissibleasdf}}, leftmargin = !]
@@ -198,7 +186,7 @@ More precisely, a configuration is called \define{ready to deploy} if it satisfi
     \item[\emph{admissible}\index{configuration!admissible}:] When the dictated configuration is applied, no line should be overloaded.
 \end{itemize}
 
-To determine whether a configuration is \emph{admissible}, the grid operator can simply \emph{calculate the line flows} that would be induced by that configuration, using a Power Flow (PF) algorithm, and check for any overloaded lines. Because power flow physics are quite well-understood, these results are accurate.\tocite{accuracy}\todo{geschiedenis van PF: modellen}
+To determine whether a configuration is \emph{admissible}, the grid operator can simply \emph{calculate the line flows} that would be induced by that configuration, using a Power Flow (PF) algorithm, and check for any overloaded lines. Because power flow physics are quite well-understood, these results are accurate.
 
 \subsection{Optimum Power Flow}
 We can easily find a configuration that is both {possible} and {balanced}. First, set all generators to maximum capacity. We now have a \emph{possible} configuration. By design, the total generation of this configuration is much greater than the total load. By scaling the output of all generators with the same factor $0 \leq \lambda \leq 1$, the configuration remains \emph{possible}, and by the intermediate value theorem, a $\lambda$ exists such that the configuration is \emph{balanced}.
@@ -216,7 +204,7 @@ The problem of
 \end{gather*}
 is called the \define{Optimum Power Flow (OPF)} problem. 
 
-Even with modern-day computers, solving this problem is a difficult task indeed, and is often simplified by making a slight modification to our process. Instead of using the Power Flow (PF) algorithm to check a configuration's admissibility, we use the so-called \define{Linearised Power Flow (LPF)} algorithm to check linear admissibility. This linearised version can be computed much more quickly, with only a small loss in accuracy. We will derive the equations describing these two algorithms in Chapter \ref{chap:model}, and compare their results.\todo{linear balance}
+Even with modern-day computers, solving this problem is a difficult task indeed, and is often simplified by making a slight modification to our process. Instead of using the Power Flow (PF) algorithm to check a configuration's admissibility, we use the so-called \define{Linearised Power Flow (LPF)} algorithm to check linear admissibility. This linearised version can be computed much more quickly, with only a small loss in accuracy. We will derive the equations describing these two algorithms in Chapter \ref{chap:model}, and compare their results.
 
 With our slight modification, we restate our problem as:
 \begin{equation*}
@@ -229,6 +217,6 @@ With our slight modification, we restate our problem as:
 \end{equation*}
 which is known as the \define{Linear Optimum Power Flow (LOPF)} problem. As suggested by the notation, this optimisation problem falls in the more general class of problems solvable using \emph{linear programming}. First studied by  Fourier in 1827, the field has seen many developments, most notably the \emph{simplex} solution method developed by G. Dantzig in 1947.\footnote{For the \emph{simplex method}, see \cite{Matousek2007} .}
 Nowadays, several high-performance linear programming solvers have been created, including the open source \texttt{GNU Linear Programming Kit}, which was used in this project.
-\todo{Je kan de eisen van OPF naar beneden schalen om lineaire admissibility te krijgen (bv de contingecy factor!)}
 
+Using the LPF algorithm introduces a small error. For this reason, the \emph{admissibility} bounds are often scaled down by a contingency factor,\footnote{A contingency factor of $0.7$ is common.} creating a margin of error for line flows.
 \end{document}

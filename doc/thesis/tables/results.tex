@@ -1,6 +1,8 @@
-\begin{tabular}{lllrrllc}
+\begin{tabular}{lll|rrl|lc}
 \toprule
-$l$ & $\PROB \left[ |\mel{f}_l| \geq 1 \right]$ & \multicolumn{1}{p{3em}}{mean $\pm$SD} & \multicolumn{1}{p{5em}}{\centering total {fluctuation}} & \multicolumn{2}{p{7em}}{extended buses (add. capacity)} & \multicolumn{1}{c}{cascade} & \multicolumn{1}{p{3em}}{\centering power \\ island?}\\
+\multicolumn{3}{c}{\textsc{Overload probability}} & \multicolumn{3}{c}{\textsc{Most likely injection}} & \multicolumn{2}{c}{\textsc{Cascade}} \\
+\midrule
+$l$ & $\PROB \left[ |\mel{f}_l| \geq 1 \right]$ & \multicolumn{1}{p{3em}}{mean $\pm$SD} & \multicolumn{1}{p{5em}}{\centering total {fluctuation}} & \multicolumn{2}{p{7em}}{extended buses (add. capacity)} & \multicolumn{1}{p{12em}}{\centering failed lines per phase \\ (disconnected)} & \multicolumn{1}{p{3em}}{\centering power \\ island?}\\
 \midrule
 \textbf{651} & \textbf{ 9.55\hphantom{0}\%} &  0.70$\pm$0.23 &       3.8 GW &      43 & (62 MW) & \multicolumn{1}{p{12em}}{                                              1 } &                 no \\
 \textbf{652} & \textbf{ 8.95\hphantom{0}\%} &  0.68$\pm$0.24 &       3.9 GW &      46 & (82 MW) & \multicolumn{1}{p{12em}}{                                            (2) } &                yes \\
@@ -28,7 +30,7 @@ $l$ & $\PROB \left[ |\mel{f}_l| \geq 1 \right]$ & \multicolumn{1}{p{3em}}{mean $
 \textbf{534} & \textbf{ 0.113\%} &  0.63$\pm$0.12 &       4.3 GW &        2 & (8 MW) & \multicolumn{1}{p{12em}}{              3 >> 5 >> (8 >> 12 >> ... >> 184) } &                yes \\
 \textbf{460} & \textbf{ 0.052\%} &  0.38$\pm$0.19 &      12.5 GW &     20 & (396 MW) & \multicolumn{1}{p{12em}}{                 3 >> 6 >> 7 >> 8 >> (11 >> 12) } &                yes \\
 \textbf{257} & \textbf{ 0.048\%} &  0.51$\pm$0.15 &      10.3 GW &     21 & (417 MW) & \multicolumn{1}{p{12em}}{                            3 >> 6 >> (8 >> 11) } &                yes \\
-\textbf{624} & \textbf{ 0.047\%} &  0.42$\pm$0.17 &       5.5 GW &      13 & (53 MW) & \multicolumn{1}{p{12em}}{        3 >> 6 >> 9 >> 15 >> (21>>...>>137) } &                yes \\
+\textbf{624} & \textbf{ 0.047\%} &  0.42$\pm$0.17 &       5.5 GW &      13 & (53 MW) & \multicolumn{1}{p{12em}}{            3 >> 6 >> 9 >> 15 >> (21>>...>>137) } &                yes \\
 \textbf{561} & \textbf{ 0.045\%} &  0.68$\pm$0.10 &       4.7 GW &        1 & (2 MW) & \multicolumn{1}{p{12em}}{             3 >> 9 >> 16 >> (21 >> ... >> 200) } &                yes \\
 \textbf{569} & \textbf{ 0.042\%} &  0.61$\pm$0.12 &       8.4 GW &      19 & (87 MW) & \multicolumn{1}{p{12em}}{                  1 >> (4 >> 179 >> ... >> 219) } &                yes \\
 \textbf{563} & \textbf{ 0.034\%} &  0.69$\pm$0.09 &       4.5 GW &        2 & (8 MW) & \multicolumn{1}{p{12em}}{             3 >> 8 >> (16 >> 52 >> ... >> 151) } &                yes \\

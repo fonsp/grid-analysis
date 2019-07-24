@@ -14,7 +14,7 @@
 \section{Multivariate Gaussian distribution}
 \emph{This presentation of the multivariate Gaussian distribution is heavily based on Chapter VIII of \emph{Mathematical Statistics} by \cite{Pestman1998}, which provides proofs to all theorems listed below.}
 
-One distribution that will be particularly useful in our analysis is the \emph{multivariate Gaussian distribution}, which generalised the (one-dimensional) normal distribution. In the simplest case, we have a stochastic vector $\mat{E}=(\mel{E}_1, \dots, \mel{E}_p)$, which is the combination of $p$ Gaussian distributed, \emph{independent} scalar variables. In general, however, we wish to study stochastic vectors produced by applying a \emph{linear transformation} $\mat{L} \in \mathcal{L}(\mathbb{R}^p, \mathbb{R}^q)$ to $\mat{E}$. In this case, the coordinate variables $(\mel{LE})_1,\dots,(\mel{LE})_q$ are not always independent! For example, the map $(\mel{E}_1, \mel{E}_2) \mapsto (\mel{E}_1, \mel{E}_1 + \mel{E}_2)$ transforms two independent normals into two dependent ones.
+One distribution that will be particularly useful in our analysis is the \emph{multivariate Gaussian distribution}, which generalises the (one-dimensional) normal distribution. In the simplest case, we have a stochastic vector $\mat{E}=(\mel{E}_1, \dots, \mel{E}_p)$, which is the combination of $p$ Gaussian distributed, \emph{independent} scalar variables. In general, however, we wish to study stochastic vectors produced by applying a \emph{linear transformation} $\mat{L} \in \mathcal{L}(\mathbb{R}^p, \mathbb{R}^q)$ to $\mat{E}$. In this case, the coordinate variables $(\mel{LE})_1,\dots,(\mel{LE})_q$ are not always independent! For example, the map $(\mel{E}_1, \mel{E}_2) \mapsto (\mel{E}_1, \mel{E}_1 + \mel{E}_2)$ transforms two independent normals into two dependent ones.
 %In particular, we answer the following question: ``For $i,j \in \range{q}$ and $x \in \mathbb{R}$, what is the distribution of $(\mel{LE})_i$, \emph{given that} $(\mel{LE})_j \geq x$?''
 \subsection{Normal and Gaussian}
 Although they are often used interchangeably, we make a clear distinction between a \emph{normal} distribution and a \emph{Gaussian} distribution. The former should be familiar:
@@ -42,12 +42,12 @@ $\mat{E}$ is \emph{elementary Gaussian distributed}\index{distribution!elementar
 A stochastic vector $\mat{X}=(\mel{X}_1, \dots, \mel{X}_p)$ is \emph{normally distributed}\index{distribution!normal} if there exists an orthogonal operator $\mat{Q}$ such that $\mat{QX}$ is elementary normally distributed.
 $\mat{X}$ is \emph{Gaussian distributed}\index{distribution!Gaussian} if there exists an orthogonal operator $\mat{Q}$ such that $\mat{QX}$ is elementary Gaussian distributed.
 \end{definition}
-
-\towrite{Plaatjes vullen gaatjes}
-
+%
+%\towrite{Plaatjes vullen gaatjes}
+%
 We state, without proof, the following properties of Gaussian distributed vectors:
 \begin{proposition}\label{thm:normaliffinvertible}
-The distribution of a Gaussian distributed vector $\mat{X}$ is uniquely determined by its expectation $\mat{\mu} =\EXP\left[\mat{X}\right]$ and covariance matrix $\mat{\Sigma}=\COVMAT(\mat{X})$, and we write $\mat{X} \sim \gaussdistr(\mat{\mu}, \mat{\Sigma})$. $\mat{X}$ is normally distributed if and only if $\mat{\Sigma}$ is invertible. \todo{define covmat}
+The distribution of a Gaussian distributed vector $\mat{X}$ is uniquely determined by its expectation $\mat{\mu} =\EXP\left[\mat{X}\right]$ and covariance matrix $\mat{\Sigma}=\COVMAT(\mat{X})$, and we write $\mat{X} \sim \gaussdistr(\mat{\mu}, \mat{\Sigma})$. $\mat{X}$ is normally distributed if and only if $\mat{\Sigma}$ is invertible.
 \end{proposition}
 
 Translating or applying a linear map to a Gaussian distribution results in a new Gaussian distribution. Note that this can be \emph{any} linear map, not necessarily a bijective, orthogonal one.
@@ -110,12 +110,12 @@ When $b=1$, we write $\mat{r}_A$ (or $\mat{r}_B$), and we say that $\mat{r}_A$ (
 When $b \neq 1$, we can scale $\mat{r}$ to create a pillar for $A$ or $B$, unless $b=0$ (which is the case if and only if $\mat{0} \in A$).
 \end{remark}
 \begin{remark}
-$A = \partial B$.
+$A$ is the \emph{boundary} of $B$, \ie $A = \partial B$.
 \end{remark}
 
 Geometrically, a pillar can be interpreted as a vector from the origin that crosses the plane orthogonally. Its length is \emph{not} the distance between the origin and the plane, but rather the \emph{inverse} of this distance.
-
-\towrite{Orthogonal projection onto a plane}
+%
+%\towrite{Orthogonal projection onto a plane}
 
 \begin{definition}
 A \emph{convex polyhedron in $\mathbb{R}^p$}\index{polyhedron} is the intersection of finitely many half-spaces in $\mathbb{R}^p$, and can be written as the set of solutions to
@@ -145,7 +145,7 @@ Let $\mat{X} \, \sim \, \gaussdistr(\mat{\mu}, \mat{\Sigma})$ be a normally dist
 \tilde{\mat{x}}_{A} = \argmax_{\mat{x} \in A} f_{\mat{X}}(\mat{x}) = \mat{\mu}  + \frac{1 - \left\langle \mat{\mu}, \mat{r}_A \right\rangle}{\left\langle  \mat{\Sigma} \mat{r}_A, \mat{r}_A \right\rangle} \mat{\Sigma} \mat{r}_A.\label{eq:modeofaplaneconditional}
 \end{equation}
 \end{theorem}
-\begin{proof}\todo{inproduct rx is verkeerd om}
+\begin{proof}%\todo{inproduct rx is verkeerd om}
 We will start with the special case of $\mat{\Sigma} = \mat{I}$, and work our way towards the general case.\footnote{This process uses the so-called the \emph{standardised}\index{distribution!standardised normal} form of $\mat{X}$.}
 
 \emph{Step 1. The case of unit covariance.}\\
@@ -161,7 +161,8 @@ Because $A$ is an affine subspace of $\mathbb{R}^p$, the distance between $\mat{
 \]
 
 \emph{Step 2. The case of an arbitrary elementary normal distribution.}\\
-Let us drop the assumption that all marginal variances are equal to one. There exist $\lambda_1, \dots, \lambda_p \in \mathbb{R}_{>0}$ such that $\mat{\Sigma} = \mat{\Lambda} = \diag(\lambda_1, \dots, \lambda_p)$, and $\mat{\Lambda}^{t} = \diag(\lambda_1^{t}, \dots, \lambda_p^{t})$ for any $t \in \mathbb{R}$. \todo{Dit zijn de varianties, gebruik simgasquared?} With $t=-\frac{1}{2}$, we find that $\mat{\Lambda}^{-\frac{1}{2}}\mat{X}$ is elementary normally distributed, with mean $\mat{\Lambda}^{-\frac{1}{2}}$ and unit covariance matrix (Theorem \ref{thm:linearmapofgaussian}).
+Let us drop the assumption that all marginal variances are equal to one. There exist $\lambda_1, \dots, \lambda_p \in \mathbb{R}_{>0}$ such that $\mat{\Sigma} = \mat{\Lambda} = \diag(\lambda_1, \dots, \lambda_p)$, and $\mat{\Lambda}^{t} = \diag(\lambda_1^{t}, \dots, \lambda_p^{t})$ for any $t \in \mathbb{R}$.%\todo{Dit zijn de varianties, gebruik simgasquared?}
+With $t=-\frac{1}{2}$, we find that $\mat{\Lambda}^{-\frac{1}{2}}\mat{X}$ is elementary normally distributed, with mean $\mat{\Lambda}^{-\frac{1}{2}}$ and unit covariance matrix (Theorem \ref{thm:linearmapofgaussian}).
 Applying the same transformation $\mat{\Lambda}^{-\frac{1}{2}}$ to $A$ yields a new plane, which has pillar $\mat{\Lambda}^{\frac{1}{2}}\mat{r}_A$ (not $\mat{\Lambda}^{-\frac{1}{2}}\mat{r}_A$!):
 
 For each $\mat{x} \in \mathbb{R}^p$, we have
@@ -245,12 +246,12 @@ In the non-trivial case of $\mat{\mu} \notin B$, we find that $\tilde{\mat{x}}_{
 For a half-plane $B$, we now have an explicit expression for $\tilde{\mat{x}}_{B}$, \ie the \emph{most likely value} of $\mat{X}$, given that $\mat{X} \in B$. What can we say about the \emph{expected value} of $\mat{X} \, \mid \, B$? Geometrically, one can imagine that $\EXP [\mat{X} \, \mid \, \mat{X} \in B]$ lies close to $\tilde{\mat{x}}_{B}$, but `shifted inwards', away from $\partial B$ (in the direction of its pillar). We have not found a direct method to compute this expected value. \cite{Nesti2018emergentfailures} introduce a scaling factor $\epsilon>0$ to the covariance of $\mat{X}$ (\ie $\mat{X}_{\epsilon} \, \sim \, \gaussdistr(\mat{\mu}, \epsilon\mat{\Sigma})$), and show that the expected value \emph{converges} to $\tilde{\mat{x}}_{B}$, the mode,\footnote{The factor $\epsilon$ disappears in (\ref{eq:modeofaplaneconditional}).} as $\epsilon \rightarrow 0$, using the tools of Large Deviations Theory.
 
 One can interpret this result as saying that the probability density of $\mat{X}_{\epsilon} | B$ gets \emph{concentrated close to the boundary of $B$}. In the one-dimensional case, this statement\footnote{\ie the \emph{tail distribution} of $X \, \sim \, \gaussdistr(0,\epsilon^2)$, given $X \geq 1$, becomes \emph{steeper} as $\epsilon \rightarrow 0$.} is easy to demonstrate, see \eg \cite{Touchette2009}.
-
-\todo[inline]{Is de marginale verdeling gaussiaans verdeeld? (Ze is niet normaal verdeeld.) Wat is de covariantiematrix? Je zou als Stap 0 kunnen transformeren naar een $\mathbf{r}_A$ die parallel aan een van de assen loopt, en dan dat coordinaat gelijk aan $\norm{\mathbf{r}_A}$ stellen? Maar dan klopt de verwachtingswaarde niet meer?}
-
-\todo[inline]{Het zou mooier zijn om dit resultaat toe te passen op een algemene Gauss-verdeling, die niet per se normaal is. De marginele verdeling bestaat dan alleen niet altijd, namelijk wanneer $A \cap \Ima(\mathbf{X}) = \emptyset$. Als ze wel bestaat, dan gok ik dat het Gaussiaans is.
-
-Het is nu niet toe te passen op line flows (want die zijn normaal, wel Gaussiaans), maar wel op de injectie. Wanneer je dan de meest likely injectie hebt, kan je afleiden wat de flow is. Dit komt overeen met elkaar?
-
-De covariantiematrix van de flow is ook bijna singulair (numeriek gezien singulair), omdat de correlaties zo sterk zijn. Maar ik denk dat je kan beargumenteren dat de kans op singulaire covariantiematrix $0$ is, en dan kan de stelling dus wel worden toegepast. Numeriek is de bijna-singulariteit ook geen probleem (denk ik), omdat in de uiteindelijke uitdrukking de inverse van sigma niet voorkomt.}
+%
+%\todo[inline]{Is de marginale verdeling gaussiaans verdeeld? (Ze is niet normaal verdeeld.) Wat is de covariantiematrix? Je zou als Stap 0 kunnen transformeren naar een $\mathbf{r}_A$ die parallel aan een van de assen loopt, en dan dat coordinaat gelijk aan $\norm{\mathbf{r}_A}$ stellen? Maar dan klopt de verwachtingswaarde niet meer?}
+%
+%\todo[inline]{Het zou mooier zijn om dit resultaat toe te passen op een algemene Gauss-verdeling, die niet per se normaal is. De marginele verdeling bestaat dan alleen niet altijd, namelijk wanneer $A \cap \Ima(\mathbf{X}) = \emptyset$. Als ze wel bestaat, dan gok ik dat het Gaussiaans is.
+%
+%Het is nu niet toe te passen op line flows (want die zijn normaal, wel Gaussiaans), maar wel op de injectie. Wanneer je dan de meest likely injectie hebt, kan je afleiden wat de flow is. Dit komt overeen met elkaar?
+%
+%De covariantiematrix van de flow is ook bijna singulair (numeriek gezien singulair), omdat de correlaties zo sterk zijn. Maar ik denk dat je kan beargumenteren dat de kans op singulaire covariantiematrix $0$ is, en dan kan de stelling dus wel worden toegepast. Numeriek is de bijna-singulariteit ook geen probleem (denk ik), omdat in de uiteindelijke uitdrukking de inverse van sigma niet voorkomt.}
 \end{document}
