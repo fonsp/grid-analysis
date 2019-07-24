@@ -70,8 +70,8 @@
 \DeclareMathAlphabet{\mathbf} {OT1}{bch}{bx}{n}
 
 
-%\pdfpkmode{dpdfezzz}
-%\pdfpkresolution=1200
+\pdfpkmode{dpdfezzz}
+\pdfpkresolution=1200
 
 
 \usepackage[pagestyles, clearempty]{titlesec}%
@@ -237,36 +237,35 @@ In this thesis, we will study the effect of fluctuating renewables on the robust
 
 Inspired by a recent study \citep{Nesti2018emergentfailures}, we demonstrate the applicability of this theory by identifying the most vulnerable lines in the German transmission network, and simulating the resulting cascades. This case study illustrates the usefulness and limitations of our model to predict line failures caused by fluctuating renewables. Using such methods in practice helps us to evaluate the risks of stochastic generation more precisely, allowing for higher shares of renewable generation to be installed.
 
-
-\towrite{
-
-By studying the effect of fluctuating renewables, we can better estimate which transmission lines are vulnerable to these emergent failures. The theory discussed in this thesis can be used to 
-
-The aim of this bachelor thesis is to introduce the reader to the fascinating mathematics that are used to model the effect of \emph{fluctuating renewables}. 
-
-Emergent failures can be prevented 
-
-The transmission network is 
-
-At the end of Part I, we extend our model to \emph{correlated, normally distributed generation}. 
-
-In Part II, we demonstrate how the theory developed in Part I can be used to 
-
-These procedures are applied to the SciGRID network: a digital representation of the German high-voltage transmission network (489 buses, 695 lines). We use the work of \cite{PyPSA} and  to estimate hourly load and generation series during the year 2011 for each bus. 
-
-Following \cite{Nesti2018emergentfailures}, we estimate the covariances in (renewable) generation between buses, and we use linearised power flow physics to find a \emph{multivariate Gaussian distribution of line flows}. This allows us to identify lines with the highest probability of overloading.
-
-Additionally, for each vulnerable line we can compute the \emph{most likely fluctuation} that would cause its emergent failure. 
-When a transmission line fails, power flow is instantly redistributed among other lines in the network, which might cause them to also overload.
-By estimating the most likely fluctuation, we can simulate these \emph{cascading failures} more realistically, to assess the damage that an emergent failure would cause.
-
-The model that we 
-
-To 
-
-In Part I, we cover the mathematical theory (graph theory and probability theory) 
-
-This bachelor thesis was written as a }
+%
+%\towrite{
+%By studying the effect of fluctuating renewables, we can better estimate which transmission lines are vulnerable to these emergent failures. The theory discussed in this thesis can be used to 
+%
+%The aim of this bachelor thesis is to introduce the reader to the fascinating mathematics that are used to model the effect of \emph{fluctuating renewables}. 
+%
+%Emergent failures can be prevented 
+%
+%The transmission network is 
+%
+%At the end of Part I, we extend our model to \emph{correlated, normally distributed generation}. 
+%
+%In Part II, we demonstrate how the theory developed in Part I can be used to 
+%
+%These procedures are applied to the SciGRID network: a digital representation of the German high-voltage transmission network (489 buses, 695 lines). We use the work of \cite{PyPSA} and  to estimate hourly load and generation series during the year 2011 for each bus. 
+%
+%Following \cite{Nesti2018emergentfailures}, we estimate the covariances in (renewable) generation between buses, and we use linearised power flow physics to find a \emph{multivariate Gaussian distribution of line flows}. This allows us to identify lines with the highest probability of overloading.
+%
+%Additionally, for each vulnerable line we can compute the \emph{most likely fluctuation} that would cause its emergent failure. 
+%When a transmission line fails, power flow is instantly redistributed among other lines in the network, which might cause them to also overload.
+%By estimating the most likely fluctuation, we can simulate these \emph{cascading failures} more realistically, to assess the damage that an emergent failure would cause.
+%
+%The model that we 
+%
+%To 
+%
+%In Part I, we cover the mathematical theory (graph theory and probability theory) 
+%
+%This bachelor thesis was written as a }
 
 \chapter*{Notation}
 \begin{align*}
@@ -281,9 +280,9 @@ Y&\text{ is a (real or complex) number}\\
 \text{\textthing}&\text{\emph{ end of example}} \\
 \text{\leafNE}&\text{\emph{ end of proof}}
 \end{align*}
-\towrite{Een geel doosje geeft aan dat een stuk tekst \emph{nog geschreven moet worden}.}
-\todo{Een oranje doosje is meer \emph{voor mezelf}, dingen waar ik later nog naar moet kijken.}
-\tocite{Een groen doosje geeft \emph{bronnen} aan die relevant (kunnen) zijn.}
+%\towrite{Een geel doosje geeft aan dat een stuk tekst \emph{nog geschreven moet worden}.}
+%\todo{Een oranje doosje is meer \emph{voor mezelf}, dingen waar ik later nog naar moet kijken.}
+%\tocite{Een groen doosje geeft \emph{bronnen} aan die relevant (kunnen) zijn.}
 
 \setcounter{tocdepth}{1}
 \tableofcontents
@@ -351,7 +350,7 @@ Y&\text{ is a (real or complex) number}\\
 
 \appendix
 \chapter*{From the author}
-Thank you for reading my thesis! I hope that I have been able to express my enthusiasm and fascination for the subject. It has been a wonderful experience to work on this thesis, and I am especially proud to have worked on a problem that is the subject of current research.
+Thank you for reading my bachelor thesis! I hope that I have been able to express my enthusiasm and fascination for the subject. It has been a wonderful experience to work on this thesis, and I am especially proud to have worked on a problem that is the subject of current research.
 
 I would like to thank my supervisors, Henk and Eric, for taking the time to guide me through this process, for communicating their knowledge and for supporting my unusual choice of subject.
 

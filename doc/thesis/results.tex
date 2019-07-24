@@ -5,8 +5,6 @@ In this final chapter, we discuss the results of applying our theory to the SciG
 
 With this in mind, we proceed with our analysis, not necessarily with the goal of providing accurate operational advice for German grid operators, but to demonstrate that the model can be applied to real-world transmission networks. By studying a representative dataset, we can study the strengths and weaknesses of the model. Finally, we hope that this model will provide \emph{qualitative insight} into the complex behaviour of grid failures, not specific to this dataset.
 
-\towrite{Iets zeggen over \emph{hoe} (on)nauwkeurig we zijn. Bijvoorbeeld: zorgen kleine veranderingen in de dataset voor grote veranderingen in resultaten?}
-
 \section{SciGRID data}
 The SciGRID dataset needs to be translated into the language of our model. It contains more information than we need, and it is not yet in the desired format. 
 
@@ -19,7 +17,7 @@ Before any processing, we find that the SciGRID network (obtained from \texttt{P
 In our model, we \emph{normalise} the grid voltage. To do so, we multiply all line admittances by the \emph{square} of their operating voltages, after which all voltages can be assumed to be $1$, and a unit of current is proportional to a unit of transmitted power. Of the 585 buses, 192 are part of one of the 96 \emph{voltage pairs}: these are two buses at the same location, with the same name (except for the voltage suffix), connected via a transformer. By merging these pairs, we find 489 geographically unique buses, at normalised voltage. From now on, we will refer to these (possibly merged) buses as the buses of the network: $n=489$, $\mathcal{N} = \range{489}$.
 
 \subsubsection{Loads}
-There is exactly 1 load connected to each bus. In reality, there are of course thousands of loads connected to a bus, but the load in the dataset is the \emph{aggregated} load at that bus. We have hourly time series (\ie amount of $\si{\mega\watt}$ being consumed) for each node in the year 2011, which only includes active power consumption.
+There is exactly 1 load connected to each bus. In reality, there are of course thousands of loads connected to a bus: the load in the dataset is the \emph{aggregated} load at that bus. We have hourly time series (\ie amount of $\si{\mega\watt}$ being consumed) for each node in the year 2011, which only includes active power consumption.
 
 \subsubsection{Generators}
 Generators are connected to the geographically closest bus, and there is at most one generator per bus of each type.\footnote{In order of installed capacity: \emph{Wind Onshore} ($37\,\si{\giga\watt}$), \emph{Solar} ($37\,\si{\giga\watt}$), \emph{Hard Coal} ($25\,\si{\giga\watt}$), \emph{Gas} ($24\,\si{\giga\watt}$), \emph{Brown Coal} ($21\,\si{\giga\watt}$), \emph{Nuclear} ($12\,\si{\giga\watt}$), \emph{Run of River} ($4\,\si{\giga\watt}$), \emph{Other} ($3\,\si{\giga\watt}$), \emph{Wind Offshore} ($3\,\si{\giga\watt}$), \emph{Oil} ($2.7\,\si{\giga\watt}$), \emph{Waste} ($1.6\,\si{\giga\watt}$), \emph{Storage Hydro} ($1.4\,\si{\giga\watt}$), \emph{Multiple} ($0.15\,\si{\giga\watt}$) and \emph{Geothermal} ($32\,\si{\mega\watt}$).} This means that generation is \emph{aggregated}: multiple generators of the same type are combined into one. There are 489 solar generators, 488 onshore wind generators and 5 offshore wind generators. Offshore wind generators are connected to buses at the north coast of Germany. This means that every bus houses stochastic generation. Their geographic distribution is shown in Figure~\ref{fig:solarwind}.
@@ -29,7 +27,7 @@ Line voltages and admittances are normalised as described above. For each line, 
 
 During the study of cascading failures, we found that the network contains \emph{parallel lines}: lines that connect the same pairs of buses. In some cases, there are up to four different lines that are all parallel. When examining these cases on OpenStreetMap, we find that there are indeed parallel lines in the physical network. This is reflected by the \emph{lengths} of parallel lines, as given by SciGRID: these are not the great-circle distances between buses, but rather the distance measured along the line (which makes some turns and bends).
 
-Because our model only holds for \emph{digraphs}, which cannot have parallel lines, we \emph{combine} parallel lines, by summing their (voltage normalised) admittances, and summing their thresholds.\footnote{The results regarding the kernel of $\FRT$, and the Optimised method for analysis cascading failures, break down without this property.} \cite{Nesti2018emergentfailures} do not mention this anomaly, and use the original set of lines. For comparison, we computed some results for both versions of the network, and found the results to be somewhat similar, in general. Because we did not consider the case of parallel lines in our model, combining parallel lines in the dataset seems like the \emph{correct} choice.
+Because our model only holds for \emph{digraphs}, which cannot have parallel lines, we \emph{combine} parallel lines by summing their (voltage normalised) admittances, and summing their thresholds.\footnote{The results regarding the kernel of $\FRT$, and the Optimised method for analysis cascading failures, break down without this property.} \cite{Nesti2018emergentfailures} do not mention this anomaly, and use the original set of lines. For comparison, we computed some results for both versions of the network, and found the results to be somewhat similar, in general. Because we did not consider the case of parallel lines in our model, combining parallel lines in the dataset seems like the \emph{correct} choice.
 
 Of the 852 original lines, there are 705 unique links between original buses before normalising voltages, and there are 695 unique links between buses. There are never two parallel lines with opposite orientation. These 695 lines were used in our model, and will be referred to as simply the \emph{lines} of the network: $m = 695$.
 
@@ -51,7 +49,7 @@ The covariance of buses, calculated using the difference series, is visualised i
     \centering
     \includegraphics[width=\textwidth]{img/bus_correlation_123_fullcov_day_and_night.pdf}
     \caption{
-    \label{fig:buscov}Covariance of all buses, relative to the circled bus. Normalised using installed renewable capacity.}
+    \label{fig:buscov}Covariance of all buses, relative to the circled bus. Dot size represents normalised covariance. (Normalised using installed renewable capacity at the node.)}
 \end{figure}
 
 \section{Line covariance}
@@ -63,13 +61,14 @@ To assess the effect of estimating bus covariances, we compare three possible bu
 	\item \emph{The estimated covariances}: the vector of bus injections is (multivariate) Gaussian distributed. All bus injections are, in general, dependent on each other, and their variances and means differ.
 \end{enumerate}
 
-It is well known that local changes to the grid structure have long-range effects. For example, \cite{Witthaut2013} showed that \emph{adding} a new line to a heavily congested, but stable network can cause the failure of another line, possibly far away from the added line.\footnote{The counter-intuitive fact that adding a line, or increasing the impedance of existing lines, can make a network \emph{more} congested, is known as \define{Braess' Paradox}. Similarly, some line failures can be \emph{prevented} by switching off other lines in the network. See Figure~\ref{fig:braess} for a minimal example.} This is reflected in our model by the fact that line currents have non-zero covariance, even when bus injections are independently distributed. (In this case, $\mat{\Sigma}_{\mat{f}} = \mat{F}\mat{I}\mat{F}^* = \mat{F}\mat{F}^*$, which is generally not a diagonal matrix.) Figure~\ref{fig:linecov1} and Figure~\ref{fig:linecov2} show the covariances of all lines, relative to a chosen line. We see that covariance is generally high for lines that are close, but there are some clear exceptions. There seems to be a general trend that lines are highly (positively or negatively) correlated when they are close, and \emph{oriented in the same direction} (\eg East-West) as the chosen line.
-
-\begin{figure}[ht]
-\centering
-\includegraphics[width=\textwidth]{img/braesstekening.png}
-\caption{\label{fig:braess} PLACEHOLDER: An example of Braess' Paradox. A network transporting $5$ units of power from left to right; all lines have the same admittance, and threshold $3$. On the left, one line (lower right) is overloaded. When this line fails, all power will travel through the upper branch, causing it to overload as well, leaving the network disconnected. If instead, the \emph{lower left} line is switched off, the flow of power will be more evenly distributed, and no line will overload. Of course, this example also illustrates how adding a line could lead to overloads.}
-\end{figure}
+It is well known that local changes to the grid structure have long-range effects. For example, \cite{Witthaut2013} showed that \emph{adding} a new line to a heavily congested, but stable network can cause the failure of another line, possibly far away from the added line.\footnote{The counter-intuitive fact that adding a line, or increasing the impedance of existing lines, can make a network \emph{more} congested, is known as \define{Braess' Paradox}. Similarly, some line failures can be \emph{prevented} by switching off other lines in the network.% See Figure~\ref{fig:braess} for a minimal example.
+} This is reflected in our model by the fact that line currents have non-zero covariance, even when bus injections are independently distributed. (In this case, $\mat{\Sigma}_{\mat{f}} = \mat{F}\mat{I}\mat{F}^* = \mat{F}\mat{F}^*$, which is generally not a diagonal matrix.) Figure~\ref{fig:linecov1} and Figure~\ref{fig:linecov2} show the covariances of all lines, relative to a chosen line. We see that covariance is generally high for lines that are close, but there are some clear exceptions. There seems to be a general trend that lines are highly (positively or negatively) correlated when they are close, and \emph{oriented in the same direction} (\eg East-West) as the chosen line.
+%
+%\begin{figure}[ht]
+%\centering
+%\includegraphics[width=\textwidth]{img/braesstekening.png}
+%\caption{\label{fig:braess} PLACEHOLDER: An example of Braess' Paradox. A network transporting $5$ units of power from left to right; all lines have the same admittance, and threshold $3$. On the left, one line (lower right) is overloaded. When this line fails, all power will travel through the upper branch, causing it to overload as well, leaving the network disconnected. If instead, the \emph{lower left} line is switched off, the flow of power will be more evenly distributed, and no line will overload. Of course, this example also illustrates how adding a line could lead to overloads.}
+%\end{figure}
 
 \begin{figure}[ht]
 \begin{subfigure}{\textwidth}
@@ -85,9 +84,9 @@ It is well known that local changes to the grid structure have long-range effect
     \caption{Covariance of all lines, relative to the enlarged line. Normalised using installed renewable capacity. Signs (red or green) can be chosen arbitrarily. Absolute covariance is therefore proportional to color \emph{saturation}.}
 \end{figure}
 
-The covariance of a random pair of lines is relatively high, when their physical separation (measured either in kilometres or in graph distance) is low. Because weather is correlated, even at high distance, using the bus full covariance might result in higher covariances between lines with high separation. (This was concluded by \cite{Nesti2018emergentfailures}.) 
+The covariance of a random pair of lines is relatively high when their physical separation (measured either in kilometres or in graph distance) is low. Because weather is correlated, even at high distance, using the bus full covariance might result in higher covariances between lines with high separation. (This was concluded by \cite{Nesti2018emergentfailures}.) 
 
-Using a different bus covariance matrix will likely result in a overall increase or decrease of line covariances. Note, however, that the line covariance matrix is scaled by an arbitrary factor $\epsilon$, so any overall change in covariance has no significance in the model. 
+Using a different bus covariance matrix will likely result in a overall increase or decrease of line covariances. Note, however, that scaling the covariance matrix \emph{uniformly} does change absolute overload probabilities, but it does not change the \emph{ranking} of most vulnerable lines, and it does not change most likely injection: a uniform factor in $\mat{\Sigma}_p$ disappears in Equation (\ref{eq:mostlikelyinjection}).
 
 This makes it difficult to compare the three bus covariance matrices, as any absolute difference in line covariance should be ignored. Instead, we will examine the covariance of two lines, \emph{relative to their own variances}. This way, the effect of any absolute, proportional increase in covariance is avoided. First, let us choose a number of lines, and examine the covariances of all other lines with the chosen line, relative to its variance. 
 
@@ -101,20 +100,18 @@ To study the decay of covariance, we collect the geographical separation and cov
 \caption{\label{fig:linecovdecay} For $10^5$ random pairs of lines, the covariance and distance (between line centres) is shown, for three possible bus covariance matrices. The averages (over $25 \, \si{\kilo\metre}$) show that correlated buses increase long-range correlations in line flows. Covariances are normalised using average line variance.}
 \end{figure}
 
-\todo{Maar als je normaliseert op variantie?}
-\towrite{Compare three bus covariance }
 By doing so, we find an important result. When we model bus injections to be uncorrelated (first two graphs in Figure~\ref{fig:linecovdecay}), we find \emph{some} correlation in line flows, which are due to power flow physics.\footnote{As an example, consider the $n$-loop network. Here, two neighbouring lines are highly correlated, since they always transmit roughly the same amount of power. (The difference is the amount of power injected at their common node.)} On average, these correlations decrease as the distance between two lines increases, as shown by the red line.\footnote{We might expect this decay to be \emph{exponential} (based on the work of \cite{Jung2016}, for example), but this is not the case.} 
 On the other hand, when we include \emph{covariances among bus injections} in our model (last graph in Figure~\ref{fig:linecovdecay}), we find a \emph{relative increase in long-distance correlations of line flows}, compared to the uncorrelated case. This is one of the main results of \cite{Nesti2018emergentfailures}, which they demonstrate only on the $n$-loop network. Figure~\ref{fig:linecovdecay} validates that the result also holds for the SciGRID network.
 
 Curiously, in the range $25\,\si{\kilo\meter}$ - $150\,\si{\kilo\meter}$, the average correlation of line flows \emph{increases} with higher line distances. The reason for this phenomenon is unclear, but one could investigate this further by examining line pairs of these short distances individually.
 
-\begin{figure}
-    \centering
-    \includegraphics[width=.4\textwidth]{img/load.png}
-    \caption{PLACEHOLDER: The load distribution of Germany at ???.}
-    \label{fig:loaddistribution}
-\end{figure}
-
+%\begin{figure}
+%    \centering
+%    \includegraphics[width=.4\textwidth]{img/load.png}
+%    \caption{PLACEHOLDER: The load distribution of Germany at ???.}
+%    \label{fig:loaddistribution}
+%\end{figure}
+%
 \begin{figure}
     \centering
     \includegraphics[width=\textwidth]{img/installed_stochastic_capacity.pdf}
@@ -126,7 +123,7 @@ Curiously, in the range $25\,\si{\kilo\meter}$ - $150\,\si{\kilo\meter}$, the av
 \section{Most vulnerable lines}
 Using the nominal injection at 1 January, 11:00, we compute the failure probability of each line. The 30 most vulnerable lines are given in Table~\ref{tab:results} (first two columns) and their positions are given in Figure~\ref{fig:nomflow_stdev_overload}. In the SciGRID dataset, lines are not numbered randomly. Rather, we find that two consecutive line numbers often correspond to two lines that are in close proximity. In the case of lines 651 and 652, for example, the two lines are connected in \emph{series}. As a consequence of power flow physics, their line flows highly correlated.
 
-We identify the same vulnerable lines as \cite{Nesti2018supplemental}, but the ranking is different. This can be attributed to two differences in approach. First, we have combined parallel lines,\footnote{all 30 most vulnerable lines were not part of a parallel combination} which changes the vulnerability order significantly. It is unclear why this changes the result. For comparison, the ranking that we get \emph{without} combining parallels is given in Table~\ref{tab:top20old}, which is more similar that of \cite{Nesti2018supplemental}. The second major difference is the use of a different covariance matrix, although it is reassuring to see that the same lines are identified.
+We identify the same vulnerable lines as \cite{Nesti2018supplemental}, but the ranking is different. This can be attributed to two differences in approach. First, we have combined parallel lines,\footnote{all 30 most vulnerable lines were not part of a parallel combination} which changes the vulnerability order significantly. It is unclear why this changes the result. For comparison, the ranking that we get \emph{without} combining parallels was also computed, which is more similar that of \cite{Nesti2018supplemental}. The second major difference is the use of a different covariance matrix, although it is reassuring to see that the same lines are identified.
 
 \subsection{Properties of vulnerable lines}
 As can clearly be seen in Table~\ref{tab:results}, most lines that are vulnerable to emergent failures are nominally being used at 70\% percent of their capacity. (This is exactly the \emph{contingency factor} used in the LOPF calculation.) This is explained by the low standard deviations of line flows. In fact, when we scale the covariance matrix uniformly by a factor close to zero, this effect is exaggerated.\footnote{This is a \emph{large deviations} result of the normal distribution: if we have $X \, \sim \, \gaussdistr(0, \sigma^2)$, then the marginal distribution of $X \, \mid \, X \geq 1$ becomes increasingly concentrated around $1$ as $\sigma$ tends towards zero. See \eg \cite{Touchette2011}.}
@@ -172,10 +169,10 @@ Since we did not incorporate the \emph{installed stochastic capacity} in our mod
 Given a most likely injection, we can compute whether the fluctuation at each bus is within the possible bounds, and if not, by how much the bounds must be extended for the most likely injection to be possible. In Table~\ref{tab:results}, the number of buses that needs to be extended is given, along with the total amount of extended capacity. For simplicity, we make no distinction between an extension upwards or downwards. An extension upwards means that more solar panels or wind turbines would be needed for the injection to be possible.\footnote{This implies an inaccuracy in our dataset.} An extension downwards is harder to justify, but one could say that it means that the amount of stochastic generation \emph{before} the fluctuation must have been higher, replacing non-stochastic generation at that node.
 
 For the most vulnerable lines, we find that the \emph{number} of extended buses can be quite high, but the total amount of addition capacity is low, in general. For reference, buses in the network have an average installed capacity of $76\,\si{\mega\watt}$ (solar); $82\,\si{\mega\watt}$ (wind). 
-
-\towrite{twee problemen: geen distr. slack meegenomen, geen onderscheid meer tussen zon en wind}
-
-\towrite{het geeft vooral een mankement van het model aan: de grenzen zouden meegenomen moeten worden in de most likely injection}
+%
+%\towrite{twee problemen: geen distr. slack meegenomen, geen onderscheid meer tussen zon en wind}
+%
+%\towrite{het geeft vooral een mankement van het model aan: de grenzen zouden meegenomen moeten worden in de most likely injection}
 
 \subsection{Cascades}
 Using the most likely injection, we simulate the resulting cascade. The results for all lines are given in Interactive~Figure~\ref{ifig:master}. The number of lines that either failed jointly with the initial failure, or failed during the subsequent cascade, is also given in Table~\ref{tab:results}. This extends the result of \cite{Nesti2018supplemental}, which only provides the failure probability. We find that among the 10 most vulnerable lines (at 11:00),
@@ -210,12 +207,8 @@ only the failures of lines 298, 25 and 645 result in a power island. We will dis
     \caption{Assumed failure of line 182.}\label{ifig:master182}
 \end{subfigure}
 %
-    \caption{(continued).}\label{ifig:master}
+    \caption{(continued).}\label{ifig:mastercont}
 \end{figure}
-
-\subsubsection{Using the most likely injection}
-\towrite{hoe zijn de resultaten anders wanneer we niet de mli nemen?}
-
 
 \subsection{Evolution of line vulnerabilities}\label{sec:evolution}
 Of course, the method above can be applied to any nominal injection, not just the injection at 1 January, 11:00. By applying the method to every hour of the first day, we find 24 different rankings, one of which is given in Table~\ref{tab:results}. This allows us to not only identify lines that are vulnerable at a given point in time, but to find lines that are a \emph{consistent vulnerability}, based on the general use of the transmission network.
@@ -245,17 +238,12 @@ Regarding the subsequent cascades of these two lines, it seems like our model fa
     \includegraphics[width=\textwidth]{img/evolution_overload_probs_3_20_IID.pdf}
     \caption{For reference, the same as Figure~\ref{fig:evolution_vulnerabilities_3_20}, but computed using \emph{uncorrelated} injections.}\label{fig:evolution_vulnerabilities_3_20_IID}
 \end{figure}
-
-
-\subsection{Lines vulnerable to cascades}
-\towrite{}
-
-
-\begin{table}
-\input{tables/top20lines.tex}
-\caption{TODO}
-\label{tab:top20old}
-\end{table}
+%
+%\begin{table}
+%\input{tables/top20lines.tex}
+%\caption{TODO}
+%\label{tab:top20old}
+%\end{table}
 
 \begin{table}
 \vspace{-1.5cm}
@@ -271,12 +259,12 @@ The number of failed lines in each cascade stage is shown. Stages in parentheses
 
 \section{Discussion}
 \subsection{Cascading failures}\label{sec:discussioncasc}
-Following \cite{Nesti2018emergentfailures}, we compute the lines most vulnerable to emergent failures, and we give the absolute overload probability (first two columns of Table~\ref{tab:results}). We extend their result by also stating the (most likely) total fluctuation and the sequence of cascades. Additionally, we asses the final stage of the cascade (\ie the \emph{severity} of the emergent failure) using the final number of failed lines, and we determine whether a power island emerged in the process.
+Following \cite{Nesti2018emergentfailures}, we identify the lines most vulnerable to emergent failures, and we give the absolute overload probabilities (first two columns of Table~\ref{tab:results}). We extend the original result by also stating the (most likely) total fluctuation and the sequence of cascades. Additionally, we asses the final stage of the cascade (\ie the \emph{severity} of the emergent failure) using the final number of failed lines, and we determine whether a power island emerged in the process. These results are given in the table.
 
-This allows us to make the important observation that most vulnerable lines do not result in a severe cascade of failures. This means that the network will remain operational after the emergent failure, and once the nefarious fluctuation has passed, the failed line can be operational again. For some vulnerable lines, our model does predict a significant amount of cascaded failures. However, when looking at these cases individually, we find that they are all lines that branch out of the network, quickly resulting in a power island. After the power island occurred, the simulated cascades are likely erroneous. We suspect that the emergent failure of these lines will indeed cause a power island to form, but that the remainder of the network will remain operational.
+This allows us to make the important observation that most vulnerable lines do \emph{not} result in a severe cascade of failures. This means that the network will remain operational after the emergent failure, and once the nefarious fluctuation has passed, the failed line can be operational again. For some vulnerable lines, our model does predict a significant amount of cascaded failures. However, when looking at these cases individually, we find that they are all lines that branch out of the network, quickly resulting in a power island. After the power island occurred, the simulated cascades are likely erroneous. We suspect that the emergent failure of these lines will indeed cause a power island to form, but that the remainder of the network will remain operational.
 
 \subsection{Power islands}\label{sec:discussionpowerislands}
-The Optimised method computes redistributed flows efficiently, and its derivation (Section \ref{sec:optimisedmethod}) provides us with a more intuitive understanding of flow redistribution. Examining results for individual lines (\eg see Interactive Figure \ref{ifig:master}) shows realistic results. Yet, as we the analyses of lines 25 and 298 demonstrate, the method is likely erroneous when the network becomes \emph{disconnected} after the line removal(s), \ie when a power island occurs.
+The Optimised method computes redistributed flows efficiently, and its derivation (Section \ref{sec:optimisedmethod}) provides us with a more intuitive understanding of flow redistribution. Examining results for individual lines (\eg see Interactive Figure \ref{ifig:master}) shows realistic results. Yet, as the analyses of lines 25 and 298 demonstrate, the method is likely erroneous when the network becomes \emph{disconnected} after the line removal(s), \ie when a power island occurs.
 
 In fact, in its original form \citep{Ronellenfitsch2017}, the optimised method is only defined when the network remains connected.
 While this is a limitation of the Optimised method, it is, more generally, a limitation of using DC approximated power flow. In this approximation, we assume the network to be in a \emph{state of equilibrium}: generation matches load exactly. 
@@ -293,7 +281,8 @@ This thesis was inspired by the model and case study of \cite{Nesti2018emergentf
 
 There are two important modifications that we chose to make to the original model. First of all, our model does not use ARMA forecasting, but a much simpler \emph{persistent forecast} as placeholder. For wind generation series, the resulting covariance matrices turn out to be very similar. We cannot comment on the similarity in solar covariances, as we were unable to reproduce these results.
 
-A second difference is the use of a different method for computing the redistributed flow, which is based on \cite{Ronellenfitsch2017}. There is no clear practical benefit to using the Optimised method, except for computational cost. Still, our use of this method has led to the insight that a DC approximated model is not well-suited for disconnected networks, when a large power imbalance exists among connected islands. Although these problems can be justified using the notion of \emph{distributive slack} TODO
+A second difference is the use of a different method for computing the redistributed flow, which is based on \cite{Ronellenfitsch2017}. There is no clear practical benefit to using the Optimised method, except for computational cost. Still, our use of this method has led to the insight that a DC approximated model is not well-suited for disconnected networks, when a large power imbalance exists among connected islands. 
+%Although these problems can be justified using the notion of \emph{distributive slack} TODO
 
 This Optimised method requires the network to be a \emph{digraph}, which does not allow for parallel lines to exist. For this reason, we have combined parallel lines in our network, taking their physical properties into account. Strangely, this increases the discrepancy between the line flows computed by the LPF, and those given by the OPF algorithm. This effect could be investigated further by studying smaller test networks.
 
@@ -304,34 +293,34 @@ We performed a careful analysis of the results that follow from the SciGRID appl
 This problem could be addressed \emph{within the framework of our model} by imposing additional conditions on the most likely injection. In its current form, the problem of finding the most likely injection is an optimisation problem with \emph{linear boundary conditions} (as given in the proof of Theorem~\ref{thm:mostlikelyinjection}). Because the boundary conditions can be written as a \emph{half-plane in $\mathbb{R}^n$}, we were able to derive a closed form solution. We could include the upper and lower limits of stochastic generation as addition linear conditions, which will likely make a closed-form solution unobtainable. Instead, non-linear optimisation methods could be used to find the most likely injection, given these additional conditions.\footnote{In fact, if we use this more general method to find the most likely injection, we could enforce the power injection to have zero sum by imposing one additional linear condition: $\sigma (\mat{p}) = 0$. Although this would solve the problem of having a most likely injection with non-zero sum, there is no physical argument for this imposing this condition.} See \cite{Chertkov2011} for a study using this approach.
 
 \subsection{Future}
-There are many aspects of this analysis that could should be studied in more detail, some of which are mentioned throughout this chapter. Regarding our case study, the first shortcoming that could be addressed is the fact that we have only thoroughly looked at the data of January 1$^{st}$. Like \cite{Nesti2018emergentfailures}, most of our results are computed for the nominal injection at 11:00. Additionally, we have computed our main result for the remaining 23 hours of the day, which includes hours where the \emph{night} covariance matrix is used (see Figure~\ref{fig:evolution_vulnerabilities}). 
+There are many aspects of this analysis that could be studied in more detail; some are mentioned throughout this chapter. Regarding our case study, the first shortcoming that could be addressed is the fact that we have only thoroughly looked at data of January 1$^{st}$. Like \cite{Nesti2018emergentfailures}, most of our results are computed for the nominal injection at 11:00. Additionally, we have computed our main result for the remaining 23 hours of the day, which includes hours where the \emph{night} covariance matrix is used (see Figure~\ref{fig:evolution_vulnerabilities}). 
 While we can directly compute results for the remaining days of January and the remaining months of 2011, we have not yet analysed these results.
 
-While our dataset provides an interesting case study, it does have some limitations. First of all, the dataset does not consist of physical measurements: it is constructed by combining various data sources, most of which are in turn the obtained from modelling. Because of the various steps needed to construct a full dataset, it is hard to quantify the inaccuracy of our results. 
+While our dataset provides an interesting case study, it does have some limitations. First of all, the dataset does not consist of physical measurements: it is constructed by combining various data sources, most of which are in turn the obtained from modelling. Because of the numerous steps needed to construct our final dataset, it is hard to quantify the inaccuracy of our results. 
 
 Crucially, our dataset does not allow us to \emph{verify our results}, since it is \emph{too coarse} to contain fluctuations, and it provides no historical data on line failures. High-resolution stochastic generation datasets do exist, possibly for all nodes of a realistic transmission network. However, to the best of our knowledge, no dataset exist that contains continuous measurements of line currents and overloads. 
 
 Many smaller datasets exists that can be analysed using our methods. Most notably, the \emph{IEEE test networks} can be extended with fictional stochastic generation, as demonstrated by \cite{Nesti2018emergentfailures} and \cite{Chertkov2011}. These smaller networks would allow us to more easily inspect the behaviour of individual lines in the network. Another way to construct a smaller network could be to take a \emph{subsection} of the SciGRID network.
 
-\towrite{
-
-Verschillen:
-- economie
-
-
-Kritiek op nesti:
-
-- ze nemen een contingency factor van 0.7 bij de OPF (arbitrair) maar voor de analyse van cascades niet. (toch?)
-
-- non-zero injection problem
-
-
-Of course, this has the same shortcoming as the model used by \cite{Nesti2018emergentfailures} (it ), but it 
-
-Although these ARMA models are fairly involved, they do not actually provide an accurate forecast.TODOfootnote{\cite{Nesti2018emergentfailures} also express this fact in their article, and note that it is only the forecast \emph{error} that is relevant in our analysis.} Using ARMA models seems unnecessarily complicated
-}
-
-
+%\towrite{
+%
+%Verschillen:
+%- economie
+%
+%
+%Kritiek op nesti:
+%
+%- ze nemen een contingency factor van 0.7 bij de OPF (arbitrair) maar voor de analyse van cascades niet. (toch?)
+%
+%- non-zero injection problem
+%
+%
+%Of course, this has the same shortcoming as the model used by \cite{Nesti2018emergentfailures} (it ), but it 
+%
+%Although these ARMA models are fairly involved, they do not actually provide an accurate forecast.TODOfootnote{\cite{Nesti2018emergentfailures} also express this fact in their article, and note that it is only the forecast \emph{error} that is relevant in our analysis.} Using ARMA models seems unnecessarily complicated
+%}
+%
+%
 
 \clearpage
 \end{document}

@@ -17,7 +17,7 @@ In the remaining chapters of this thesis, we apply the theory developed in Part 
 The model, in particular the use of a bus covariance matrix to study cascading line failures, was proposed by \citet{Nesti2018emergentfailures}.\nocite{Nesti2018supplemental} Following their approach, the model is applied numerically to the SciGRID dataset \citep{SciGRIDv0.2}. This dataset is an approximation of the transmission network in Germany, including grid structure, generation capacity, hourly load series and hourly renewable generation series.
 
 As discussed in Section \ref{sec:linefailures}, transmission lines can fail for a number of reasons, and this model only studies one specific type of failure: \emph{short-term changes in renewable generation}.
-\todo{how common are these types of failures?}
+%\todo{how common are these types of failures?}
 
 Line overloads are not the most common, but the most imminent type of failure in a network, in the sense that grid operators need to continually monitor the \define{configuration} (distribution among the nodes of power generation) to ensure that no line will overload.
 This strongly constrains the capability of the transmission network. At any point in time, there could be many configurations that are environmentally (or \emph{economically}) better than the current configuration, but they might lead to a line overload.%
@@ -26,20 +26,18 @@ Turning off functioning wind turbines is known as \emph{wind curtailment}\index{
 \footnote{Wind turbines can indeed be turned off, by twisting the rotor blades towards $0\si{\degree}$ pitch and applying the \emph{brakes}. In large turbines, common types are drum brakes (similar to a back-pedalling brake for bikes) and disk brakes. Brakes are especially important during maintenance.
 Solar panels are switched off using a simple mechanical or electronic switch (a relay). \citep{Denholm2015}}
 
-In China, as of 2019 the world's largest producer of renewable energy \emph{by a factor of two}, \tocite{ref, wiki} wind curtailment amounted to 16\% between 2010 and 2016. \citep{Qi2018} \todo{compare to european consumption}
-
-
+In China, where roughly a quarter of the world's wind generation capacity is installed, wind curtailment amounted to 16\% between 2010 and 2016. \citep{Qi2018}
 
 \section{Constructing a complete dataset}\label{sec:constructingdataset}
 European grid operators have detailed datasets that describe the grid structure and state of the transmission network, but these are not (yet) publicly available. We use the work of \cite{PyPSA}, which combines open datasets from different sources, to obtain an approximate representation of the German transmission network. 
 
 \subsection{Grid structure}
-The \emph{European Network for Transmission System Operators for Electricity} (ENTSO-E) was established in 2008 to promote the integration between the electricity markets of European member states, and to increase public transparency of these markets.
+The \emph{European Network for Transmission System Operators for Electricity} (ENTSO-E) was established in 2008 to promote the integration between the electricity markets of European Union member states, and to increase public transparency of these markets.
 %According to their website, ``ENTSO-E is committed to develop the most suitable responses to the challenge of a changing power system while maintaining security of supply.'' \tocite{https://www.entsoe.eu/about/inside-entsoe/objectives/ met datum}
-ENTSO-E provides a number of public datasets, including historical hourly load series, international energy flows, and yearly generation series.
+ENTSO-E provides a number of public datasets, including historical hourly load series, international energy flows and yearly generation series.
 An up-to-date map can be viewed, containing almost all high-voltage transmission lines in Europe, and lines outside of Europe that are part of the synchronous grid of Continental Europe. Unfortunately, this dataset is not available in a computer-readable format,\footnote{they provide a more on this later} and only gives the operating voltage and number of parallel circuits of a line.
 
-Luckily, the SciGRID project has assembled an open source dataset of grid structure, using an entirely different source. The OpenStreetMap project is a detailed, open source world map, maintained by a community of mappers. The map is so detailed, in fact, that it not only contains most transmission lines and substations of Europe, it even contains observations of the number of parallel circuits, the number of wires per cable\footnote{You can sometimes see that a cable is made up of three wires, with less than a metre of separation between them. This increases the total surface area of the cable with relatively low increase in volume (\ie cost).}, the frequency\footnote{which is always $50\,\si{\hertz}$ in Europe}, the name of the grid operator, the operating voltage\footnote{This can be deduced from the physical size of the insulators between the cable and the transmission tower (or you could ask the operator).}, and the names of the two buses that it connects. From these characteristics, line resistance and inductance can be estimated.
+Luckily, the SciGRID project has assembled an open source dataset of grid structure, using an entirely different source. The OpenStreetMap project is a detailed, open source world map, maintained by a community of mappers. The map is so detailed, in fact, that it not only contains most transmission lines and substations of Europe, it even contains observations of the number of parallel circuits, the number of wires per cable\footnote{You can sometimes see that instead of a single high-voltage cable, there are \emph{three} wires right next to each other. These three lines carry the same current: they are connected every few metres. This increases the total surface area of the cable with relatively low increase in volume (\ie cost).}, the frequency\footnote{which is always $50\,\si{\hertz}$ in Europe}, the name of the grid operator, the operating voltage\footnote{This can be deduced from the physical size of the insulators between the cable and the transmission tower (or you could ask the operator).} and the names of the two buses that it connects. From these characteristics, line resistance and inductance can be estimated.
 The SciGRID dataset has aggregated OpenStreetMap data, and highly simplified the network, resulting in a complete grid structure.
 
 \subsection{Grid state}
@@ -97,7 +95,7 @@ In the solar generation series, one can clearly identify the daylight hours, whi
 \subsection{Geographical correlation}
 By superimposing the generation series of multiple buses, we can see how strongly they are correlated. Figure~\ref{fig:solarcov} shows the \emph{midday} solar generation values of different buses. When choosing buses randomly (Figure \ref{fig:solarcovrandom}), we see sme overall correlation in generation. For example, on January 13, all buses experience low solar generation. 
 
-In Figure \ref{fig:solarcovclose}, we first choose an arbitrary initial bus (79 was chosen in the Figure), and then look at all buses that are in close proximity of the first bus. The generation series of buses chosen this way are clearly \emph{more correlated} than those of randomly selected buses.
+In Figure \ref{fig:solarcovclose}, we first choose an arbitrary initial bus (79 was chosen in the figure), and then look at all buses that are in close proximity of the first bus. The generation series of buses chosen this way are clearly \emph{more correlated} than those of randomly selected buses.
 
 \begin{figure}[ht]
 \begin{subfigure}{\textwidth}
@@ -116,8 +114,8 @@ In Figure \ref{fig:solarcovclose}, we first choose an arbitrary initial bus (79 
 \section{Stochastic power injection}
 We model the power injection as a \emph{stochastic variable}. In particular, we will assume that the power injection is (multivariate) normally distributed, and we can use historical generation series to estimate this distribution. 
 
-More generally, assuming the power injection captures the \emph{general uncertainty} of the exact amount of power injected during the TODO
-
+%More generally, assuming the power injection captures the \emph{general uncertainty} of the exact amount of power injected during the TODO
+%
 Besides its useful mathematical properties, the normal distribution is a natural choice for modelling the `noise' of injected power, as each bus is the \emph{accumulation of all generators and loads} connected to the bus. When their individual contributions are \emph{random} (but not necessarily normally distributed), their combined effect will resemble a normal distribution by the Central Limit Theorem. 
 
 Of course, the Central Limit Theorem can only be applied to individual contributions that are \emph{independently} distributed, which is not the case when studying renewable generation. For example, the amount of solar power generated at a bus is the sum of power generated by all individual solar panels in the region, but their fluctuations are \emph{highly correlated}; not independent.
@@ -133,21 +131,20 @@ While we do not know what forecast models are used by the grid operators in Germ
 
 Because of the possibly unnecessary complexity of these ARMA models, we introduce a simpler model: the \emph{persistent forecast model}, which predicts the future generation to be equal to the present generation. Although this model does not necessarily provide an accurate forecast, it is sufficient for the purpose of having a placeholder model.
 
-\subsection{Persistent forecast model}
-\towrite{In plaats van een ARMA model gebruiken we het model $X_t = X_{t-1}$, en we bekijken de covarianties van fouten volgens deze 'voorspelling'. De reeks van fouten is dan simpelweg de verschilrij.
+\subsection{Persistent forecast model}\label{sec:persistentforecast}
+Suppose that $(X^i_1, \dots, X^i_T)$ is the measured (solar or wind) generation series at a node $i$ ($T$ is the number of hours in the series). Given our \emph{persistent forecast} model, we predict the next value to be:
+\begin{align*}
+X^i_{T+1} \approx X^i_T.
+\end{align*}
+If $X^i_{T+1}$ is known, the \emph{prediction error} is defined as $\epsilon^i_{T} = X^i_{T+1} - X^i_T$.
 
-Voor het windmodel komt dit eigenlijk sterk overeen met het gefitte ARMA-model, ik heb hier veel plotjes over.}
+For all buses, we compute the $T-1$ prediction errors for the generation series of January. We compute the \emph{sample covariance of these error series}.
+
 \subsection{Bus covariance matrix}
-Using each method, we find covariance matrices for solar generation and wind generation. Following \cite{Nesti2018emergentfailures}, we use these matrices to construct the two \emph{bus covariance matrices}: 
+We find covariance matrices for solar generation and wind generation. Following \cite{Nesti2018emergentfailures}, we use these matrices to construct the two \emph{bus covariance matrices}: 
 \[
 \mat{\Sigma}_{\text{day}} = \mat{\Sigma}_{\text{wind}} + \mat{\Sigma}_{\text{solar}} \qquad \mat{\Sigma}_{\text{night}} = \mat{\Sigma}_{\text{wind}}.
 \]
-\section{Stochastic line flows}
-\towrite{Eigenlijk is er over de \emph{methode} hier niet veel te zeggen, dit is in het vorige hoofdstuk al gedaan. (Misschien hier naartoe verplaatsen? en het vorige hoofdstuk laten eindigen na de LPF-vergelijking) De resultaten staan in het volgende hoofdstuk.}
-
-\subsection{Line failures}
-\towrite{idem}
-
 \section{Most likely power injection}
 The most likely power injection, given the failure of a line, can be computed directly using Theorem~\ref{thm:mostlikelyinjection}. This method is numerically stable, even when the failure probability is, to numerical approximation, equal to $0$. Also, while the proof of Theorem~\ref{thm:mostlikelyinjection} uses (the existence of) the inverse of $\mat{\Sigma}_{\mat{p}}$, it is not required in the final expression.
 
@@ -158,7 +155,7 @@ First, the most likely injection might not have zero sum. We can safely apply th
 
 Instead of concluding that our model, and the results that follow, are therefore entirely invalid, we will simply \emph{ignore this problem}. We do so with the same reasoning as \cite{Nesti2018emergentfailures}: in reality, the total power injection is never exactly of zero sum. As discussed in Section \ref{sec:loads}, turning any grid-connected device on or off will change the total injection. This does \emph{not} cause the power grid to `promptly vanish in a puff of logic', but rather, it physically causes a \emph{change of AC frequency}. This change in frequency is then measured by grid operators and generators, who react by changing their energy output to compensate for the change in frequency. This feedback loop is \emph{stable} \citep{VonMeier2006}, as long as frequency changes are small, and the demand can be met.\footnote{Note that this is a one-sentence simplification of the study of \define{grid stability}.}
 
-The generators (or rather, the the buses that they are connected to) that respond to a change in AC frequency are called the \emph{slack buses}\index{slack bus} of the network, and they are chosen by the grid operator. In our discussion of the energy market (\ref{sec:energymarkey}), we assumed, for didactic simplicity, that a single generator is assigned to be the slack bus.
+The generators (or rather, the the buses that they are connected to) that respond to a change in AC frequency are called the \emph{slack buses}\index{slack bus} of the network, and they are chosen by the grid operator. In our discussion of the energy market (\ref{sec:energymarket}), we assumed, for didactic simplicity, that a single generator is assigned to be the slack bus.
 
 \cite{Nesti2018emergentfailures} assume, for mathematical simplicity, that all generators play this role, which is called \emph{distributive slack}. The individual amounts of change in generation is chosen such that the line flows after all generators have settled into a zero-sum are exactly equal to $\mat{F}\mat{p}^{init}$, where $\mat{p}^{init}$ is the initial, non-zero power injection. This redistributed injection is given by:
 \[
@@ -168,8 +165,8 @@ When $\mat{p}^{init}$ \emph{does} have zero sum, we find $\mat{p}^{slack} = \mat
 
 \subsection{Unrealistic renewable fluctuations}
 The second problem with the most likely injection is that it might not be realistic, simply because there are not enough solar panels and wind turbines to produce the predicted injection. A simple way to check this condition is to calculate the predicted increase in renewable generation at each node, and compare it to the installed capacity.
-
-\towrite{In Nesti is duurzame opbrengst een som van stochasten, en dus kan de maximale capaciteit wel worden overschreden (de capaciteit is dan 'een schatting van een gemiddelde bovengrens' oid). We kunnen dus beter berekenen met hoeveel procent we de capaciteiten moeten rekken daarvoor. Verder is de data slechts een schatting van capaciteit.}
+%
+%\towrite{In Nesti is duurzame opbrengst een som van stochasten, en dus kan de maximale capaciteit wel worden overschreden (de capaciteit is dan 'een schatting van een gemiddelde bovengrens' oid). We kunnen dus beter berekenen met hoeveel procent we de capaciteiten moeten rekken daarvoor. Verder is de data slechts een schatting van capaciteit.}
 
 \section{Cascading line failures}\label{sec:cascades}
 Given the most likely injection for an assumed initial failure, we can compute the corresponding line flows using the (error-corrected) LPF. This gives us the set of lines that become overloaded, which includes the assumed initial line. Any other lines that fail in this first stage are said to \emph{fail jointly} with the initial failure. The overloaded lines form our set of failed lines: we model the failure after a line overload to be \emph{instant}.
